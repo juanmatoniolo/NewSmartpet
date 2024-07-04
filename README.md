@@ -19,3 +19,10 @@
 @media (min-width: 1200px) {
 
 }
+
+
+Color1: #6C5C94 
+Color2: #DDB3C9
+Color3: #FFFFFF
+
+VarienteColor2: #CD7FA7 
