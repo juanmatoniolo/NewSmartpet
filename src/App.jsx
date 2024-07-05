@@ -1,15 +1,12 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Header from "./components/header/Header";
-import Barnav from "./components/nav/Nav";
-
+import Homepage from "./pages/home";
 
 function App() {
 	return (
-		<div className="App">
-			<Header />
-			<Barnav/>
-		</div>
+		<>
+			<Homepage />
+		</>
 	);
 }
 

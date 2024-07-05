@@ -1,0 +1,159 @@
+/* .DivCarrusel {
+  width: 100%;
+  height: 60vh;
+  margin: auto;
+  margin-top: 3px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  margin-bottom: 4em;
+  overflow: hidden;
+
+}
+
+.IMGCarrusel {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+
+}
+ */
+
+
+
+/* Estilos para pantallas extra pequeñas */
+@media (max-width: 575.98px) {
+  .DivCarrusel {
+    width: 100%;
+    margin: auto;
+    margin-top: 3px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    /* Agrega una sombra alrededor del carrusel */
+    border-radius: 10px;
+    /* Bordes redondeados para el carrusel */
+    margin-bottom: 4em;
+    overflow: hidden;
+    /* Oculta cualquier contenido que sobresalga del borde */
+  }
+
+  .IMGCarrusel {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Asegura que las imágenes llenen el contenedor sin distorsionarse */
+    border-radius: 10px;
+    /* Bordes redondeados para las imágenes */
+  }
+
+
+}
+
+/* Estilos para pantallas pequeñas */
+@media (min-width: 576px) and (max-width: 767.98px) {
+  .DivCarrusel {
+    width: 100%;
+    height: 50vh;
+    margin: auto;
+    margin-top: 3px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    /* Agrega una sombra alrededor del carrusel */
+    border-radius: 10px;
+    /* Bordes redondeados para el carrusel */
+    margin-bottom: 4em;
+    overflow: hidden;
+    /* Oculta cualquier contenido que sobresalga del borde */
+  }
+
+  .IMGCarrusel {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Asegura que las imágenes llenen el contenedor sin distorsionarse */
+    border-radius: 10px;
+    /* Bordes redondeados para las imágenes */
+  }
+
+}
+
+/* Estilos para pantallas medianas */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .DivCarrusel {
+    width: 100%;
+    height: 60vh;
+    margin: auto;
+    margin-top: 3px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    /* Agrega una sombra alrededor del carrusel */
+    border-radius: 10px;
+    /* Bordes redondeados para el carrusel */
+    margin-bottom: 4em;
+    overflow: hidden;
+    /* Oculta cualquier contenido que sobresalga del borde */
+  }
+
+  .IMGCarrusel {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Asegura que las imágenes llenen el contenedor sin distorsionarse */
+    border-radius: 10px;
+    /* Bordes redondeados para las imágenes */
+  }
+
+}
+
+/* Estilos para pantallas grandes */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+  .DivCarrusel {
+    width: 100%;
+    height: 80vh;
+    margin: auto;
+    margin-top: 3px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    /* Agrega una sombra alrededor del carrusel */
+    border-radius: 10px;
+    /* Bordes redondeados para el carrusel */
+    margin-bottom: 4em;
+    overflow: hidden;
+    /* Oculta cualquier contenido que sobresalga del borde */
+  }
+
+  .IMGCarrusel {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Asegura que las imágenes llenen el contenedor sin distorsionarse */
+    border-radius: 10px;
+    /* Bordes redondeados para las imágenes */
+
+  }
+
+}
+
+/* Estilos para pantallas extra grandes */
+@media (min-width: 1200px) {
+  .DivCarrusel {
+    width: 100%;
+    height: 80vh;
+    margin: auto;
+    margin-top: 3px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    /* Agrega una sombra alrededor del carrusel */
+    border-radius: 10px;
+    /* Bordes redondeados para el carrusel */
+    margin-bottom: 4em;
+    overflow: hidden;
+    /* Oculta cualquier contenido que sobresalga del borde */
+  }
+
+  .IMGCarrusel {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Asegura que las imágenes llenen el contenedor sin distorsionarse */
+    border-radius: 10px;
+    /* Bordes redondeados para las imágenes */
+
+  }
+
+}

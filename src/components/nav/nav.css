@@ -38,7 +38,11 @@
 	color: #555;
 	/* Color del texto al pasar el mouse */
 }
+.nav-link{
+	color: #555 !important;
+	font-size: 1.3em !important;
 
+}
 /* Estilo para el título del offcanvas */
 #offcanvasNavbarLabel-expand-xl {
 	font-size: 1.5em !important;
