@@ -22,7 +22,16 @@ function Homepage() {
 					<p className="subtitle">
 						Collares inteligentes para tus mascotas
 					</p>
-					<Button variant="primary" className="cta-button">
+					<Button
+						variant="primary"
+						onClick={() => {
+							window.open(
+								"https://wa.me/+5493412275598?text=¡Hola! Estoy interesado en comprar un collar SmarPet!",
+								"_blank"
+							);
+						}}
+						className="cta-button"
+					>
 						Comprar Ahora
 					</Button>
 				</header>
@@ -34,14 +43,17 @@ function Homepage() {
 								<h2>¿Qué es SmartPet?</h2>
 								<p>
 									SmartPet es un colgante identificatorio para
-									mascotas que cuenta con un chip inteligente
-									a base de NFC. Al acercar tu teléfono con el
-									NFC de tu celular te direccionará
-									automáticamente a una base de datos online
-									donde estarán alojados los datos de esa
-									mascota. Todos los colgantes cuentan también
-									con código QR para que todos puedan acceder
-									a esa base de datos online.
+									mascotas que ofrece dos opciones para
+									acceder a la información de tu mascota.
+									Puedes escanear el código QR con la cámara
+									de tu teléfono o utilizar el chip
+									inteligente basado en NFC. Al acercar tu
+									teléfono al chip NFC, serás redirigido
+									automáticamente a una base de datos en línea
+									donde se encuentran los datos de la mascota.
+									De esta manera, cualquier persona puede
+									acceder a la información utilizando el QR o
+									el NFC.
 								</p>
 							</Col>
 							<Col md={5} sm={12} lg={4}>

@@ -3,7 +3,7 @@ import React from "react";
 const CallToActionButton = ({ phoneNumber, text }) => {
 	const handleCallClick = () => {
 		const customMessage =
-			"¡Hola! Estoy interesado en saber más sobre Curiyú!";
+			"¡Hola! Estoy interesado en comprar un collar SmarPet!";
 		const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
 			customMessage
 		)}`;

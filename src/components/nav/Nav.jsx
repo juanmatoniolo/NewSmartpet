@@ -5,6 +5,7 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import Offcanvas from "react-bootstrap/Offcanvas";
+import { Link } from "react-router-dom";
 
 function Barnav() {
 	return (
@@ -23,10 +24,18 @@ function Barnav() {
 					</Offcanvas.Header>
 					<Offcanvas.Body>
 						<Nav className="linkscontainer">
-							<Nav.Link href="#action1">Home</Nav.Link>
-							<Nav.Link href="#action2">Nosotros</Nav.Link>
-							<Nav.Link href="#action3">Modelos</Nav.Link>
-							<Nav.Link href="#action4">Tengo un código</Nav.Link>
+							<Nav.Link as={Link} to="/">
+								Home
+							</Nav.Link>
+							<Nav.Link as={Link} to="/about">
+								Nosotros
+							</Nav.Link>
+							<Nav.Link as={Link} to="/Collares">
+								Modelos
+							</Nav.Link>
+							<Nav.Link as={Link} to="/Cod">
+								Tengo un código
+							</Nav.Link>
 						</Nav>
 					</Offcanvas.Body>
 				</Navbar.Offcanvas>
