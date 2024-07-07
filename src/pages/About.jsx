@@ -1,62 +1,81 @@
 import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
 import "./about.css";
+import { Container, Row, Col, Card, Image } from "react-bootstrap";
 import Header from "../components/header/Header";
 import Barnav from "../components/nav/Nav";
 import Footers from "../components/footer/Footer";
+
+import equipo from "../assets/img-jm-minerva.jpg";
+// Puedes agregar más imágenes aquí si es necesario
 
 function About() {
 	return (
 		<>
 			<Header />
 			<Barnav />
-			<div className="about-page">
-				<header className="about-header">
-					<h1>Sobre SmartPet</h1>
-					<p>Conoce más sobre nosotros y nuestra misión.</p>
-				</header>
-
-				<section className="about-section">
-					<div className="about-content">
-						<h2>Nuestra Historia</h2>
-						<p>
-							SmartPet fue fundado con la misión de proporcionar
-							soluciones innovadoras para la identificación y
-							cuidado de mascotas. Nos esforzamos por hacer la
-							vida más fácil para los dueños de mascotas al
-							ofrecer collares inteligentes que permiten el acceso
-							rápido a la información de la mascota mediante QR y
-							NFC.
-						</p>
-					</div>
-				</section>
-
-				<section className="about-section">
-					<div className="about-content">
-						<h2>Nuestra Misión</h2>
-						<p>
-							Nuestra misión es mejorar la seguridad y el
-							bienestar de las mascotas al ofrecer tecnologías
-							avanzadas que permiten a los dueños de mascotas
-							acceder y compartir información crucial de manera
-							fácil y rápida.
-						</p>
-					</div>
-				</section>
-
-				<section className="about-section">
-					<div className="about-content">
-						<h2>Nuestros Valores</h2>
-						<p>
-							En SmartPet, valoramos la innovación, la calidad y
-							la confianza. Trabajamos arduamente para asegurarnos
-							de que nuestros productos sean confiables y
-							efectivos, y nos comprometemos a mantenernos a la
-							vanguardia de la tecnología para mascotas.
-						</p>
-					</div>
-				</section>
-			</div>
+			<Container className="about-us-container">
+				<Row className="roe-container-us">
+					<Col>
+						<Card className="about-us-card">
+							<Card.Body>
+								<Card.Title>Historia de SmartPet</Card.Title>
+								<Card.Text>
+									En mayo de 2023, Minerva, mi querida perrita, se perdió en Rosario. La chapita de identificación tenía un error en el número de teléfono, lo que complicó su regreso a casa. Por suerte, cuando las personas marcaron el segundo número, lograron contactarme y recuperé a Minerva. Este incidente, junto con mi reciente incursión en la programación, me inspiró a crear SmartPet.
+								</Card.Text>
+								<Card.Text>
+									La chispa para SmartPet surgió de un video en TikTok sobre chips NFC, un curso de programación web, y la experiencia de haber perdido a Minerva. Decidí combinar estos elementos y desarrollar una solución tecnológica para evitar que otros pasaran por lo mismo.
+								</Card.Text>
+								<Card.Text>
+									El viaje no fue fácil. Después de escribir el código y diseñar la estructura web, necesitaba materializarlo. Tras muchas horas de investigación, encontré la resina epoxi, ideal para crear collares coloridos y proteger el chip NFC.
+								</Card.Text>
+							</Card.Body>
+						</Card>
+					</Col>
+				</Row>
+	
+				<Col md={5}>
+						<Card className="about-us-card">
+							<Card.Body>
+								<Card.Title>Misión y Visión</Card.Title>
+								<Card.Text>
+									En SmartPet, nuestra misión es garantizar que, si tu mascota se pierde, la persona que la encuentre pueda acceder rápidamente a su información de contacto. Con un simple escaneo del collar (a través de QR o NFC), podrán visitar la página de la mascota y comunicarse contigo de inmediato.
+								</Card.Text>
+								<Card.Text>
+									Nuestra visión a largo plazo es permitir que los dueños de mascotas actualicen fácilmente la información de sus mascotas en cualquier momento. Queremos que puedas mantener el collar actualizado sin tener que reemplazarlo, asegurando que los datos estén siempre correctos y accesibles.
+								</Card.Text>
+							</Card.Body>
+						</Card>
+					</Col>
+					<Col md={6}>
+						<Card className="about-us-card">
+							<Card.Body>
+								<Card.Title>El Equipo</Card.Title>
+								<Row>
+									<Col md={6}>
+										<Card.Text>
+											Soy Juan Manuel Toniolo, el creador de SmartPet. Aunque trabajo solo en la programación, he recibido un gran apoyo de amigos y familiares que creen en este proyecto. Avanzo lentamente debido a mi empleo a tiempo completo, pero continúo dedicando mis tiempos libres a este emprendimiento apasionante.
+										</Card.Text>
+									</Col>
+									<Col md={6} className="d-flex align-items-center">
+										<Image src={equipo} className="about-us-image" fluid />
+									</Col>
+								</Row>
+							</Card.Body>
+						</Card>
+					</Col>
+				<Row>
+					<Col>
+						<Card className="about-us-card">
+							<Card.Body>
+								<Card.Title>Productos y Servicios</Card.Title>
+								<Card.Text>
+									En SmartPet, ofrecemos collares de resina epoxi o sublimados, personalizados con el nombre de tu mascota y un código QR. Al escanear el QR, se accede a una página con los datos de contacto de la mascota, permitiendo una comunicación rápida y eficiente.
+								</Card.Text>
+							</Card.Body>
+						</Card>
+					</Col>
+				</Row>
+			</Container>
 			<Footers />
 		</>
 	);
