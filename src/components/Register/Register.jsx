@@ -40,7 +40,7 @@ function Register() {
 							alt="Logo Curiyú"
 							className="club-logo"
 						/>
-						<h1 className="club-name">SmartPet</h1>
+						<h1 className="club-name">Reistrar</h1>
 					</header>
 					<h2 className="login-title">Iniciar Sesión</h2>
 					<form className="login-form" onSubmit={handleSubmit}>
