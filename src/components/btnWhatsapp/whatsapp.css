@@ -1,0 +1,27 @@
+.whatsapp-button {
+    position: fixed;
+    bottom: 20px;
+    /* Ajusta la distancia desde el borde inferior */
+    right: 20px;
+    /* Ajusta la distancia desde el borde derecho */
+    background-color: #25d366;
+    /* Color de fondo del botón de WhatsApp */
+    width: 60px;
+    /* Ancho del botón */
+    height: 60px;
+    /* Alto del botón */
+    border-radius: 50%;
+    /* Bordes redondeados para hacer un círculo */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3);
+    /* Sombra */
+}
+
+.whatsapp-icon {
+    width: 40px;
+    /* Tamaño del icono de WhatsApp */
+    height: 40px;
+}
