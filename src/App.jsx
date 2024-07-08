@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import About from "./pages/About";
 import Collares from "./pages/Collares";
 import Cod from "./pages/Cod";
+import Login from "./components/Login/Login";
 
 function App() {
 	return (
@@ -16,7 +17,9 @@ function App() {
 				<Route path="/About" element={<About />} />
 				<Route path="/Collares" element={<Collares/>} />
 				<Route path="/Cod" element={<Cod />} />
+				<Route path="/Login" element={<Login />} />
 
+			
 
 			</Routes>
 		</BrowserRouter>
