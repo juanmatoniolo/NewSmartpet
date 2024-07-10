@@ -1,71 +1,103 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "./login.css";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
-import logo from "../../assets/logobien.svg";
 import Header from "../header/Header";
-import Barnav from "../nav/Nav";
 import Footers from "../footer/Footer";
 
 function Login() {
-	const [showPassword, setShowPassword] = useState(false);
-	const [username, setUsername] = useState("");
-	const [password, setPassword] = useState("");
+	const [dni, setDni] = useState("");
+	const [contrasenia, setContrasenia] = useState("");
 	const [error, setError] = useState("");
-	const navigate = useNavigate();
+	const [showPassword, setShowPassword] = useState(false);
+	const handleInputChange = (e) => {
+		if (e.target.id === "dni") {
+			setDni(e.target.value);
+		} else if (e.target.id === "contrasenia") {
+			setContrasenia(e.target.value);
+		}
+	};
+
+
 
 	const togglePasswordVisibility = () => {
 		setShowPassword(!showPassword);
 	};
 
-	const handleSubmit = (e) => {
+
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-		if (username === "adm" && password === "pomekapo") {
-			localStorage.setItem("authenticated", "true");
-			navigate("/crud");
-		} else {
-			setError("Usuario o contraseña incorrectos");
+
+		try {
+			const response = await fetch(
+				"https://smartpet-1d59e-default-rtdb.firebaseio.com/usuario.json"
+			);
+			const data = await response.json();
+
+			let registroEncontrado = false;
+			let registroId;
+
+			for (const key in data) {
+				if (
+					data.hasOwnProperty(key) &&
+					data[key].dni === dni.trim() &&
+					data[key].contrasenia === contrasenia.trim()
+				) {
+					registroEncontrado = true;
+					registroId = key;
+					break;
+				}
+			}
+
+			if (dni === "JuanmaToniolo" && contrasenia === "Sarmiento.846") {
+				window.location.href = "/User";
+			} else if (registroEncontrado) {
+				const idUsuario = encodeURIComponent(registroId);
+                window.location.href = `/Smartpet/:id=${idUsuario}`;
+			} else {
+				setError(
+					"Usuario o contraseña incorrectos. Inténtelo nuevamente"
+				);
+			}
+		} catch (error) {
+			alert("Ha ocurrido un error. Por favor, intenta nuevamente.");
+			console.error(error);
 		}
 	};
 
 	return (
 		<>
 			<Header />
-			<Barnav />
 			<main className="main-login">
 				<section className="login-section">
-					<header className="club-header">
-						<img
-							src={logo}
-							alt="Logo Curiyú"
-							className="club-logo"
-						/>
-						<h1 className="club-name">SmartPet</h1>
-					</header>
 					<h2 className="login-title">Iniciar Sesión</h2>
 					<form className="login-form" onSubmit={handleSubmit}>
 						<div className="input-group">
 							<label htmlFor="username">Usuario:</label>
 							<input
-								type="text"
-								id="username"
-								name="username"
-								value={username}
-								onChange={(e) => setUsername(e.target.value)}
-							/>
+							type="text"
+							id="dni"
+							name="usuario"
+							placeholder="Username"
+							required
+							value={dni}
+							onChange={handleInputChange}
+							className="input-user btnLoginConjunto"
+						/>
+					
+
+							
 						</div>
 						<div className="input-group">
 							<label htmlFor="password">Contraseña:</label>
 							<div className="password-input-container">
 								<input
 									type={showPassword ? "text" : "password"}
-									id="password"
-									name="password"
+									id="contrasenia"
+									name="contrasenia"
 									className="password-input"
-									value={password}
-									onChange={(e) =>
-										setPassword(e.target.value)
-									}
+									value={contrasenia}
+									onChange={handleInputChange}
 								/>
 								<div
 									className="password-toggle-btn"
@@ -84,6 +116,9 @@ function Login() {
 							Entrar
 						</button>
 					</form>
+					<p className="message">
+						Already registered? <Link to="/Registro">Sign In</Link>
+					</p>
 				</section>
 			</main>
 			<Footers />
