@@ -6,7 +6,7 @@ function MasterCrud() {
     return (
         <>
             <Logout />
- 
+ <h1>Master</h1>
 			<br />
 			<br />
 			<br />

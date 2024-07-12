@@ -5,6 +5,8 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import { Container } from "react-bootstrap";
+import "../container/body.css"
+
 
 function Logout() {
 	return (
@@ -29,7 +31,7 @@ function Logout() {
 				</div>
 			</header>
 
-			<Navbar expand="xl" className="navbar-container">
+			<Navbar expand="sm" className="navbar-container">
 				<Container fluid>
 					<Navbar.Toggle aria-controls="offcanvasNavbar-expand-xl" />
 					<Navbar.Offcanvas

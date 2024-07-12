@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./login.css";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import Header from "../header/Header";
@@ -10,6 +10,8 @@ function Login() {
 	const [contrasenia, setContrasenia] = useState("");
 	const [error, setError] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
+	const navigate = useNavigate();
+
 	const handleInputChange = (e) => {
 		if (e.target.id === "dni") {
 			setDni(e.target.value);
@@ -18,12 +20,9 @@ function Login() {
 		}
 	};
 
-
-
 	const togglePasswordVisibility = () => {
 		setShowPassword(!showPassword);
 	};
-
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -50,14 +49,13 @@ function Login() {
 			}
 
 			if (dni === "JuanmaToniolo" && contrasenia === "Sarmiento.846") {
-				window.location.href = "/User";
+				localStorage.setItem("authenticated", "true");
+				navigate("/MasterCrud");
 			} else if (registroEncontrado) {
-				const idUsuario = encodeURIComponent(registroId);
-                window.location.href = `/Smartpet/:id=${idUsuario}`;
+				localStorage.setItem("authenticated", "true");
+				navigate(`/Consultas/${registroId}`);
 			} else {
-				setError(
-					"Usuario o contraseña incorrectos. Inténtelo nuevamente"
-				);
+				setError("Usuario o contraseña incorrectos. Inténtelo nuevamente");
 			}
 		} catch (error) {
 			alert("Ha ocurrido un error. Por favor, intenta nuevamente.");
@@ -73,23 +71,21 @@ function Login() {
 					<h2 className="login-title">Iniciar Sesión</h2>
 					<form className="login-form" onSubmit={handleSubmit}>
 						<div className="input-group">
-							<label htmlFor="username">Usuario:</label>
+							<label htmlFor="dni">Usuario:</label>
 							<input
-							type="text"
-							id="dni"
-							name="usuario"
-							placeholder="Username"
-							required
-							value={dni}
-							onChange={handleInputChange}
-							className="input-user btnLoginConjunto"
-						/>
-					
-
-							
+								type="text"
+								id="dni"
+								name="usuario"
+								placeholder="Username"
+								required
+								value={dni}
+								onChange={handleInputChange}
+								className="input-user btnLoginConjunto"
+								autoComplete="username"
+							/>
 						</div>
 						<div className="input-group">
-							<label htmlFor="password">Contraseña:</label>
+							<label htmlFor="contrasenia">Contraseña:</label>
 							<div className="password-input-container">
 								<input
 									type={showPassword ? "text" : "password"}
@@ -98,16 +94,13 @@ function Login() {
 									className="password-input"
 									value={contrasenia}
 									onChange={handleInputChange}
+									autoComplete="current-password"
 								/>
 								<div
 									className="password-toggle-btn"
 									onClick={togglePasswordVisibility}
 								>
-									{showPassword ? (
-										<IoMdEyeOff />
-									) : (
-										<IoMdEye />
-									)}
+									{showPassword ? <IoMdEyeOff /> : <IoMdEye />}
 								</div>
 							</div>
 						</div>

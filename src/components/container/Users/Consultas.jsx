@@ -1,21 +1,14 @@
 import React from "react";
 import Logout from "../../Logout/Logout";
 import Footers from "../../footer/Footer";
+import SubscriptionForm from "../BodyConsultas";
 
 function Consultas() {
 	return (
 		<>
 			<Logout />
-
-			<br />
-			<br />
-			<br />
-			<br />
-			<br />
-			<br />
-			<br />
-			<br />
-			<br />
+			<SubscriptionForm />
+	
 			<Footers />
 		</>
 	);

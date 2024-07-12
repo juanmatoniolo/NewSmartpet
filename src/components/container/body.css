@@ -1,0 +1,100 @@
+body {
+    background-color: #f4f4f4;
+    font-family: Arial, sans-serif;
+}
+
+.register-container,
+.validate-code-container,
+.pet-info-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+    text-align: center;
+    color: #6C5C94;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #6C5C94;
+    border-radius: 4px;
+}
+
+.password-input-container {
+    position: relative;
+}
+
+.password-toggle-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+form button {
+    width: 100%;
+    padding: 10px;
+    background-color: #6C5C94;
+}
+
+.offcanvasNavbar-expand-xl {
+    width: 2em !important;
+}
+
+
+
+
+
+/* body.css */
+
+.how-it-works {
+    padding: 40px;
+    background-color: #f2f2f2;
+    border-radius: 10px;
+    margin-top: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.how-it-works-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.how-it-works h2 {
+    color: #333;
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+.how-it-works p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.how-it-works ol {
+    list-style-type: decimal;
+    padding-left: 20px;
+}
+
+.how-it-works ol li {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.how-it-works p:last-child {
+    margin-bottom: 0;
+}
