@@ -1,0 +1,49 @@
+.contenedor-cards-user {
+    margin-top: 2em;
+    margin-bottom: 2em;
+    display: flex;
+    flex-flow: row wrap;
+    gap: 2em;
+    justify-content: space-evenly;
+    align-items: center;
+    align-content: center;
+}
+
+.titulo-card {
+    text-align: center;
+    font-weight: 700;
+}
+
+.btn-editar {
+    width: 100%;
+    color: #fff;
+    font-weight: 600;
+    background-color: #6C5C94;
+    border-color: #6C5C94;
+}
+
+.btn-editar:hover {
+    background-color: #6a51aa;
+    border-color: #6C5C94;
+
+}
+
+.img-card-pet {
+    padding: 12px;
+
+
+}
+
+/* Estilos para pantallas extra grandes */
+@media (min-width: 999px) {
+    .contenedor-cards-user {
+        display: flex;
+        flex-flow: row wrap;
+        gap: 2em;
+        justify-content: start;
+        align-items: center;
+        align-content: center;
+    }
+
+
+}
