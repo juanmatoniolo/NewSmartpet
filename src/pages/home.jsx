@@ -15,7 +15,7 @@ function Homepage() {
 		<div className="Homepage">
 			<Header />
 			<Barnav />
-			<WhatsAppButton />
+			<WhatsAppButton  mensaje={'Hola estoy interesado en adquirir un collar smartpet'} />
 			<div>
 				<header className="header">
 					<h1 className="title">Bienvenido a SmartPet</h1>

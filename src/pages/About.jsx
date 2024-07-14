@@ -14,7 +14,7 @@ function About() {
 		<>
 			<Header />
 			<Barnav />
-			<WhatsAppButton />
+			<WhatsAppButton mensaje={'Hola estoy interesado en adquirir un collar smartpet'} />
 			<Container className="about-us-container">
 				<Row className="roe-container-us">
 					<Col>

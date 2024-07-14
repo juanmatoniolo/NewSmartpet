@@ -7,11 +7,17 @@
 	/* Sombra suave para el navbar */
 }
 
-.navbar>.container, .navbar>.container-fluid, .navbar>.container-lg, .navbar>.container-md, .navbar>.container-sm, .navbar>.container-xl, .navbar>.container-xxl {
-    display: flex;
-    flex-wrap: inherit;
-    align-items: center;
-    justify-content: flex-end;
+.navbar>.container,
+.navbar>.container-fluid,
+.navbar>.container-lg,
+.navbar>.container-md,
+.navbar>.container-sm,
+.navbar>.container-xl,
+.navbar>.container-xxl {
+	display: flex;
+	flex-wrap: inherit;
+	align-items: center;
+	justify-content: flex-end;
 }
 
 .offcanvas-body {
@@ -35,14 +41,16 @@
 }
 
 .linkscontainer .nav-link:hover {
-	color: #555;
+	color: #ffffff !important;
 	/* Color del texto al pasar el mouse */
 }
-.nav-link{
+
+.nav-link {
 	color: #000000ca !important;
 	font-size: 1.3em !important;
 
 }
+
 /* Estilo para el título del offcanvas */
 #offcanvasNavbarLabel-expand-xl {
 	font-size: 1.5em !important;
@@ -73,6 +81,11 @@
 		font-weight: 600 !important;
 		font-size: 1.2em !important;
 		width: 65% !important;
+	}
+
+	.linkscontainer .nav-link:hover {
+		color: #000000 !important;
+		/* Color del texto al pasar el mouse */
 	}
 }
 

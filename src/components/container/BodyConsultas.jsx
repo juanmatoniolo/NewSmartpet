@@ -1,11 +1,9 @@
 import React from "react";
 import "./body.css";
-import { ValidateCode } from "./HomeUser";
 
 function SubscriptionForm() {
 	return (
 		<div className="container">
-			<ValidateCode />
 			<section className="container how-it-works">
 				<h2>Cómo funciona SmartPet</h2>
 				<p>

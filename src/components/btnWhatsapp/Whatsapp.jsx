@@ -1,11 +1,10 @@
 import React from "react";
 import "./whatsapp.css";
 
-function WhatsAppButton() {
+function WhatsAppButton( {mensaje}) {
 	const handleWhatsAppClick = () => {
 		const phoneNumber = "+5493412275598";
-		const customMessage =
-			"¡Hola! Estoy interesado en saber más sobre Curiyú!";
+		const customMessage =mensaje;
 		const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
 			customMessage
 		)}`;

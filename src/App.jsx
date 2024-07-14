@@ -8,6 +8,7 @@ import Cod from "./pages/Cod";
 import Login from "./components/Login/Login";
 import Register from "./components/Register/Register";
 import Consultas from "./components/container/Users/Consultas";
+import MisMascotas from "./components/container/Users/MisMascotas";
 import MasterCrud from "./components/container/Master/MasterCrud";
 import ProtectedRoute from "./components/Login/ProtectedRoute";
 
@@ -30,6 +31,15 @@ function App() {
 						</ProtectedRoute>
 					}
 				/>
+				<Route
+					path="/MisMascotas/:id"
+					element={
+						<ProtectedRoute>
+							<MisMascotas />
+						</ProtectedRoute>
+					}
+				/>
+
 				<Route
 					path="/MasterCrud"
 					element={

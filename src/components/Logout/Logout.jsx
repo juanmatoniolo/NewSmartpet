@@ -1,20 +1,20 @@
 import React from "react";
 import Img from "../../assets/Imagenes";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import { Container } from "react-bootstrap";
-import "../container/body.css"
-
+import "../container/body.css";
 
 function Logout() {
+	const { id } = useParams();
+
 	return (
 		<>
 			<header className="headersmart">
 				<div className="imglogo">
-					<Link to="/Consultas">
-						{" "}
+					<Link to={`/Consultas/${id}`}>
 						<img
 							src={Img.img1}
 							className="imglogopng"
@@ -41,15 +41,15 @@ function Logout() {
 					>
 						<Offcanvas.Header closeButton>
 							<Offcanvas.Title id="offcanvasNavbarLabel-expand-xl">
-								Usuario + Smartpet
+								🦴 Smartpet
 							</Offcanvas.Title>
 						</Offcanvas.Header>
 						<Offcanvas.Body>
 							<Nav className="linkscontainer">
-								<Nav.Link as={Link} to="/">
+								<Nav.Link as={Link} to={`/Consultas/${id}`}>
 									Home
 								</Nav.Link>
-								<Nav.Link as={Link} to="/about">
+								<Nav.Link as={Link} to={`/MisMascotas/${id}`}>
 									Mis mascotas
 								</Nav.Link>
 							</Nav>
