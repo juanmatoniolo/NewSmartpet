@@ -7,7 +7,7 @@ import "./get.css";
 
 function GetData({ id }) {
 	const [data, setData] = useState(null); // Estado para almacenar los datos obtenidos
-	const [codigosActivacion, setCodigosActivacion] = useState([]); // Estado para almacenar los códigos de activación
+	const [, setCodigosActivacion] = useState([]); // Estado para almacenar los códigos de activación
 
 	const url = `https://smartpet-1d59e-default-rtdb.firebaseio.com/usuario/${id}.json`;
 
