@@ -12,8 +12,8 @@ function Consultas() {
 	return (
 		<>
 			<Logout />
-			<Agregarcodigo id={id} />
 			<Getapi id={id} />
+			<Agregarcodigo id={id} />
 			<SubscriptionForm />
 			<Footers />
 		</>

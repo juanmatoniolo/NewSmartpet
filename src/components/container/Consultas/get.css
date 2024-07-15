@@ -9,6 +9,21 @@
     align-content: center;
 }
 
+.nombre-editable {
+    margin: 1em auto;
+    text-align: center;
+    font-weight: 700;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 2.5em;
+    color: #333;
+    padding: 0.5em 1em; /* Añadí padding para separar el texto del borde */
+    border-radius: 8px; /* Añadí bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+
+
+
 .titulo-card {
     text-align: center;
     font-weight: 700;
@@ -46,4 +61,39 @@
     }
 
 
+}
+
+
+/* Estilos optimizados con colores de la empresa */
+
+.nombre-editable {
+    margin: 1em auto;
+    text-align: center;
+    font-weight: 700;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1.6em;
+    color: #6C5C94; /* Color primario de la empresa */
+}
+
+.titulo-card {
+    text-align: center;
+    font-weight: 700;
+    color: #6C5C94; /* Color primario de la empresa */
+}
+
+.btn-editar {
+    width: 100%;
+    color: #fff;
+    font-weight: 600;
+    background-color: #6C5C94; /* Color primario de la empresa */
+    border-color: #6C5C94; /* Color primario de la empresa */
+}
+
+.btn-editar:hover {
+    background-color: #6a51aa; /* Color secundario para hover */
+    border-color: #6C5C94; /* Mantén el color primario */
+}
+
+.img-card-pet {
+    padding: 12px;
 }

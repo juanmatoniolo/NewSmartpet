@@ -38,6 +38,9 @@ function GetData({ id }) {
 		<div>
 			{data ? (
 				<div>
+					<h1 className="container nombre-editable">
+						Hola {data.nombreyapellido} aqui estan tus mascotas
+					</h1>
 					<section className="container contenedor-cards-user">
 						{Array.from(codigosUnicos).map((codAct) => (
 							<Card
@@ -49,7 +52,11 @@ function GetData({ id }) {
 									marginBottom: "20px",
 								}}
 							>
-								<Card.Img variant="top" src={img} className="img-card-pet" />
+								<Card.Img
+									variant="top"
+									src={img}
+									className="img-card-pet"
+								/>
 								<Card.Body>
 									<Card.Title className="titulo-card">
 										{codAct}
@@ -59,7 +66,10 @@ function GetData({ id }) {
 										<p>Sexo: cargando...</p>
 										<p>Edad: cargando...</p>
 									</Card.Text>
-									<Button variant="primary" className="btn-editar">
+									<Button
+										variant="primary"
+										className="btn-editar"
+									>
 										Editar Mascotas
 									</Button>
 								</Card.Body>
