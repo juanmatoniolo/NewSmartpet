@@ -5,7 +5,6 @@ import SubscriptionForm from "../BodyConsultas";
 
 import Getapi from "../Consultas/Getapi";
 import Agregarcodigo from "../Consultas/Agregarcodigo";
-import Codmascotas from "../Consultas/Codmascotas";
 
 function Consultas() {
 	const { id } = useParams();
@@ -13,7 +12,6 @@ function Consultas() {
 	return (
 		<>
 			<Logout />
-		{/* 	<Codmascotas/> */}
 			<Agregarcodigo id={id} />
 			<Getapi id={id} />
 			<SubscriptionForm />

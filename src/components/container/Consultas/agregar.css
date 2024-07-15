@@ -13,8 +13,23 @@
     animation: spin 1s linear infinite;
 }
 
+.section-validador {
+    width: 80%;
+}
+
 @keyframes spin {
     to {
         transform: rotate(360deg);
     }
+}
+
+
+@media (min-width: 836px) {
+    .section-validador {
+        width: 60%;
+        margin-top: 2em;
+        margin-bottom: 3em;
+
+    }
+
 }
