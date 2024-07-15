@@ -1,8 +1,13 @@
 {
   "files": {
     "main.css": "/NewSmartpet/static/css/main.1ddc0421.css",
-    "main.js": "/NewSmartpet/static/js/main.1a96eff2.js",
+    "main.js": "/NewSmartpet/static/js/main.fdcb2f2d.js",
     "static/js/453.e9a49207.chunk.js": "/NewSmartpet/static/js/453.e9a49207.chunk.js",
+    "static/media/collar5.png": "/NewSmartpet/static/media/collar5.df6dfa330401a1212ec8.png",
+    "static/media/collar4.png": "/NewSmartpet/static/media/collar4.5bb613d8fc83a4f4b41e.png",
+    "static/media/collar3.png": "/NewSmartpet/static/media/collar3.310a52c4567f48be8aae.png",
+    "static/media/collar2.png": "/NewSmartpet/static/media/collar2.fd2bd2fda85d75499b22.png",
+    "static/media/collar1.png": "/NewSmartpet/static/media/collar1.a4789cb10a7501e50b7d.png",
     "static/media/img5.jpg": "/NewSmartpet/static/media/img5.1a6cc66ee98352d4d92c.jpg",
     "static/media/img2.jpg": "/NewSmartpet/static/media/img2.1d7303ef264ff3008ac0.jpg",
     "static/media/img1.jpg": "/NewSmartpet/static/media/img1.ee6c13094eef66e15563.jpg",
@@ -15,11 +20,11 @@
     "static/media/letrasBlancas.svg": "/NewSmartpet/static/media/letrasBlancas.63ad970b55a551c96045b8a4087456df.svg",
     "index.html": "/NewSmartpet/index.html",
     "main.1ddc0421.css.map": "/NewSmartpet/static/css/main.1ddc0421.css.map",
-    "main.1a96eff2.js.map": "/NewSmartpet/static/js/main.1a96eff2.js.map",
+    "main.fdcb2f2d.js.map": "/NewSmartpet/static/js/main.fdcb2f2d.js.map",
     "453.e9a49207.chunk.js.map": "/NewSmartpet/static/js/453.e9a49207.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.1ddc0421.css",
-    "static/js/main.1a96eff2.js"
+    "static/js/main.fdcb2f2d.js"
   ]
 }
