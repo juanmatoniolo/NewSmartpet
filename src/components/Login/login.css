@@ -2,7 +2,7 @@
     background-color: #dfc8d476;
     padding: 3em;
     margin: auto;
-    height: 95;
+    height: auto;
 
 }
 
@@ -150,4 +150,8 @@
     .login-section {
         height: 27em;
     }
+}
+
+.message{
+    margin-top: 12px;
 }

@@ -1,0 +1,81 @@
+/* cod.css */
+
+.cod-title {
+    color: #6C5C94; /* Color1 */
+    font-family: 'Arial', sans-serif;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.cod-subtitle {
+    color: #DDB3C9; /* Color2 */
+    font-family: 'Arial', sans-serif;
+    font-weight: 600;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.cod-text {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    font-family: 'Arial', sans-serif;
+    font-weight: 500;
+    margin-bottom: 15px;
+}
+
+.cod-container {
+    background-color: #FFFFFF; /* Color3 */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para pantallas extra pequeñas */
+@media (max-width: 575.98px) {
+    .cod-container {
+        padding: 20px;
+    }
+    .cod-text {
+        font-size: 1.1rem;
+    }
+}
+
+/* Estilos para pantallas pequeñas */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .cod-container {
+        padding: 25px;
+    }
+    .cod-text {
+        font-size: 1.15rem;
+    }
+}
+
+/* Estilos para pantallas medianas */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .cod-container {
+        padding: 28px;
+    }
+    .cod-text {
+        font-size: 1.2rem;
+    }
+}
+
+/* Estilos para pantallas grandes */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .cod-container {
+        padding: 30px;
+    }
+    .cod-text {
+        font-size: 1.25rem;
+    }
+}
+
+/* Estilos para pantallas extra grandes */
+@media (min-width: 1200px) {
+    .cod-container {
+        padding: 30px;
+    }
+    .cod-text {
+        font-size: 1.3rem;
+    }
+}

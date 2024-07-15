@@ -111,3 +111,8 @@
     }
 }
 
+/* agregar.css */
+.mensaje-exito {
+    color: green;
+    font-weight: bold;
+}

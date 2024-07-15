@@ -1,0 +1,50 @@
+.consultas-container {
+
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.consultas-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.instructions {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-top: 2em;
+    margin-bottom: 1em;
+}
+
+.instructions-title {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.instructions-list {
+    list-style-type: decimal;
+    padding-left: 20px;
+}
+
+.instructions-list li {
+    margin-bottom: 10px;
+    font-size: 1em;
+    color: #333;
+}
+
+.instructions-link {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.instructions-link:hover {
+    text-decoration: underline;
+}

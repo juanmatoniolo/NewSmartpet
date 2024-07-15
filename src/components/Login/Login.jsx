@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import "./login.css";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import Header from "../header/Header";
 import Footers from "../footer/Footer";
+import Barnav from "../nav/Nav";
 
 function Login() {
 	const [dni, setDni] = useState("");
@@ -66,6 +67,7 @@ function Login() {
 	return (
 		<>
 			<Header />
+			<Barnav/>
 			<main className="main-login">
 				<section className="login-section">
 					<h2 className="login-title">Iniciar Sesión</h2>
@@ -109,9 +111,7 @@ function Login() {
 							Entrar
 						</button>
 					</form>
-					<p className="message">
-						Already registered? <Link to="/Registro">Sign In</Link>
-					</p>
+					
 				</section>
 			</main>
 			<Footers />

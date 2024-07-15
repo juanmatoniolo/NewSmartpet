@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/NewSmartpet/static/css/main.3427147c.css",
-    "main.js": "/NewSmartpet/static/js/main.415873d3.js",
+    "main.css": "/NewSmartpet/static/css/main.e3f1adba.css",
+    "main.js": "/NewSmartpet/static/js/main.4b55f646.js",
     "static/js/453.e9a49207.chunk.js": "/NewSmartpet/static/js/453.e9a49207.chunk.js",
     "static/media/img5.jpg": "/NewSmartpet/static/media/img5.1a6cc66ee98352d4d92c.jpg",
     "static/media/img2.jpg": "/NewSmartpet/static/media/img2.1d7303ef264ff3008ac0.jpg",
@@ -14,12 +14,12 @@
     "static/media/logobien.svg": "/NewSmartpet/static/media/logobien.b28ae095f530ba51dd4c291227cba525.svg",
     "static/media/letrasBlancas.svg": "/NewSmartpet/static/media/letrasBlancas.63ad970b55a551c96045b8a4087456df.svg",
     "index.html": "/NewSmartpet/index.html",
-    "main.3427147c.css.map": "/NewSmartpet/static/css/main.3427147c.css.map",
-    "main.415873d3.js.map": "/NewSmartpet/static/js/main.415873d3.js.map",
+    "main.e3f1adba.css.map": "/NewSmartpet/static/css/main.e3f1adba.css.map",
+    "main.4b55f646.js.map": "/NewSmartpet/static/js/main.4b55f646.js.map",
     "453.e9a49207.chunk.js.map": "/NewSmartpet/static/js/453.e9a49207.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.3427147c.css",
-    "static/js/main.415873d3.js"
+    "static/css/main.e3f1adba.css",
+    "static/js/main.4b55f646.js"
   ]
 }
