@@ -6,35 +6,68 @@ const Agregarcodigo = ({ id }) => {
     const [codigo, setCodigo] = useState(""); // Estado para almacenar el código a agregar
     const [mensaje, setMensaje] = useState(""); // Estado para mostrar mensajes de éxito o error
     const [cargando, setCargando] = useState(false); // Estado para controlar la carga
-    const [codigos, setCodigos] = useState([]); // Estado para almacenar los códigos obtenidos
+    const [codigosUnicos, setCodigosUnicos] = useState(new Set()); // Estado para almacenar los códigos de activación únicos
 
     const urlMascotas = `https://smartpet-1d59e-default-rtdb.firebaseio.com/smartpet/mascotas.json`;
+    const urlUsuario = `https://smartpet-1d59e-default-rtdb.firebaseio.com/usuario/${id}.json`;
 
-    // Función para obtener los códigos de activación desde la base de datos
-    const fetchCodigos = async () => {
+    // Función para obtener los códigos de activación desde la base de datos de mascotas
+    const fetchCodigosMascotas = async () => {
         try {
             const response = await axios.get(urlMascotas);
             const fetchedData = response.data;
 
-            // Extrae y guarda los códigos de activación en un array
-            const codigos = Object.keys(fetchedData).reduce((acc, key) => {
+            // Extrae y guarda los códigos de activación únicos en un set
+            const codigos = new Set();
+            Object.keys(fetchedData).forEach((key) => {
                 if (fetchedData[key]?.codAct) {
-                    acc.push(fetchedData[key].codAct);
+                    codigos.add(fetchedData[key].codAct);
                 }
-                return acc;
-            }, []);
-
-            setCodigos(codigos); // Almacena los códigos en el estado
+            });
+            return codigos; // Retorna el set de códigos únicos de mascotas
         } catch (error) {
-            console.error("Error al obtener datos:", error);
-            setMensaje("Error al obtener datos de la base de datos.");
+            console.error("Error al obtener datos de mascotas:", error);
+            throw new Error("Error al obtener datos de mascotas");
         }
     };
 
-    // Efecto para cargar los códigos al montar el componente
+    // Función para obtener los códigos de activación desde la base de datos de usuario
+    const fetchCodigosUsuario = async () => {
+        try {
+            const response = await axios.get(urlUsuario);
+            const fetchedData = response.data;
+
+            // Extrae y guarda los códigos de activación únicos en un set
+            const codigos = new Set();
+            Object.keys(fetchedData).forEach((key) => {
+                if (fetchedData[key]?.codAct) {
+                    codigos.add(fetchedData[key].codAct);
+                }
+            });
+            return codigos; // Retorna el set de códigos únicos de usuario
+        } catch (error) {
+            console.error("Error al obtener datos de usuario:", error);
+            throw new Error("Error al obtener datos de usuario");
+        }
+    };
+
+    // Efecto para cargar los códigos únicos al montar el componente y cuando 'id' cambia
     useEffect(() => {
-        fetchCodigos();
-    }, []);
+        const fetchData = async () => {
+            try {
+                const codigosMascotas = await fetchCodigosMascotas();
+                const codigosUsuario = await fetchCodigosUsuario();
+
+                // Filtra los códigos que están en mascotas pero no en usuario
+                const codigosFiltrados = Array.from(codigosMascotas).filter((codigo) => !codigosUsuario.has(codigo));
+                setCodigosUnicos(new Set(codigosFiltrados)); // Actualiza el estado con los códigos filtrados
+            } catch (error) {
+                console.error("Error al obtener códigos únicos:", error);
+            }
+        };
+
+        fetchData(); // Llama a la función fetchData al montar el componente y cuando 'id' cambia
+    }, [id]);
 
     // Función para manejar el envío del formulario
     const handleSubmit = async (e) => {
@@ -47,18 +80,10 @@ const Agregarcodigo = ({ id }) => {
             return;
         }
 
-        setCargando(true); // Establece el estado de carga a verdadero
+        // Validación de existencia del código en los códigos únicos
+        if (codigosUnicos.has(codigo)) {
+            setCargando(true); // Establece el estado de carga a verdadero
 
-        try {
-            // Validación de coincidencia del código
-            const codigoExiste = codigos.includes(codigo);
-            if (codigoExiste) {
-                setMensaje("El código ingresado ya existe.");
-                setCargando(false); // Establece el estado de carga a falso
-                return;
-            }
-
-            const urlUsuario = `https://smartpet-1d59e-default-rtdb.firebaseio.com/usuario/${id}.json`;
             try {
                 // Realiza una solicitud POST para agregar el código en la ruta específica según el 'id'
                 const instance = axios.create({
@@ -79,12 +104,11 @@ const Agregarcodigo = ({ id }) => {
                 console.error("Error al agregar código:", error);
                 setMensaje("Error al agregar código. Por favor, intenta nuevamente."); // Actualiza el estado del mensaje de error
             }
-        } catch (error) {
-            console.error("Error al obtener datos:", error);
-            setMensaje("Error al obtener datos de la base de datos."); // Muestra mensaje de error si falla la obtención de datos
-        }
 
-        setCargando(false); // Establece el estado de carga a falso
+            setCargando(false); // Establece el estado de carga a falso
+        } else {
+            setMensaje("El código ingresado no es válido o ya ha sido utilizado."); // Mensaje de error si el código no es válido o ya existe
+        }
     };
 
     // Función para manejar cambios en el input de código
