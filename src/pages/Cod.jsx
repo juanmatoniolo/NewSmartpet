@@ -5,12 +5,14 @@ import Header from "../components/header/Header";
 import Barnav from "../components/nav/Nav";
 import Footers from "../components/footer/Footer";
 import { Link } from "react-router-dom";
+import WhatsAppButton from "../components/btnWhatsapp/Whatsapp";
 
 function Cod() {
 	return (
 		<>
 			<Header />
 			<Barnav />
+			<WhatsAppButton mensaje='Hola, quiero comprar un collar para mi mascota' />
 			<div className="cod-container container mt-4">
 				<div className="mt-4">
 					<h2 className="cod-subtitle">Proceso de Registro</h2>

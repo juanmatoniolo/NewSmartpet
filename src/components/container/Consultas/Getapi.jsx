@@ -4,34 +4,50 @@ import Card from "react-bootstrap/Card";
 import { Button } from "react-bootstrap";
 import img from "../../../assets/img5.jpg";
 import "./get.css";
+import GetMascota from "./getmascotas";
 
 function GetData({ id }) {
-	const [data, setData] = useState(null); // Estado para almacenar los datos obtenidos
+	const [data, setData] = useState(null); // Estado para almacenar los datos del usuario
+	const [mascotas, setMascotas] = useState({}); // Estado para almacenar los datos de las mascotas
 	const [codigosUnicos, setCodigosUnicos] = useState(new Set()); // Estado para almacenar los códigos de activación únicos
 
-	const url = `https://smartpet-1d59e-default-rtdb.firebaseio.com/usuario/${id}.json`;
+	const urlUsuario = `https://smartpet-1d59e-default-rtdb.firebaseio.com/usuario/${id}.json`;
+	const urlMascotasBase = `https://smartpet-1d59e-default-rtdb.firebaseio.com/smartpet/mascotas`;
 
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const response = await axios.get(url);
-				setData(response.data); // Actualiza el estado con los datos obtenidos
+				// Obtiene los datos del usuario
+				const responseUsuario = await axios.get(urlUsuario);
+				const usuarioData = responseUsuario.data;
+				setData(usuarioData); // Actualiza el estado con los datos del usuario
 
 				// Extrae y guarda los códigos de activación únicos en un set
 				const codigos = new Set();
-				Object.keys(response.data).forEach((key) => {
-					if (response.data[key]?.codAct) {
-						codigos.add(response.data[key].codAct);
+				Object.keys(usuarioData).forEach((key) => {
+					if (usuarioData[key]?.codAct) {
+						codigos.add(usuarioData[key].codAct);
 					}
 				});
 				setCodigosUnicos(codigos); // Actualiza el estado con los códigos de activación únicos
+
+				// Obtiene los datos de las mascotas usando los códigos de activación
+				const mascotasData = {};
+				for (const codAct of codigos) {
+					const responseMascota = await axios.get(
+						`${urlMascotasBase}.json?orderBy="codAct"&equalTo="${codAct}"`
+					);
+					const mascota = Object.values(responseMascota.data)[0];
+					mascotasData[codAct] = mascota; // Guarda los datos de la mascota
+				}
+				setMascotas(mascotasData); // Actualiza el estado con los datos de las mascotas
 			} catch (error) {
 				console.error("Error al obtener datos:", error);
 			}
 		};
 
 		fetchData(); // Llama a la función fetchData al montar el componente y cuando 'id' cambia
-	}, [id, url]);
+	}, [id, urlUsuario, urlMascotasBase]);
 
 	// Renderiza los datos obtenidos
 	return (
@@ -39,47 +55,54 @@ function GetData({ id }) {
 			{data ? (
 				<div>
 					<h1 className="container nombre-editable">
-						Hola {data.nombreyapellido} aqui estan tus mascotas
+						Hola {data.nombreyapellido}, aquí están tus mascotas
 					</h1>
 					<section className="container contenedor-cards-user">
-						{Array.from(codigosUnicos).map((codAct) => (
-							<Card
-								className={codAct}
-								id={codAct}
-								key={codAct}
-								style={{
-									width: "17rem",
-									marginBottom: "20px",
-								}}
-							>
-								<Card.Img
-									variant="top"
-									src={img}
-									className="img-card-pet"
-								/>
-								<Card.Body>
-									<Card.Title className="titulo-card">
-										{codAct}
-									</Card.Title>
-									<Card.Text>
-										<p>Nombre: cargando...</p>
-										<p>Sexo: cargando...</p>
-										<p>Edad: cargando...</p>
-									</Card.Text>
-									<Button
-										variant="primary"
-										className="btn-editar"
-									>
-										Editar Mascotas
-									</Button>
-								</Card.Body>
-							</Card>
-						))}
+					{Array.from(codigosUnicos).map((codAct) => (
+				<GetMascota key={codAct} id={codAct} />
+			))}
 					</section>
 				</div>
 			) : (
-				<p>Cargando datos...</p>
+				<div>
+					<h1 className="container nombre-editable">
+						Hola, aquí están tus mascotas
+					</h1>
+					<section className="container contenedor-cards-user">
+						<Card
+							className="card-pet"
+							style={{
+								width: "17rem",
+								marginBottom: "20px",
+							}}
+						>
+							<Card.Img
+								variant="top"
+								src={img}
+								className="img-card-pet"
+							/>
+							<Card.Body>
+								<Card.Title className="titulo-card">
+									Nombre: ...
+								</Card.Title>
+								<Card.Text>
+									<p>Ult. ubicación: cargando...</p>
+									<p>Código: cargando ... </p>
+								</Card.Text>
+								<Button
+									variant="primary"
+									className="btn-editar"
+								>
+									Editar Mascotas
+								</Button>
+							</Card.Body>
+						</Card>
+					</section>
+				</div>
 			)}
+
+			{/* Renderiza el componente GetMascota para cada código único */}
+		
 		</div>
 	);
 }

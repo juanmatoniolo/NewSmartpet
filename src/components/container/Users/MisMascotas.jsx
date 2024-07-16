@@ -11,6 +11,9 @@ function MisMascotas() {
 		<>
 			<Logout />
 			<Getapi id={id} />
+
+
+
 			<Footers/>
 		</>
 	);
