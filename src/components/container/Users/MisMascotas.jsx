@@ -3,6 +3,7 @@ import React from "react";
 import Logout from "../../Logout/Logout";
 import Getapi from "../Consultas/Getapi";
 import Footers from "../../footer/Footer";
+import EditarDatos from "../Consultas/EditarDatos";
 
 function MisMascotas() {
 	const { id } = useParams();
@@ -11,6 +12,7 @@ function MisMascotas() {
 		<>
 			<Logout />
 			<Getapi id={id} />
+			<EditarDatos/>
 
 
 

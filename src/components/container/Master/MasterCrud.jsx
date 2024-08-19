@@ -3,10 +3,10 @@ import Logout from "../../Logout/Logout";
 import Footers from "../../footer/Footer";
 
 function MasterCrud() {
-    return (
-        <>
-            <Logout />
- <h1>Master</h1>
+	return (
+		<>
+			<Logout />
+			<h1>Master</h1>
 			<br />
 			<br />
 			<br />
@@ -16,9 +16,9 @@ function MasterCrud() {
 			<br />
 			<br />
 			<br />
-            <Footers />
-        </>
-    );
+			<Footers />
+		</>
+	);
 }
 
 export default MasterCrud;

@@ -9,7 +9,6 @@ import "../container/body.css";
 
 function Logout() {
 	const { id } = useParams();
-
 	return (
 		<>
 			<header className="headersmart">

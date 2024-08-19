@@ -14,6 +14,20 @@ function GetData({ id }) {
 	const urlUsuario = `https://smartpet-1d59e-default-rtdb.firebaseio.com/usuario/${id}.json`;
 	const urlMascotasBase = `https://smartpet-1d59e-default-rtdb.firebaseio.com/smartpet/mascotas`;
 
+	const fetchMascotasData = async (codigos, cachedMascotas) => {
+		const mascotasData = { ...cachedMascotas };
+		for (const codAct of codigos) {
+			if (!cachedMascotas[codAct]) {
+				const responseMascota = await axios.get(
+					`${urlMascotasBase}.json?orderBy="codAct"&equalTo="${codAct}"`
+				);
+				const mascota = Object.values(responseMascota.data)[0];
+				mascotasData[codAct] = mascota; // Guarda los datos de la mascota
+			}
+		}
+		return mascotasData;
+	};
+
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
@@ -31,23 +45,27 @@ function GetData({ id }) {
 				});
 				setCodigosUnicos(codigos); // Actualiza el estado con los códigos de activación únicos
 
-				// Obtiene los datos de las mascotas usando los códigos de activación
-				const mascotasData = {};
-				for (const codAct of codigos) {
-					const responseMascota = await axios.get(
-						`${urlMascotasBase}.json?orderBy="codAct"&equalTo="${codAct}"`
-					);
-					const mascota = Object.values(responseMascota.data)[0];
-					mascotasData[codAct] = mascota; // Guarda los datos de la mascota
-				}
+				// Revisa si los datos de las mascotas ya están en localStorage
+				const cachedMascotas =
+					JSON.parse(localStorage.getItem("mascotasData")) || {};
+
+				// Obtiene los datos de las mascotas usando los códigos de activación si no están en localStorage
+				const mascotasData = await fetchMascotasData(
+					codigos,
+					cachedMascotas
+				);
 				setMascotas(mascotasData); // Actualiza el estado con los datos de las mascotas
+				localStorage.setItem(
+					"mascotasData",
+					JSON.stringify(mascotasData)
+				); // Guarda los datos en localStorage
 			} catch (error) {
 				console.error("Error al obtener datos:", error);
 			}
 		};
 
 		fetchData(); // Llama a la función fetchData al montar el componente y cuando 'id' cambia
-	}, [id, urlUsuario, urlMascotasBase]);
+	}, []);
 
 	// Renderiza los datos obtenidos
 	return (
@@ -58,9 +76,9 @@ function GetData({ id }) {
 						Hola {data.nombreyapellido}, aquí están tus mascotas
 					</h1>
 					<section className="container contenedor-cards-user">
-					{Array.from(codigosUnicos).map((codAct) => (
-				<GetMascota key={codAct} id={codAct} />
-			))}
+						{Array.from(codigosUnicos).map((codAct) => (
+							<GetMascota key={codAct} id={codAct} />
+						))}
 					</section>
 				</div>
 			) : (
@@ -92,6 +110,7 @@ function GetData({ id }) {
 								<Button
 									variant="primary"
 									className="btn-editar"
+									
 								>
 									Editar Mascotas
 								</Button>
@@ -100,9 +119,6 @@ function GetData({ id }) {
 					</section>
 				</div>
 			)}
-
-			{/* Renderiza el componente GetMascota para cada código único */}
-		
 		</div>
 	);
 }
