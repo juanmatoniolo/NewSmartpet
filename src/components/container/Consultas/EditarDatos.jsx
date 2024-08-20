@@ -5,6 +5,7 @@ import Form from "react-bootstrap/Form";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import axios from "axios";
 import { app } from "../../db/db";
+import Spinner from "react-bootstrap/Spinner";
 
 const EditarDatos = ({ show, handleClose, mascota, id, onSave }) => {
 	const [formData, setFormData] = useState(mascota); // Estado para almacenar los datos del formulario
@@ -12,6 +13,7 @@ const EditarDatos = ({ show, handleClose, mascota, id, onSave }) => {
 	const [archivoURL, setArchivoURL] = useState(null); // Estado para almacenar la URL del archivo previsualizado
 	const [error, setError] = useState(null); // Estado para manejar errores de validación
 	const [linkFirestore, setLinkFirestore] = useState(""); // Estado para almacenar el link de Firestore
+	const [cargando, setCargando] = useState(false); // Estado para manejar el estado de carga
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -62,13 +64,12 @@ const EditarDatos = ({ show, handleClose, mascota, id, onSave }) => {
 		}
 	};
 
-	// Manejador de eventos para la selección de archivos
 	const archivoHandeler = (e) => {
 		const archivoSeleccionado = e.target.files[0];
 
 		// Validación del tamaño del archivo
-		if (archivoSeleccionado.size > 3 * 1024 * 1024) {
-			setError("El archivo no puede pesar más de 3MB");
+		if (archivoSeleccionado.size > 5 * 1024 * 1024) {
+			setError("El archivo no puede pesar más de 5MB");
 			setArchivo(null);
 			setArchivoURL(null);
 		} else {
@@ -84,13 +85,13 @@ const EditarDatos = ({ show, handleClose, mascota, id, onSave }) => {
 		}
 	};
 
-	// Manejador de eventos para guardar el archivo en Firebase Storage
 	const guardarArchivo = async () => {
 		if (!archivo) {
 			setError("Por favor selecciona un archivo antes de guardar.");
 			return;
 		}
 
+		setCargando(true); // Muestra el indicador de carga
 		try {
 			const storage = getStorage(app);
 			const archivoRef = ref(storage, archivo.name);
@@ -103,8 +104,20 @@ const EditarDatos = ({ show, handleClose, mascota, id, onSave }) => {
 			setArchivo(null);
 			setArchivoURL(null);
 			setError(null);
+
+			// Actualiza la previsualización con la nueva URL
+			setFormData((prevFormData) => ({
+				...prevFormData,
+				datosMascotas: {
+					...prevFormData.datosMascotas,
+					img: url,
+				},
+			}));
 		} catch (error) {
 			console.error("Error al guardar el archivo:", error);
+			setError("Error al cargar la imagen. Inténtalo de nuevo.");
+		} finally {
+			setCargando(false); // Oculta el indicador de carga
 		}
 	};
 
@@ -112,6 +125,7 @@ const EditarDatos = ({ show, handleClose, mascota, id, onSave }) => {
 		// Limpia el archivo y la previsualización si se cancela
 		setArchivo(null);
 		setArchivoURL(null);
+		setCargando(false);
 		handleClose();
 	};
 
@@ -171,6 +185,12 @@ const EditarDatos = ({ show, handleClose, mascota, id, onSave }) => {
 								>
 									Guardar Imagen
 								</Button>
+								{cargando && (
+									<div className="mt-3">
+										<Spinner animation="border" />
+										<p>Cargando...</p>
+									</div>
+								)}
 							</div>
 						</Form.Group>
 
@@ -263,74 +283,74 @@ const EditarDatos = ({ show, handleClose, mascota, id, onSave }) => {
 							</Form.Label>
 							<Form.Control
 								type="text"
-								placeholder="Hola, encontré a ...."
+								placeholder="Escribe el mensaje predeterminado para whatsapp"
 								name="mensaje"
 								value={formData?.datosMascotas?.mensaje || ""}
 								onChange={handleChange}
 								className="form-control-lg"
 							/>
-									</Form.Group>
+						</Form.Group>
 
-<Form.Group className="mb-4">
-    <Form.Label>Contacto 1</Form.Label>
-    <Form.Control
-        type="text"
-        placeholder="Nombre del dueño/a"
-        name="persona1"
-        value={formData?.datosMascotas?.persona1 || ""}
-        onChange={handleChange}
-        className="form-control-lg"
-    />
-    <Form.Control
-        type="text"
-        placeholder="Número de teléfono"
-        name="telefono1"
-        value={formData?.datosMascotas?.telefono1 || ""}
-        onChange={handleChange}
-        className="form-control-lg mt-2"
-    />
-    <Form.Control
-        type="text"
-        placeholder="Usuario de Instagram"
-        name="ig1"
-        value={formData?.datosMascotas?.ig1 || ""}
-        onChange={handleChange}
-        className="form-control-lg mt-2"
-    />
-</Form.Group>
+						<Form.Group className="mb-4">
+							<Form.Label>Contacto 1</Form.Label>
+							<Form.Control
+								type="text"
+								placeholder="Nombre del dueño/a"
+								name="persona1"
+								value={formData?.datosMascotas?.persona1 || ""}
+								onChange={handleChange}
+								className="form-control-lg"
+							/>
+							<Form.Control
+								type="text"
+								placeholder="Telefono sin 0 ni 15. Ej.: 3412275598"
+								name="telefono1"
+								value={formData?.datosMascotas?.telefono1 || ""}
+								onChange={handleChange}
+								className="form-control-lg mt-2"
+							/>
+							<Form.Control
+								type="text"
+								placeholder="@UsuarioDeInstagram"
+								name="ig1"
+								value={formData?.datosMascotas?.ig1 || ""}
+								onChange={handleChange}
+								className="form-control-lg mt-2"
+							/>
+						</Form.Group>
 
-<Form.Group className="mb-4">
-    <Form.Label>Contacto 2</Form.Label>
-    <Form.Control
-        type="text"
-        placeholder="Nombre del dueño/a"
-        name="persona2"
-        value={formData?.datosMascotas?.persona2 || ""}
-        onChange={handleChange}
-        className="form-control-lg"
-    />
-    <Form.Control
-        type="text"
-        placeholder="Número de teléfono"
-        name="telefono2"
-        value={formData?.datosMascotas?.telefono2 || ""}
-        onChange={handleChange}
-        className="form-control-lg mt-2"
-    />
-    <Form.Control
-        type="text"
-        placeholder="Usuario de Instagram"
-        name="ig2"
-        value={formData?.datosMascotas?.ig2 || ""}
-        onChange={handleChange}
-        className="form-control-lg mt-2"
-    />
-</Form.Group>
-</div>
+						<Form.Group className="mb-4">
+							<Form.Label>Contacto 2</Form.Label>
+							<Form.Control
+								type="text"
+								placeholder="Nombre del dueño/a"
+								name="persona2"
+								value={formData?.datosMascotas?.persona2 || ""}
+								onChange={handleChange}
+								className="form-control-lg"
+							/>
+							<Form.Control
+								type="text"
+								placeholder="Telefono sin 0 ni 15. Ej.: 3412275598"
+								name="telefono2"
+								value={formData?.datosMascotas?.telefono2 || ""}
+								onChange={handleChange}
+								className="form-control-lg mt-2"
+							/>
+							<Form.Control
+								type="text"
+								placeholder="@UsuarioDeInstagram"
+								name="ig2"
+								value={formData?.datosMascotas?.ig2 || ""}
+								onChange={handleChange}
+								className="form-control-lg mt-2"
+							/>
+						</Form.Group>
+					</div>
 				</Form>
 			</Modal.Body>
 			<Modal.Footer>
-				<Button variant="danger" onClick={handleCancel}>
+				<Button variant="secondary" onClick={handleCancel}>
 					Cancelar
 				</Button>
 				<Button variant="primary" onClick={handleSaveChanges}>
