@@ -61,3 +61,22 @@ h2 {
 .mt-3 {
     margin-top: 1rem;
 }
+
+.password-input-container{
+    display: flex;
+
+}
+.password-visibility-toggle{
+    height: 3em;
+    width: 2em;
+}
+button svg{
+    width: 1.5em;
+height: 1.5em;
+}
+.password-input-container button{
+    position: relative;
+    right:  2.7em;
+    top: .5em;
+    
+}
