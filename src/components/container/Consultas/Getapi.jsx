@@ -18,11 +18,14 @@ function GetData({ id }) {
 		const mascotasData = { ...cachedMascotas };
 		for (const codAct of codigos) {
 			if (!cachedMascotas[codAct]) {
-				const responseMascota = await axios.get(
-					`${urlMascotasBase}.json?orderBy="codAct"&equalTo="${codAct}"`
-				);
+				const url = `${urlMascotasBase}.json?orderBy="codAct"&equalTo="${codAct}"`;
+				console.log("Fetching URL:", url); // Log URL for debugging
+				const responseMascota = await axios.get(url);
+				console.log("Response Mascota:", responseMascota.data); // Log response data
 				const mascota = Object.values(responseMascota.data)[0];
-				mascotasData[codAct] = mascota; // Guarda los datos de la mascota
+				if (mascota) {
+					mascotasData[codAct] = mascota; // Guarda los datos de la mascota
+				}
 			}
 		}
 		return mascotasData;
@@ -46,26 +49,19 @@ function GetData({ id }) {
 				setCodigosUnicos(codigos); // Actualiza el estado con los códigos de activación únicos
 
 				// Revisa si los datos de las mascotas ya están en localStorage
-				const cachedMascotas =
-					JSON.parse(localStorage.getItem("mascotasData")) || {};
+				const cachedMascotas = JSON.parse(localStorage.getItem("mascotasData")) || {};
 
 				// Obtiene los datos de las mascotas usando los códigos de activación si no están en localStorage
-				const mascotasData = await fetchMascotasData(
-					codigos,
-					cachedMascotas
-				);
+				const mascotasData = await fetchMascotasData(codigos, cachedMascotas);
 				setMascotas(mascotasData); // Actualiza el estado con los datos de las mascotas
-				localStorage.setItem(
-					"mascotasData",
-					JSON.stringify(mascotasData)
-				); // Guarda los datos en localStorage
+				localStorage.setItem("mascotasData", JSON.stringify(mascotasData)); // Guarda los datos en localStorage
 			} catch (error) {
 				console.error("Error al obtener datos:", error);
 			}
 		};
 
 		fetchData(); // Llama a la función fetchData al montar el componente y cuando 'id' cambia
-	}, []);
+	}, []); // Agrega 'id' como dependencia para volver a ejecutar el efecto cuando cambie
 
 	// Renderiza los datos obtenidos
 	return (
@@ -110,7 +106,6 @@ function GetData({ id }) {
 								<Button
 									variant="primary"
 									className="btn-editar"
-									
 								>
 									Editar Mascotas
 								</Button>

@@ -1,0 +1,63 @@
+/* register.css */
+
+/* Colores de SmartPet */
+:root {
+    --color-principal: #6C5C94;
+    --color-secundario: #DDB3C9;
+    --color-blanco: #FFFFFF;
+    --color-acento: #6a51aa;
+
+    ;
+
+}
+
+.container-register {
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: auto;
+    margin-top: 1em;
+    margin-bottom: 3em;
+    
+}
+
+h1 {
+    text-align: center;
+    color: var(--color-principal);
+}
+
+h2 {
+    color: var(--color-principal);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+
+
+.form-control:focus {
+    border-color: var(--color-principal);
+    box-shadow: 0 0 0 0.2rem rgba(108, 92, 148, 0.25);
+    /* Sombra sutil para el enfoque */
+    outline: none;
+    /* Elimina el contorno predeterminado del navegador */
+}
+
+.btn-primary {
+    background-color: var(--color-principal);
+    border: none;
+    color: var(--color-blanco);
+    font-weight: bold;
+}
+
+.btn-primary:hover {
+    background-color: var(--color-acento);
+}
+
+.text-muted {
+    color: var(--color-secundario);
+}
+
+.mt-3 {
+    margin-top: 1rem;
+}

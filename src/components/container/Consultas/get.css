@@ -108,7 +108,47 @@
     border-color: #6C5C94;
     /* Mantén el color primario */
 }
+.btn-editar-primary{
+    color: #fff;
+    font-weight: 600;
+    background-color: #6C5C94;
+    /* Color primario de la empresa */
+    border-color: #6C5C94;
+    /* Color primario de la empresa */
+}
+
+.btn-editar-primary:hover {
+    background-color: #6a51aa;
+    /* Color secundario para hover */
+    border-color: #6C5C94;
+    /* Mantén el color primario */
+}
+
 
 .img-card-pet {
     padding: 12px;
+}
+
+
+
+.form-label {
+    font-size: 1.25rem; /* Tamaño de fuente mayor para los títulos */
+    font-weight: bold;
+    margin-bottom: 0.5em; /* Espacio debajo de la etiqueta */
+}
+
+.img-thumbnail {
+    max-width: 12em;
+    max-height: 12em;
+    margin-bottom: 1em;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.text-danger {
+    color: red;
+}
+
+.form-control-lg {
+    font-size: 0.875rem; /* Tamaño de fuente más pequeño para los campos de entrada */
 }
