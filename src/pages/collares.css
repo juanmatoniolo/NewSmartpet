@@ -1,0 +1,26 @@
+.collares-container {
+    padding: 30px;
+    background-color: #f9f9fc;
+    border-radius: 10px;
+}
+
+.section-title {
+    font-size: 2rem;
+    color: #6c5c94; /* Color1 */
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.collares-gallery .img-fluid {
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.collares-videos .video-fluid {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}

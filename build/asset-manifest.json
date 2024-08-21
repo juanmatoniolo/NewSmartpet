@@ -1,0 +1,30 @@
+{
+  "files": {
+    "main.css": "/NewSmartpet/static/css/main.99bc6ded.css",
+    "main.js": "/NewSmartpet/static/js/main.1eb9d1f2.js",
+    "static/js/453.e9a49207.chunk.js": "/NewSmartpet/static/js/453.e9a49207.chunk.js",
+    "static/media/img5.jpg": "/NewSmartpet/static/media/img5.1a6cc66ee98352d4d92c.jpg",
+    "static/media/img2.jpg": "/NewSmartpet/static/media/img2.1d7303ef264ff3008ac0.jpg",
+    "static/media/img1.jpg": "/NewSmartpet/static/media/img1.ee6c13094eef66e15563.jpg",
+    "static/media/img4.jpg": "/NewSmartpet/static/media/img4.bc9d28b0fe091e62913c.jpg",
+    "static/media/a.jpg": "/NewSmartpet/static/media/a.e61fa3c294bd080b2064.jpg",
+    "static/media/img3.jpg": "/NewSmartpet/static/media/img3.f90a967c108e028f845e.jpg",
+    "static/media/mine.jfif": "/NewSmartpet/static/media/mine.7d1b346743bde38f86d8.jfif",
+    "static/media/img-jm-minerva.jpg": "/NewSmartpet/static/media/img-jm-minerva.4741be84396a61128a55.jpg",
+    "static/media/5.jpg": "/NewSmartpet/static/media/5.47b6fb829639e9b3ee9c.jpg",
+    "static/media/2.jpg": "/NewSmartpet/static/media/2.4564bfe6c5d8ba5a4721.jpg",
+    "static/media/1.jpg": "/NewSmartpet/static/media/1.14546b95a599519fd80a.jpg",
+    "static/media/4.jpg": "/NewSmartpet/static/media/4.ed556df68f9492051093.jpg",
+    "static/media/3.jpg": "/NewSmartpet/static/media/3.808ec1f411849c144faf.jpg",
+    "static/media/logobien.svg": "/NewSmartpet/static/media/logobien.b28ae095f530ba51dd4c291227cba525.svg",
+    "static/media/letrasBlancas.svg": "/NewSmartpet/static/media/letrasBlancas.63ad970b55a551c96045b8a4087456df.svg",
+    "index.html": "/NewSmartpet/index.html",
+    "main.99bc6ded.css.map": "/NewSmartpet/static/css/main.99bc6ded.css.map",
+    "main.1eb9d1f2.js.map": "/NewSmartpet/static/js/main.1eb9d1f2.js.map",
+    "453.e9a49207.chunk.js.map": "/NewSmartpet/static/js/453.e9a49207.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.99bc6ded.css",
+    "static/js/main.1eb9d1f2.js"
+  ]
+}
