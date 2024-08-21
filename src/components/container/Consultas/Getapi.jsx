@@ -102,6 +102,7 @@ function GetData({ id }) {
 								<Card.Text>
 									<p>Ult. ubicación: cargando...</p>
 									<p>Código: cargando ... </p>
+									
 								</Card.Text>
 								<Button
 									variant="primary"

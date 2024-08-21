@@ -88,6 +88,20 @@ function GetMascota({ id }) {
 										"No disponible"}
 								</p>
 								<p>Cod Act: {id}</p>
+								<p>
+    {mascota.datosMascotas.lat && mascota.datosMascotas.lon ? (
+        <a
+            href={`https://maps.google.com/?q=${mascota.datosMascotas.lat},${mascota.datosMascotas.lon}`}
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            Ver en mapa
+        </a>
+    ) : (
+        <span>Ubicación no disponible</span>
+    )}
+</p>
+
 							</Card.Text>
 							<Button
 								variant="primary"
