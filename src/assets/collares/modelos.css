@@ -1,0 +1,105 @@
+.carousel-container {
+    position: relative;
+    width: 80%;
+    margin: 0 auto;
+}
+
+.carousel-slide {
+    padding: 10px;
+    /* Espaciado entre las imágenes */
+}
+
+.carousel-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    /* O usa 'contain' si prefieres ver la imagen completa */
+    border-radius: 10px;
+    transition: transform 0.5s ease;
+}
+
+.carousel-slide.slick-center .carousel-image {
+    transform: scale(1.1);
+    /* Agranda la imagen central para resaltar */
+}
+
+.custom-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 2;
+    transition: background-color 0.3s ease;
+}
+
+.custom-arrow-next {
+    right: -50px;
+}
+
+.custom-arrow-prev {
+    left: -50px;
+}
+
+.custom-arrow:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.custom-arrow::before {
+    font-size: 20px;
+    color: #fff;
+    content: '→';
+    /* Cambia según la dirección: ← para prev y → para next */
+}
+
+.custom-arrow-prev::before {
+    content: '←';
+}
+
+/* Estilos para el modal */
+.image-modal {
+    display: none;
+    /* Oculto por defecto */
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+}
+
+.image-modal.open {
+    display: flex;
+    /* Muestra el modal */
+}
+
+.image-modal-content {
+    max-width: 90%;
+    max-height: 90%;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.image-modal-content img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.image-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 30px;
+    color: #fff;
+    cursor: pointer;
+}
