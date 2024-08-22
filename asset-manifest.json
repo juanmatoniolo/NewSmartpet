@@ -1,8 +1,9 @@
 {
   "files": {
-    "main.css": "/NewSmartpet/static/css/main.3215f603.css",
-    "main.js": "/NewSmartpet/static/js/main.4a28414d.js",
-    "static/js/453.e9a49207.chunk.js": "/NewSmartpet/static/js/453.e9a49207.chunk.js",
+    "main.css": "/NewSmartpet/static/css/main.3338dc37.css",
+    "main.js": "/NewSmartpet/static/js/main.73eb0572.js",
+    "static/js/453.196594ef.chunk.js": "/NewSmartpet/static/js/453.196594ef.chunk.js",
+    "static/media/b.mp4": "/NewSmartpet/static/media/b.970135a237a5d2c50771.mp4",
     "static/media/img5.jpg": "/NewSmartpet/static/media/img5.1a6cc66ee98352d4d92c.jpg",
     "static/media/img2.jpg": "/NewSmartpet/static/media/img2.1d7303ef264ff3008ac0.jpg",
     "static/media/img1.jpg": "/NewSmartpet/static/media/img1.ee6c13094eef66e15563.jpg",
@@ -11,15 +12,27 @@
     "static/media/img3.jpg": "/NewSmartpet/static/media/img3.f90a967c108e028f845e.jpg",
     "static/media/mine.jfif": "/NewSmartpet/static/media/mine.7d1b346743bde38f86d8.jfif",
     "static/media/img-jm-minerva.jpg": "/NewSmartpet/static/media/img-jm-minerva.4741be84396a61128a55.jpg",
+    "static/media/a (10).jpg": "/NewSmartpet/static/media/a (10).c510418035daf497652c.jpg",
+    "static/media/a (11).jpg": "/NewSmartpet/static/media/a (11).427983bdc6ab62f797ee.jpg",
+    "static/media/a (9).jpg": "/NewSmartpet/static/media/a (9).47b6fb829639e9b3ee9c.jpg",
+    "static/media/a (6).jpg": "/NewSmartpet/static/media/a (6).4564bfe6c5d8ba5a4721.jpg",
+    "static/media/a (5).jpg": "/NewSmartpet/static/media/a (5).14546b95a599519fd80a.jpg",
+    "static/media/a (8).jpg": "/NewSmartpet/static/media/a (8).ed556df68f9492051093.jpg",
+    "static/media/a (7).jpg": "/NewSmartpet/static/media/a (7).808ec1f411849c144faf.jpg",
+    "static/media/a (4).jpg": "/NewSmartpet/static/media/a (4).2a170fedef18dfff65c9.jpg",
     "static/media/logobien.svg": "/NewSmartpet/static/media/logobien.b28ae095f530ba51dd4c291227cba525.svg",
     "static/media/letrasBlancas.svg": "/NewSmartpet/static/media/letrasBlancas.63ad970b55a551c96045b8a4087456df.svg",
+    "static/media/slick.svg": "/NewSmartpet/static/media/slick.2630a3e3eab21c607e21.svg",
+    "static/media/slick.eot": "/NewSmartpet/static/media/slick.a4e97f5a2a64f0ab1323.eot",
+    "static/media/slick.ttf": "/NewSmartpet/static/media/slick.c94f7671dcc99dce43e2.ttf",
+    "static/media/slick.woff": "/NewSmartpet/static/media/slick.295183786cd8a1389865.woff",
     "index.html": "/NewSmartpet/index.html",
-    "main.3215f603.css.map": "/NewSmartpet/static/css/main.3215f603.css.map",
-    "main.4a28414d.js.map": "/NewSmartpet/static/js/main.4a28414d.js.map",
-    "453.e9a49207.chunk.js.map": "/NewSmartpet/static/js/453.e9a49207.chunk.js.map"
+    "main.3338dc37.css.map": "/NewSmartpet/static/css/main.3338dc37.css.map",
+    "main.73eb0572.js.map": "/NewSmartpet/static/js/main.73eb0572.js.map",
+    "453.196594ef.chunk.js.map": "/NewSmartpet/static/js/453.196594ef.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.3215f603.css",
-    "static/js/main.4a28414d.js"
+    "static/css/main.3338dc37.css",
+    "static/js/main.73eb0572.js"
   ]
 }
