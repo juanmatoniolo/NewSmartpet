@@ -21,25 +21,61 @@ const ListarMascotas = () => {
 	};
 
 	return (
-		<div className="container"> 
-		<button onClick={obtenerMascotas}>Obtener Mascotas</button>
-			
+		<div className="container">
+			<button onClick={obtenerMascotas}>Obtener Mascotas</button>
+
 			<div className="cards-container">
 				{mascotas.map((mascota) => (
 					<div key={mascota.id} className="card">
 						<div className="card-body">
-							<h2>{mascota.datosMascotas.nombre}</h2>
-							
-							{mascota.datosMascotas.img && (
+							{/* Verifica si datosMascotas existe antes de acceder a sus propiedades */}
+							<h2>
+								{mascota.datosMascotas?.nombre ||
+									"Nombre no disponible"}
+							</h2>
+
+							{/* Verifica si img existe antes de intentar mostrar la imagen */}
+							{mascota.datosMascotas?.img && (
 								<img
 									src={mascota.datosMascotas.img}
-									alt={mascota.datosMascotas.nombre}
+									alt={
+										mascota.datosMascotas.nombre ||
+										"Imagen de mascota"
+									}
 									className="img-img-img"
 								/>
 							)}
-							
+
 							<h3>Código de Activación:</h3>
-							<p>{mascota.codAct}</p>
+							<p>{mascota.codAct || "Código no disponible"}</p>
+
+							{/* Añade enlaces de teléfono */}
+							{mascota.datosMascotas?.telefono1 && (
+								<p>
+									<a
+										href={`https://wa.me/+549${mascota.datosMascotas.telefono1}`}
+										target="_blank"
+										rel="noreferrer"
+
+									>
+										Whatsapp {" "}
+										{mascota.datosMascotas.telefono1}
+									</a>
+								</p>
+							)}
+
+							{mascota.datosMascotas?.telefono2 && (
+								<p>
+									<a
+										href={`https://wa.me/+549${mascota.datosMascotas.telefono2}`}
+										target="_blank"
+										rel="noreferrer"
+									>
+										Whatsapp {" "}
+										{mascota.datosMascotas.telefono2}
+									</a>
+								</p>
+							)}
 						</div>
 					</div>
 				))}

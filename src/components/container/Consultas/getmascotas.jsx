@@ -77,31 +77,21 @@ function GetMascota({ id }) {
 									"Debe cargar datos"}
 							</Card.Title>
 							<Card.Text>
-								<p>
-									Edad:{" "}
-									{mascota.datosMascotas.edad ||
-										"No disponible"}
-								</p>
-								<p>
-									Sexo:{" "}
-									{mascota.datosMascotas.sexo ||
-										"No disponible"}
-								</p>
 								<p>Cod Act: {id}</p>
 								<p>
-    {mascota.datosMascotas.lat && mascota.datosMascotas.lon ? (
-        <a
-            href={`https://maps.google.com/?q=${mascota.datosMascotas.lat},${mascota.datosMascotas.lon}`}
-            target="_blank"
-            rel="noopener noreferrer"
-        >
-            Ver en mapa
-        </a>
-    ) : (
-        <span>Ubicación no disponible</span>
-    )}
-</p>
-
+									{mascota.datosMascotas.lat &&
+									mascota.datosMascotas.lon ? (
+										<a
+											href={`https://maps.google.com/?q=${mascota.datosMascotas.lat},${mascota.datosMascotas.lon}`}
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											Ver en mapa
+										</a>
+									) : (
+										<span>Ubicación no disponible</span>
+									)}
+								</p>
 							</Card.Text>
 							<Button
 								variant="primary"
@@ -139,8 +129,6 @@ function GetMascota({ id }) {
 							Cargando ...
 						</Card.Title>
 						<Card.Text>
-							<p>Edad: Cargando ...</p>
-							<p>Sexo: Cargando ... </p>
 							<p>Cod Act: {id}</p>
 						</Card.Text>
 						<Button
@@ -153,6 +141,9 @@ function GetMascota({ id }) {
 					</Card.Body>
 				</Card>
 			)}
+
+
+
 		</div>
 	);
 }
