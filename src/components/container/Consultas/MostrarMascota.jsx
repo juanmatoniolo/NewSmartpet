@@ -52,33 +52,51 @@ function MostrarMascota({ show, handleClose, mascota }) {
 											width="18"
 											height="18"
 											style={{ color: "#cd7fa7" }}
-
 											fill="currentColor"
 											class="bi bi-heart-pulse-fill"
 											viewBox="0 0 16 16"
 										>
 											<path d="M1.475 9C2.702 10.84 4.779 12.871 8 15c3.221-2.129 5.298-4.16 6.525-6H12a.5.5 0 0 1-.464-.314l-1.457-3.642-1.598 5.593a.5.5 0 0 1-.945.049L5.889 6.568l-1.473 2.21A.5.5 0 0 1 4 9H1.475Z"></path>
 											<path d="M.88 8C-2.427 1.68 4.41-2 7.823 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C11.59-2 18.426 1.68 15.12 8h-2.783l-1.874-4.686a.5.5 0 0 0-.945.049L7.921 8.956 6.464 5.314a.5.5 0 0 0-.88-.091L3.732 8H.88Z"></path>
-										</svg> {" "}
+										</svg>{" "}
 										{mascota.datosMascotas.edad}
 									</p>
 									<p className="sexo-mascota">
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											width="18"
-											height="18"
-											style={{ color: "#cd7fa7" }}
-											fill="currentColor"
-											class="bi bi-gender-female"
-											viewBox="0 0 16 16"
-										>
-											<path
-												fill-rule="evenodd"
-												d="M8 1a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM3 5a5 5 0 1 1 5.5 4.975V12h2a.5.5 0 0 1 0 1h-2v2.5a.5.5 0 0 1-1 0V13h-2a.5.5 0 0 1 0-1h2V9.975A5 5 0 0 1 3 5z"
-											></path>
-										</svg>
-										{" "}{mascota.datosMascotas.sexo}
+										{mascota.datosMascotas.sexo ===
+										"Hembra" ? (
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												width="18"
+												height="18"
+												style={{ color: "#cd7fa7" }}
+												fill="currentColor"
+												className="bi bi-gender-female"
+												viewBox="0 0 16 16"
+											>
+												<path
+													fillRule="evenodd"
+													d="M8 1a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM3 5a5 5 0 1 1 5.5 4.975V12h2a.5.5 0 0 1 0 1h-2v2.5a.5.5 0 0 1-1 0V13h-2a.5.5 0 0 1 0-1h2V9.975A5 5 0 0 1 3 5z"
+												></path>
+											</svg>
+										) : (
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												width="18"
+												height="18"
+												style={{ color: "#cd7fa7" }}
+												fill="currentColor"
+												className="bi bi-gender-male"
+												viewBox="0 0 16 16"
+											>
+												<path
+													fillRule="evenodd"
+													d="M9.5 2a.5.5 0 0 1 0-1h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V2.707L9.871 6.836a5 5 0 1 1-.707-.707L13.293 2H9.5zM6 6a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"
+												></path>
+											</svg>
+										)}{" "}
+										{mascota.datosMascotas.sexo}
 									</p>
+
 									<p className="ubicacion-masctoa">
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
@@ -96,11 +114,13 @@ function MostrarMascota({ show, handleClose, mascota }) {
 								</div>
 							</section>
 
-							<section className="descripcion">
-								<p className="descripcion-mascota">
-									{mascota.datosMascotas.descripcion}
-								</p>
-							</section>
+							{mascota.datosMascotas.descripcion ? (
+								<section className="descripcion">
+									<p className="descripcion-mascota">
+										{mascota.datosMascotas.descripcion}
+									</p>
+								</section>
+							) : null}
 
 							<section className="contactos-masctoa">
 								<h2 className="contacto text-center">

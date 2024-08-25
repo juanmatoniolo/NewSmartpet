@@ -71,11 +71,13 @@
 
 .ubicacion-masctoa {
     margin-bottom: 0;
-  
+
 }
-.bi-geo-alt-fill{
+
+.bi-geo-alt-fill {
     margin-right: 3px;
 }
+
 .descripcion {
     background-color: #bab7b725;
     box-shadow: 3px 3px 6px 4px #d3d3d3d1;

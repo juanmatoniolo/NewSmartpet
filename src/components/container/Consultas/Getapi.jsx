@@ -79,18 +79,18 @@ function GetData({ id }) {
 						Hola {data.nombreyapellido}, aquí están tus mascotas
 					</h1>
 					<div className="container mensaje-mensaje">
-						<h4>
+						<p>
 							Debajo del código de activación verás un botón que
 							dice "Ver mapa" si la ubicación está disponible, o
 							"Ubicación no disponible" si no se compartió la
 							ubicación.
-						</h4>
-						<h4>
+						</p>
+						<p>
 							Recomendamos revisar el perfil de tu mascota desde
 							el botón "Mostrar mascota". Si se escanea el collar
 							o se abre el enlace, la última ubicación podría
 							cambiar a la del nuevo usuario.
-						</h4>
+						</p>
 					</div>
 
 					<section className="container contenedor-cards-user">
