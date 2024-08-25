@@ -1,4 +1,4 @@
-.container {
+.container-main {
     width: 100%;
 
 }
@@ -16,6 +16,8 @@
 
 .imagenen-mascota {
     width: 50%;
+    height: 12em !important;
+
     display: flex;
     justify-content: flex-start;
     height: auto;
@@ -44,6 +46,10 @@
     align-items: baseline;
 }
 
+.datos-mascota p {
+    font-size: 14px;
+}
+
 .nombre-mascota {
     font-size: 1.6em;
     text-align: center;
@@ -65,9 +71,11 @@
 
 .ubicacion-masctoa {
     margin-bottom: 0;
-    /* Estilos para la ubicación de la mascota */
+  
 }
-
+.bi-geo-alt-fill{
+    margin-right: 3px;
+}
 .descripcion {
     background-color: #bab7b725;
     box-shadow: 3px 3px 6px 4px #d3d3d3d1;
@@ -79,6 +87,7 @@
 .descripcion-mascota {
     font-family: "Blinker", sans-serif;
     color: #696868;
+    font-size: 14px;
 }
 
 .contactos-masctoa {
@@ -115,15 +124,27 @@
 .redes-sociales {
     display: flex;
     flex-flow: row nowrap;
-    gap: .5em;
+    gap: 3px;
     margin-bottom: .5em;
     justify-content: space-evenly;
-    width: 100%;
-    padding: .5em;
     height: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: space-around;
+    align-items: baseline;
 
 }
 
+.redes-sociales .btn {
+    font-size: 12px;
+}
+
+.iconos-redes {
+    margin-right: .4em;
+    max-width: 100%;
+    height: auto;
+
+}
 
 
 .redes-sociales button:active {
@@ -131,39 +152,16 @@
     /* Color de fondo cuando se presiona */
 }
 
-.llamar-redes {
-    /* Estilos para el botón de llamada */
-}
-
-.ig {
-    /* Estilos para el botón de Instagram */
-}
-
-
-/*  ARRIB ADE 400 px */
 
 /* Estilos para pantallas pequeñas */
-@media (min-width: 401px) and (max-width:748.5px) {
-
-.container-main{
-    width: 80%;
-}
-
-    .datos-principales{
-        display: flex;
-        width: 100%;
-        align-items: stretch;
-        background-color: #bab7b725;
-        box-shadow: 3px 3px 6px 4px #d3d3d3d1;
-        border-radius: 20px;
-        flex-direction: row;
-        flex-wrap: nowrap;
-        justify-content: flex-start;
-        margin: auto;
+@media (min-width: 434px) and (max-width: 767.98px) {
+    .container-main {
+        width: 85%;
     }
-    
+
     .imagenen-mascota {
-        width: 80%;
+        height: 12em !important;
+        width: 50%;
         display: flex;
         justify-content: flex-start;
         height: auto;
@@ -183,31 +181,26 @@
     .datos-mascota {
         display: flex;
         flex-flow: column wrap;
+        gap: .5em;
         font-family: "Blinker", sans-serif;
         color: #696868;
-        width: 100%;
-        padding: 0;
-        margin: 0;
-        align-items: baseline;
-        justify-content: space-around;
-        align-content: flex-start;
-        flex-wrap: nowrap;
-        flex-direction: column;
+        justify-content: space-evenly;
+        align-content: center;
         margin-left: .5em;
+        align-items: baseline;
     }
 
-.datos-mascota span {
-padding: 0;
-
-}
+    .datos-mascota p {
+        font-size: 14px;
+    }
 
     .nombre-mascota {
-        font-size: 2em;
+        font-size: 1.6em;
+        text-align: center;
         font-weight: 600;
         color: black;
         margin-top: .3em;
         margin-bottom: 0;
-        width: 5em;
     }
 
     .sexo-mascota {
@@ -225,74 +218,182 @@ padding: 0;
         /* Estilos para la ubicación de la mascota */
     }
 
-    .descripcion {
-        background-color: #bab7b725;
-        box-shadow: 3px 3px 6px 4px #d3d3d3d1;
-        margin: 16px auto;
-        padding: 1em 6px;
-        border-radius: 10px;
-    }
 
-    .descripcion-mascota {
-        font-family: "Blinker", sans-serif;
-        color: #696868;
-    }
-
-    .contactos-masctoa {
-        width: 100%;
-    }
-
-    .contacto {
-        color: black;
-        font-weight: 600;
-        margin-top: 1.2em;
-    }
-
-    .contenenedor-contacto {
-        background-color: #bab7b725;
-        box-shadow: 3px 3px 15px 8px #d3d3d3d1;
-        border-radius: 10px;
-        width: 100%;
-        margin-top: 1em;
-        margin-bottom: 2em;
-        display: flex;
-        flex-flow: column nowrap;
-        justify-content: center;
-    }
-
-    .nombre-contacto {
-        font-weight: 600;
-        font-size: 1.4em;
-        color: black;
-        margin-left: 1em;
-        margin-top: 0.38em;
-        margin-bottom: 0;
-    }
 
     .redes-sociales {
         display: flex;
         flex-flow: row nowrap;
-        gap: .5em;
+        gap: 3px;
         margin-bottom: .5em;
         justify-content: space-evenly;
-        width: 100%;
-        padding: .5em;
         height: auto;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-content: space-around;
+        align-items: baseline;
+        margin-bottom: .8em;
 
+    }
+
+    .redes-sociales .btn {
+        font-size: .7em;
+        width: 30%;
+    }
+
+
+    .iconos-redes {
+        margin-right: .4em;
+
+
+    }
+
+}
+
+/* Estilos para pantallas medianas */
+@media (min-width: 768px) and (max-width: 991.98px) {
+
+    .container-main {
+        width: 70%;
+    }
+
+    .imagenen-mascota {
+        width: 50%;
+        height: 12em !important;
+        display: flex;
+        justify-content: flex-start;
+        height: auto;
+        margin: .4em;
+    }
+
+    .imagenen-mascota img {
+        object-fit: cover;
+        width: 100%;
+        border-radius: 1em;
+        -webkit-border-radius: 1em;
+        -moz-border-radius: 1em;
+        -ms-border-radius: 1em;
+        -o-border-radius: 1em;
+    }
+
+    .datos-mascota {
+        display: flex;
+        flex-flow: column wrap;
+        gap: .5em;
+        font-family: "Blinker", sans-serif;
+        color: #696868;
+        justify-content: space-evenly;
+        align-content: center;
+        margin-left: .5em;
+        align-items: baseline;
+    }
+
+    .datos-mascota p {
+        font-size: 14px;
+    }
+
+    .nombre-mascota {
+        font-size: 1.6em;
+        text-align: center;
+        font-weight: 600;
+        color: black;
+        margin-top: .3em;
+        margin-bottom: 0;
+    }
+
+    .sexo-mascota {
+        margin-bottom: 0;
+        /* Estilos para el sexo de la mascota */
+    }
+
+    .edad-mascota {
+        margin-bottom: 0;
+
+    }
+
+    .ubicacion-masctoa {
+        margin-bottom: 0;
+        /* Estilos para la ubicación de la mascota */
     }
 
 
 
-    .redes-sociales button:active {
-        background-color: #db96ba !important;
-        /* Color de fondo cuando se presiona */
+    .redes-sociales {
+        display: flex;
+        flex-flow: row nowrap;
+        gap: 3px;
+        margin-bottom: .5em;
+        justify-content: space-evenly;
+        height: auto;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-content: space-around;
+        align-items: baseline;
+        margin-bottom: .8em;
+
     }
 
-    .llamar-redes {
-        /* Estilos para el botón de llamada */
+    .redes-sociales .btn {
+        font-size: .8em;
+        width: 30%;
     }
 
-    .ig {
-        /* Estilos para el botón de Instagram */
+
+
+}
+
+/* Estilos para pantallas grandes */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+
+    .container-main {
+        width: 50%;
+    }
+
+
+    .redes-sociales {
+        display: flex;
+        flex-flow: row nowrap;
+        gap: 3px;
+        margin-bottom: .5em;
+        justify-content: space-evenly;
+        height: auto;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-content: space-around;
+        align-items: baseline;
+        margin-bottom: .8em;
+
+    }
+
+    .redes-sociales .btn {
+        font-size: .8em;
+        width: 30%;
+    }
+}
+
+/* Estilos para pantallas extra grandes */
+@media (min-width: 1200px) {
+    .container-main {
+        width: 50%;
+    }
+
+
+    .redes-sociales {
+        display: flex;
+        flex-flow: row nowrap;
+        gap: 3px;
+        margin-bottom: .5em;
+        justify-content: space-evenly;
+        height: auto;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-content: space-around;
+        align-items: baseline;
+        margin-bottom: .8em;
+
+    }
+
+    .redes-sociales .btn {
+        font-size: .8em;
+        width: 30%;
     }
 }
