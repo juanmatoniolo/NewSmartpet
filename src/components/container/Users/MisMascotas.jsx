@@ -11,6 +11,7 @@ function MisMascotas() {
 	return (
 		<>
 			<Logout />
+		
 			<Getapi id={id} />
 			<EditarDatos/>
 

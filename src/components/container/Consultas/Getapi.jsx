@@ -49,12 +49,19 @@ function GetData({ id }) {
 				setCodigosUnicos(codigos); // Actualiza el estado con los códigos de activación únicos
 
 				// Revisa si los datos de las mascotas ya están en localStorage
-				const cachedMascotas = JSON.parse(localStorage.getItem("mascotasData")) || {};
+				const cachedMascotas =
+					JSON.parse(localStorage.getItem("mascotasData")) || {};
 
 				// Obtiene los datos de las mascotas usando los códigos de activación si no están en localStorage
-				const mascotasData = await fetchMascotasData(codigos, cachedMascotas);
+				const mascotasData = await fetchMascotasData(
+					codigos,
+					cachedMascotas
+				);
 				setMascotas(mascotasData); // Actualiza el estado con los datos de las mascotas
-				localStorage.setItem("mascotasData", JSON.stringify(mascotasData)); // Guarda los datos en localStorage
+				localStorage.setItem(
+					"mascotasData",
+					JSON.stringify(mascotasData)
+				); // Guarda los datos en localStorage
 			} catch (error) {
 				console.error("Error al obtener datos:", error);
 			}
@@ -71,6 +78,21 @@ function GetData({ id }) {
 					<h1 className="container nombre-editable">
 						Hola {data.nombreyapellido}, aquí están tus mascotas
 					</h1>
+					<div className="container mensaje-mensaje">
+						<h4>
+							Debajo del código de activación verás un botón que
+							dice "Ver mapa" si la ubicación está disponible, o
+							"Ubicación no disponible" si no se compartió la
+							ubicación.
+						</h4>
+						<h4>
+							Recomendamos revisar el perfil de tu mascota desde
+							el botón "Mostrar mascota". Si se escanea el collar
+							o se abre el enlace, la última ubicación podría
+							cambiar a la del nuevo usuario.
+						</h4>
+					</div>
+
 					<section className="container contenedor-cards-user">
 						{Array.from(codigosUnicos).map((codAct) => (
 							<GetMascota key={codAct} id={codAct} />
@@ -102,7 +124,6 @@ function GetData({ id }) {
 								<Card.Text>
 									<p>Ult. ubicación: cargando...</p>
 									<p>Código: cargando ... </p>
-									
 								</Card.Text>
 								<Button
 									variant="primary"

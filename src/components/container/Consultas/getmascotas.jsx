@@ -5,13 +5,15 @@ import { Button } from "react-bootstrap";
 import imgPlaceholder from "../../../assets/img5.jpg"; // Imagen de relleno en caso de no haber imagen en la base de datos
 import "./get.css"; // Estilos CSS adicionales
 import EditarDatos from "./EditarDatos";
+import MostrarMascota from "./MostrarMascota"; // Importa el nuevo componente
 
 function GetMascota({ id }) {
 	const urlMascotasBase =
 		"https://smartpet-1d59e-default-rtdb.firebaseio.com/smartpet/mascotas.json";
 
 	const [mascota, setMascota] = useState(null); // Estado para almacenar los datos de la mascota
-	const [showModal, setShowModal] = useState(false); // Estado para controlar la visibilidad del modal
+	const [showModal, setShowModal] = useState(false); // Estado para controlar la visibilidad del modal de edición
+	const [showModalMostrar, setShowModalMostrar] = useState(false); // Estado para controlar la visibilidad del modal de mostrar
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -36,6 +38,9 @@ function GetMascota({ id }) {
 
 	const handleShowModal = () => setShowModal(true);
 	const handleCloseModal = () => setShowModal(false);
+
+	const handleShowModalMostrar = () => setShowModalMostrar(true);
+	const handleCloseModalMostrar = () => setShowModalMostrar(false);
 
 	const handleSave = async () => {
 		try {
@@ -100,6 +105,13 @@ function GetMascota({ id }) {
 							>
 								Editar Mascotas
 							</Button>
+							<Button
+								variant="primary"
+								className="btn-editar2"
+								onClick={handleShowModalMostrar} // Muestra el modal de MostrarMascota
+							>
+								Mostrar Mascota
+							</Button>
 						</Card.Body>
 					</Card>
 
@@ -109,6 +121,12 @@ function GetMascota({ id }) {
 						mascota={mascota} // Pasa los datos de la mascota al modal
 						id={mascota.id}
 						onSave={handleSave} // Pasa la función de actualización al modal
+					/>
+
+					<MostrarMascota
+						show={showModalMostrar}
+						handleClose={handleCloseModalMostrar}
+						mascota={mascota} // Pasa los datos de la mascota al modal
 					/>
 				</section>
 			) : (
@@ -141,9 +159,6 @@ function GetMascota({ id }) {
 					</Card.Body>
 				</Card>
 			)}
-
-
-
 		</div>
 	);
 }

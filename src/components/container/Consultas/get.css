@@ -108,7 +108,29 @@
     border-color: #6C5C94;
     /* Mantén el color primario */
 }
-.btn-editar-primary{
+
+
+.btn-editar2{
+    width: 100%;
+    color: #fff;
+    font-weight: 600;
+    background-color: #d4669fd5;
+    /* Color primario de la empresa */
+    border-color: DDB3C9;
+    /* Color primario de la empresa */
+    margin-top: .5em;
+}
+
+
+.btn-editar2:hover {
+    background-color: #CD7FA7;
+    /* Color secundario para hover */
+    border-color: #CD7FA7;
+    /* Mantén el color primario */
+}
+
+
+.btn-editar-primary {
     color: #fff;
     font-weight: 600;
     background-color: #6C5C94;
@@ -132,9 +154,11 @@
 
 
 .form-label {
-    font-size: 1.25rem; /* Tamaño de fuente mayor para los títulos */
+    font-size: 1.25rem;
+    /* Tamaño de fuente mayor para los títulos */
     font-weight: bold;
-    margin-bottom: 0.5em; /* Espacio debajo de la etiqueta */
+    margin-bottom: 0.5em;
+    /* Espacio debajo de la etiqueta */
 }
 
 .img-thumbnail {
@@ -150,5 +174,26 @@
 }
 
 .form-control-lg {
-    font-size: 0.875rem; /* Tamaño de fuente más pequeño para los campos de entrada */
+    font-size: 0.875rem;
+    /* Tamaño de fuente más pequeño para los campos de entrada */
+}
+
+
+
+.mensaje-mensaje {
+    padding: 15px;
+    background-color: #f7f7f7;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.mensaje-mensaje h4 {
+    color: #6C5C94;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.mensaje-mensaje h4:last-child {
+    font-weight: normal;
+    color: #333;
 }
