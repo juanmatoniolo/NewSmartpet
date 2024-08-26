@@ -15,7 +15,9 @@ function Homepage() {
 		<div className="Homepage">
 			<Header />
 			<Barnav />
-			<WhatsAppButton  mensaje={'Hola estoy interesado en adquirir un collar smartpet'} />
+			<WhatsAppButton
+				mensaje={"Hola estoy interesado en adquirir un collar smartpet"}
+			/>
 			<div>
 				<header className="header">
 					<h1 className="title">Bienvenido a SmartPet</h1>
@@ -76,14 +78,19 @@ function Homepage() {
 					</Container>
 				</section>
 
-				<section className="section section-body bg-light">
+				<section className=" container section section-body bg-light">
 					<Container>
 						<Row>
-							<Col md={5} sm={12} lg={4} className="esconder">
+							<Col
+								md={5}
+								sm={12}
+								lg={4}
+								className="d-none d-md-block"
+							>
 								<img
 									src={Imagenes.imgs1}
 									alt="Pet with SmartPet Collar"
-									className="img-fluid imgs-body esconder"
+									className="img-fluid imgs-body"
 								/>
 							</Col>
 							<Col md={7} sm={12} lg={8}>
@@ -100,6 +107,9 @@ function Homepage() {
 									personas con botones de acceso directo a
 									Instagram, llamada telefónica y WhatsApp.
 								</p>
+								<p>Cuando alguien escanea el QR, recibirás una notificación con su ubicación* y se mostrarán las vías de contacto que hayas elegido. Esto permite un contacto directo con el dueño sin importar si ha perdido su teléfono, además de ofrecerte el beneficio agregado de recibir la ubicación de tu mascota en el momento en que alguien escanee su QR.
+
+*Recibirás una notificación que informa que alguien ha escaneado el QR de tu mascota y la ubicación aproximada. Si la persona que escanea el QR comparte permisos de ubicación, también obtendrás la ubicación precisa.</p>
 							</Col>
 						</Row>
 					</Container>

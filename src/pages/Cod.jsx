@@ -15,9 +15,21 @@ function Cod() {
 			<WhatsAppButton mensaje="Hola, quiero comprar un collar para mi mascota" />
 
 			<div className="cod-container container mt-4">
+				<section className="cod-section">
+					<h2 className="cod-subtitle">
+						Adquiere tu Collar Smartpet
+					</h2>
+					<p className="cod-text">
+						Para adquirir un collar Smartpet, solo tienes que tocar
+						el ícono de WhatsApp para enviarnos un mensaje y
+						coordinar la compra. Estamos aquí para ayudarte y
+						asegurarnos de que tu mascota siempre esté segura y bien
+						identificada.
+					</p>
+				</section>
 				{/* Proceso de Registro */}
 				<section className="cod-section">
-					<h2 className="cod-subtitle">Proceso de Registro</h2>
+					<h2 className="cod-subtitle"> Registro</h2>
 					<p className="cod-text">
 						Primero, necesitas{" "}
 						<Link to="/Register">crear una cuenta</Link>. El proceso
@@ -29,7 +41,7 @@ function Cod() {
 
 				{/* Ingreso del Código */}
 				<section className="cod-section">
-					<h2 className="cod-subtitle">Ingreso del Código</h2>
+					<h2 className="cod-subtitle">Ingresa el Código</h2>
 					<p className="cod-text">
 						Una vez registrada tu cuenta, ingresa el código único
 						que recibiste al comprar tu collar Smartpet. Este código
@@ -63,18 +75,6 @@ function Cod() {
 				</section>
 
 				{/* Adquiere tu Collar Smartpet */}
-				<section className="cod-section">
-					<h2 className="cod-subtitle">
-						Adquiere tu Collar Smartpet
-					</h2>
-					<p className="cod-text">
-						Para adquirir un collar Smartpet, solo tienes que tocar
-						el ícono de WhatsApp para enviarnos un mensaje y
-						coordinar la compra. Estamos aquí para ayudarte y
-						asegurarnos de que tu mascota siempre esté segura y bien
-						identificada.
-					</p>
-				</section>
 			</div>
 
 			<Footers />
