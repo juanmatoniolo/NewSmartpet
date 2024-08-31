@@ -76,7 +76,7 @@ function GetData({ id }) {
 			{data ? (
 				<div>
 					<h1 className="container nombre-editable">
-						Hola {data.nombreyapellido}, aquí están tus mascotas
+						Hola {data.nombre}, aquí están tus mascotas
 					</h1>
 					<div className="container mensaje-mensaje">
 						<p>

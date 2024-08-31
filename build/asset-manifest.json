@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/NewSmartpet/static/css/main.ef81f78d.css",
-    "main.js": "/NewSmartpet/static/js/main.2344ae8e.js",
+    "main.js": "/NewSmartpet/static/js/main.df88ce58.js",
     "static/js/453.196594ef.chunk.js": "/NewSmartpet/static/js/453.196594ef.chunk.js",
     "static/media/b.mp4": "/NewSmartpet/static/media/b.970135a237a5d2c50771.mp4",
     "static/media/img5.jpg": "/NewSmartpet/static/media/img5.1a6cc66ee98352d4d92c.jpg",
@@ -28,11 +28,11 @@
     "static/media/slick.woff": "/NewSmartpet/static/media/slick.295183786cd8a1389865.woff",
     "index.html": "/NewSmartpet/index.html",
     "main.ef81f78d.css.map": "/NewSmartpet/static/css/main.ef81f78d.css.map",
-    "main.2344ae8e.js.map": "/NewSmartpet/static/js/main.2344ae8e.js.map",
+    "main.df88ce58.js.map": "/NewSmartpet/static/js/main.df88ce58.js.map",
     "453.196594ef.chunk.js.map": "/NewSmartpet/static/js/453.196594ef.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.ef81f78d.css",
-    "static/js/main.2344ae8e.js"
+    "static/js/main.df88ce58.js"
   ]
 }
