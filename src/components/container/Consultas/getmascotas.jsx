@@ -82,7 +82,13 @@ function GetMascota({ id }) {
 									"Debe cargar datos"}
 							</Card.Title>
 							<Card.Text>
-								<p>Cod Act: {id}</p>
+								<p>
+									Cod Act:{" "}
+									{mascota.codAct.length > 10
+										? "Primeros usuarios"
+										: mascota.codAct}
+								</p>
+
 								<p>
 									{mascota.datosMascotas.lat &&
 									mascota.datosMascotas.lon ? (
