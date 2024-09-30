@@ -37,3 +37,120 @@
     width: 16em;
 
 }
+
+/* Botón para obtener usuarios */
+.btn-obtener {
+	background-color: #6c5c94;
+	color: #ffffff;
+	padding: 10px 20px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 16px;
+	margin-bottom: 20px;
+}
+
+.btn-obtener:hover {
+	background-color: #5a4b7a;
+}
+
+/* Contenedor de las cards */
+.cards-container {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	justify-content: center;
+}
+
+/* Estilos de cada card de usuario */
+.user-card {
+	background-color: #f9f9f9;
+	border: 1px solid #ddd;
+	border-radius: 10px;
+	padding: 20px;
+	width: 300px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.user-card:hover {
+	transform: scale(1.05);
+	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos del contenido dentro de la card */
+.card-body h2 {
+	font-size: 20px;
+	color: #6c5c94;
+	margin-bottom: 10px;
+}
+
+.card-body p {
+	font-size: 14px;
+	margin: 5px 0;
+}
+
+.card-body hr {
+	margin: 10px 0;
+	border: 0;
+	border-top: 1px solid #ddd;
+}
+
+.card-body h3 {
+	font-size: 16px;
+	color: #cd7fa7;
+	margin-top: 10px;
+}
+
+
+.container {
+    padding: 20px;
+    display: flex;
+    flex-direction: column; /* Alinea elementos verticalmente */
+    align-items: center; /* Centra los elementos horizontalmente */
+}
+
+.cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Centra las tarjetas en el contenedor */
+    gap: 20px; /* Espacio entre tarjetas */
+}
+
+.card {
+    border: 1px solid #ccc; /* Borde de la tarjeta */
+    border-radius: 8px; /* Bordes redondeados */
+    padding: 10px;
+    background-color: #f9f9f9; /* Color de fondo */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra de la tarjeta */
+    width: calc(100% - 40px); /* Ancho de la tarjeta para móviles */
+    max-width: 300px; /* Ancho máximo para mantener tarjetas compactas en PC */
+    transition: transform 0.3s; /* Transición suave para el hover */
+}
+
+.card:hover {
+    transform: scale(1.05); /* Efecto de hover */
+}
+
+.card-body {
+    text-align: center; /* Centrar texto en la tarjeta */
+}
+
+.img-img-img {
+    width: 100%; /* Ajusta el tamaño de la imagen a un porcentaje del contenedor */
+    height: auto; /* Mantiene la proporción */
+    max-width: 12em; /* Establece un ancho máximo para las imágenes */
+    height: 12em;
+    object-fit: scale-down;
+}
+
+h3 {
+    margin-bottom: 5px; /* Espacio debajo del título */
+}
+
+/* Media Queries para ajustar el diseño en dispositivos móviles */
+@media (max-width: 768px) {
+    .card {
+        width: calc(100% - 20px); /* Ajusta el ancho en pantallas pequeñas */
+    }
+}
