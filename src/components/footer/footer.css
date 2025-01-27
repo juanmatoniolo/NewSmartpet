@@ -1,5 +1,5 @@
 /*========================   Footer   ===========================*/
-footer{
+footer {
     background-color: #6c5c94;
     align-content: center;
     padding: 0;
@@ -11,11 +11,13 @@ footer{
 .redes-creador {
     margin: 10px;
     display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-flow: row nowrap !important;
+    gap: 3em;
 }
 
+.redes-creador   path{
+    height: 2em;
+}
 .redes-nombres {
     padding-left: 2px;
     margin: 0%;
@@ -41,10 +43,10 @@ footer{
 }
 
 .footer-iconos {
-    width: 26px;
-    height: 26px;
+    width: 2.5em;
+    height: 2.5em;
     color: #fff;
-    
+
 }
 
 
