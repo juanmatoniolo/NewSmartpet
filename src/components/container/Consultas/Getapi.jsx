@@ -93,7 +93,7 @@ function GetData({ id }) {
 						</p>
 					</div>
 
-					<section className="container contenedor-cards-user">
+					<section className="  contenedor-cards-user">
 						{Array.from(codigosUnicos).map((codAct) => (
 							<GetMascota key={codAct} id={codAct} />
 						))}

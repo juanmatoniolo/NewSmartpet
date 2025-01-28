@@ -78,12 +78,13 @@
     margin-right: 3px;
 }
 
-.descripcion {
+.descripcion-1 {
     background-color: #bab7b725;
     box-shadow: 3px 3px 6px 4px #d3d3d3d1;
-    margin: 16px auto;
+    margin: 2em  auto 0em;
     padding: 1em 6px;
     border-radius: 10px;
+    width: 100%;
 }
 
 .descripcion-mascota {

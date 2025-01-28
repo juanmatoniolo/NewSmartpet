@@ -1,28 +1,22 @@
-/* Estilos para pantallas extra pequeñas */
-@media (max-width: 575.98px) {
+/_ Extra pequeño _/
+@media (max-width: 480px) { ... }
 
-}
+/_ Pequeño _/
+@media (min-width: 481px) and (max-width: 767px) { ... }
 
-/* Estilos para pantallas pequeñas */
-@media (min-width: 576px) and (max-width: 767.98px) {
-}
+/_ Mediano _/
+@media (min-width: 768px) and (max-width: 1024px) { ... }
 
-/* Estilos para pantallas medianas */
-@media (min-width: 768px) and (max-width: 991.98px) {
+/_ Grande _/
+@media (min-width: 1025px) and (max-width: 1366px) { ... }
 
-}
-
-/* Estilos para pantallas grandes */
-@media (min-width: 992px) and (max-width: 1199.98px) {}
-
-/* Estilos para pantallas extra grandes */
-@media (min-width: 1200px) {
-
-}
+/_ Extra grande _/
+@media (min-width: 1367px) { ... }
 
 
-Color1: #6C5C94 
+
+Color1: #6C5C94
 Color2: #DDB3C9
 Color3: #FFFFFF
 
-VarienteColor2: #CD7FA7 
+VarienteColor2: #CD7FA7

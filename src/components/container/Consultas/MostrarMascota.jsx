@@ -115,7 +115,7 @@ function MostrarMascota({ show, handleClose, mascota }) {
 							</section>
 
 							{mascota.datosMascotas.descripcion ? (
-								<section className="descripcion">
+								<section className="descripcion-1">
 									<p className="descripcion-mascota">
 										{mascota.datosMascotas.descripcion}
 									</p>
