@@ -34,6 +34,16 @@ body {
     background-color: #715cbd;
     /* Violeta más claro */
 }
+.columna-home{
+    width: 70%;
+}
+.columna-home2{
+    width: 30%;
+}
+.imgs-body{
+    width: 100% !important;
+    object-fit: cover;
+}
 
 .section {
     padding: 4em 0;
@@ -95,3 +105,5 @@ body {
         display: none;
     }
 }
+
+
