@@ -1,7 +1,7 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Homepage from "./pages/home";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 import About from "./pages/About";
 import Collares from "./pages/Collares";
 import Cod from "./pages/Cod";
@@ -14,7 +14,7 @@ import ProtectedRoute from "./components/Login/ProtectedRoute";
 
 function App() {
 	return (
-		<BrowserRouter>
+		<HashRouter>
 			<Routes>
 				<Route path="/" element={<Homepage />} />
 				<Route path="/NewSmartpet" element={<Homepage />} />
@@ -39,7 +39,6 @@ function App() {
 						</ProtectedRoute>
 					}
 				/>
-
 				<Route
 					path="/MasterCrud"
 					element={
@@ -49,7 +48,7 @@ function App() {
 					}
 				/>
 			</Routes>
-		</BrowserRouter>
+		</HashRouter>
 	);
 }
 

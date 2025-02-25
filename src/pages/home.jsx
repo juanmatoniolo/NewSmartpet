@@ -41,7 +41,7 @@ function Homepage() {
 				<section className="section section-body">
 					<Container className="container-fluid
 					">
-						<Row>
+						<Row className="fila-home">
 							<Col md={7} sm={12} lg={8} className="columna-home">
 								<h2>¿Qué es SmartPet?</h2>
 								<p>
@@ -126,7 +126,7 @@ function Homepage() {
 
 				<section className="section section-body">
 					<Container>
-						<Row>
+						<Row  className="fila-home">
 							<Col md={7} sm={12} lg={8}>
 								<h2>Características Destacadas</h2>
 								<p>
@@ -149,7 +149,7 @@ function Homepage() {
 
 				<section className="section section-body bg-light">
 					<Container>
-						<Row>
+						<Row  className="fila-home">
 							<Col md={5} sm={8} lg={4} className="esconder">
 								<img
 									src={Imagenes.imgs3}
