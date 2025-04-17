@@ -1,0 +1,14 @@
+.contacto-container h3 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #6C5C94;
+  }
+  
+  .contacto-container a {
+    transition: transform 0.2s ease;
+  }
+  
+  .contacto-container a:hover {
+    transform: scale(1.2);
+  }
+  

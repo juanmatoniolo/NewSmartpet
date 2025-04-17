@@ -1,141 +1,117 @@
-body {
-    font-family: Arial, sans-serif;
-    color: #6C5C94;
-    background-color: #FFFFFF;
-}
 
-.header {
-    text-align: center;
-    padding: 2em 0;
-    background-color: #F8F9FA;
-    color: #333;
+/* General Styles */
+body {
+    font-size: 1.2rem; /* Increase overall font size */
 }
 
 .title {
-    font-size: 3em;
-    margin-bottom: 0.5em;
+    font-size: 3rem; /* Larger title */
+    font-weight: bold;
+    color: #6C5C94;
 }
 
 .subtitle {
-    font-size: 1.5em;
-    margin-bottom: 1em;
+    font-size: 1.5rem;
+    color: #6C5C94;
 }
 
-.cta-button {
+.highlight {
+    color: #CD7FA7;
+}
+
+/* Card Slider Styles */
+.card-slider-container {
+    position: relative;
+    width: 100%;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2rem;
+    background: rgba(0, 0, 0, 0.731);
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+}
+
+.carousel-control-prev {
+    left: 0;
+    height: 3em;
+    width: 2em;
+}
+
+.carousel-control-next {
+    right: 0;
+    height: 3em;
+    width: 2em;
+}
+
+.card {
+    border: 1px solid #ddd;
+    border-radius: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+/* Button Styles */
+.cta-button, .my-3 {
+    font-size: 1.25rem;
+    padding: 0.75rem 2rem;
     background-color: #6C5C94;
     border: none;
-    padding: 0.5em 2em;
-    font-size: 1.2em;
-    color: #f9f9f9;
-    transition: background-color 0.3s ease;
 }
 
-.cta-button:hover {
-    background-color: #715cbd;
-    /* Violeta más claro */
+.cta-button:hover, .my-3:hover {
+    background-color: #CD7FA7;
 }
-
-.columna-home {
-}
-
-.columna-home2 {
-}
-.columna-home2 > img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-.imgs-body {
-    width: 100% !important;
-    object-fit: cover;
-}
-
-
-
-.section {
-    padding: 4em 0;
-}
-
-.bg-light {
-    background-color: #f9f9f9;
-}
-
-.imgs-body {
-    width: 100%;
-    object-fit: contain;
-    border-radius: 24px;
-    -webkit-border-radius: 24px;
-    -moz-border-radius: 24px;
-    -ms-border-radius: 24px;
-    -o-border-radius: 24px;
-    margin: auto;
-}
-
-/* Estilos para pantallas extra grandes */
-@media (min-width: 1200px) {
-    .imgs-body {
-        width: 16em;
-        object-fit: contain;
-        border-radius: 24px;
-        -webkit-border-radius: 24px;
-        -moz-border-radius: 24px;
-        -ms-border-radius: 24px;
-        -o-border-radius: 24px;
-        margin: auto;
+/* ✅ Responsive: Ajustes para tablets y móviles */
+@media (max-width: 991px) {
+    body {
+        font-size: 1rem; /* Más pequeño en tablets */
     }
 
-}
-
-/* Estilos para pantallas extra pequeñas */
-@media (max-width: 777px) {
-    .imgs-body {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 24px;
-        -webkit-border-radius: 24px;
-        -moz-border-radius: 24px;
-        -ms-border-radius: 24px;
-        -o-border-radius: 24px;
-        display: flex;
-        justify-content: center;
+    .title {
+        font-size: 2.2rem; /* Reducir tamaño de título */
     }
 
-    .esconder {
-          display: none;
+    .subtitle {
+        font-size: 1.3rem;
     }
 
-}
-
-@media (min-width: 788px) {
-    .container-carrusel {
-        display: none;
+    .cta-button, .my-3 {
+        font-size: 1.1rem;
+        padding: 0.6rem 1.5rem;
     }
 }
 
-
-
-/*/_ Pequeño _/*/
-@media (min-width: 481px) and (max-width: 790px) {
-    .fila-home {
-        display: flex;
-        flex-flow: column nowrap;
+@media (max-width: 576px) {
+    body {
+        font-size: 0.95rem; /* Aún más pequeño en móviles */
     }
 
-    .columna-home {
-        width: 100% !important;
+    .title {
+        font-size: 1.8rem;
     }
 
-    .columna-home2 {
-        width: 100% !important;
+    .subtitle {
+        font-size: 1.1rem;
     }
 
-    .esconder {
-        display: none;
+    .cta-button, .my-3 {
+        font-size: 1rem;
+        padding: 0.5rem 1.2rem;
     }
-    .columna-home2 > img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+
+    .carousel-control-prev,
+    .carousel-control-next {
+        font-size: 1.5rem;
+        height: 2.5em;
+        width: 1.8em;
     }
 }

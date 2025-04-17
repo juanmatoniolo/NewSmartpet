@@ -1,20 +1,41 @@
-.whatsapp-button  img .join-btn{
+.ht-ctc {
     position: fixed;
-    bottom: 20px;
+    bottom: 1em;
     right: 20px;
-    background-color: #25d366;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
+    cursor: pointer;
+    z-index: 99999999;
+}
+
+.ht_ctc_style {
     display: flex;
     justify-content: center;
     align-items: center;
-    cursor: pointer;
-    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3);
-    z-index: 1000; /* Aumentar el z-index para garantizar que esté por encima de otros elementos */
 }
 
-.whatsapp-icon {
-    width: 40px;
-    height: 40px;
+.ctc_chip {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #e4e4e4;
+    color: #7f7d7d;
+    padding: 0 12px;
+    border-radius: 25px;
+    font-size: 13px;
+    line-height: 32px;
+}
+
+.s4_img {
+    margin: 0 8px 0 -12px;
+    order: 0;
+}
+
+.s4_img svg {
+    pointer-events: none;
+    display: block;
+    height: 1em;
+    width: 1em;
+}
+
+.ctc_cta {
+    font-weight: bold;
 }
