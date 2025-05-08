@@ -94,3 +94,34 @@
 		transform: rotate(360deg);
 	}
 }
+
+
+@media (min-width: 1200px) {
+
+
+	.agregar-form-container {
+		max-width: 60%;
+        height: auto;
+		border-radius: 24px;
+	}
+
+	.agregar-h2 {
+		font-size: 1.2rem;
+		margin-bottom: 2rem;
+	}
+
+	.agregar-codigo-form input {
+		font-size: 1rem;
+		padding: .4rem;
+	}
+
+	.agregar-codigo-form button {
+		font-size: 1rem;
+        width: 60%;
+        margin: auto;
+	}
+
+	.agregar-mensaje {
+		font-size: 1rem;
+	}
+}

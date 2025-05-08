@@ -11,12 +11,9 @@ function MisMascotas() {
 	return (
 		<>
 			<Logout />
-		
 			<Getapi id={id} />
-			<EditarDatos/>
-
-
-			<Footers/>
+			<EditarDatos />
+			<Footers />
 		</>
 	);
 }

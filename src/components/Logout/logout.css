@@ -1,0 +1,124 @@
+/* Header con Gradiente y Logo */
+.smart-header {
+    background: linear-gradient(to bottom, #6C5C94, rgba(221, 179, 201, 0.805));
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    border-bottom: 2px solid #DDB3C9;
+}
+
+/* Logo dentro del header */
+.logo-img {
+    width: 4em;
+    object-fit: cover;
+}
+
+/* Contenedor de los enlaces del header */
+.contendor-links-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5em;
+}
+
+.logged-in-text {
+    font-size: 1.1rem;
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+/* Contenedor del botón de logout */
+.logout-btn-container {
+    margin-top: 10px;
+}
+
+.btn-logout {
+    background-color: #CD7FA7;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 2rem;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-logout:hover {
+    background-color: #DDB3C9;
+}
+
+/* Icono dentro del botón de logout */
+.logout-icon {
+    font-size: 1.2rem;
+}
+
+/* Navbar con fondo gradiente */
+.navbar-gradient {
+    background: linear-gradient(to bottom, #6C5C94, rgba(221, 179, 201, 0.805)) !important;
+    width: 100%;
+}
+
+/* Enlaces dentro del Navbar */
+.navbar-nav .nav-link {
+    color: white !important;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #CD7FA7 !important;
+}
+
+/* Contenedor flexible en la Navbar */
+.navbar>.container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Estilo para las opciones del menú */
+.linkscontainer {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.linkscontainer .nav-link {
+    font-size: 1rem;
+    color: #6C5C94;
+}
+
+.linkscontainer .nav-link:hover {
+    color: #CD7FA7;
+}
+
+/* Estilos para el menú de hamburguesa en pantallas pequeñas */
+.menu-hamburguesa {
+    width: 100%;
+    width: 3.4em;
+    align-items: end;
+    justify-content: end;
+}
+
+.hamburguesa {
+    width: 100%;
+    display: flex;
+    flex-flow: row nowrap !important;
+    justify-content: space-between !important;
+    align-items: center;
+    font-weight: 600;
+}
+
+@media (min-width: 992px) {
+    .hamburguesa {
+        width: 100% !important;
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-evenly !important;
+    }
+}

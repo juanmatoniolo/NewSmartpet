@@ -5,7 +5,6 @@ import { Button } from "react-bootstrap";
 import img from "../../../assets/img5.jpg";
 import "./get.css";
 import GetMascota from "./getmascotas";
-import Register from "../../Register/Register";
 import Agregarcodigo from "./Agregarcodigo";
 
 function GetData({ id }) {
