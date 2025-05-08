@@ -107,13 +107,12 @@ function Register() {
 
 	return (
 		<>
-			<Header />
 			<Barnav />
 			<main className="main-register">
 				<div className="container-register">
-					<h2>Registro de Usuario</h2>
-					<Form onSubmit={handleSubmit}>
-						<Form.Group className="mb-3">
+					<h2 className="title-register">Registro de Usuario</h2>
+					<Form onSubmit={handleSubmit} className="form-register">
+						<Form.Group className="mb-4">
 							<Form.Label>Nombre</Form.Label>
 							<Form.Control
 								type="text"
@@ -121,9 +120,11 @@ function Register() {
 								value={formData.nombre}
 								onChange={handleChange}
 								placeholder="Nombre"
+								className="form-control-register"
 							/>
 						</Form.Group>
-						<Form.Group className="mb-3">
+
+						<Form.Group className="mb-4">
 							<Form.Label>Apellido</Form.Label>
 							<Form.Control
 								type="text"
@@ -131,9 +132,11 @@ function Register() {
 								value={formData.apellido}
 								onChange={handleChange}
 								placeholder="Apellido"
+								className="form-control-register"
 							/>
 						</Form.Group>
-						<Form.Group className="mb-3">
+
+						<Form.Group className="mb-4">
 							<Form.Label>DNI</Form.Label>
 							<Form.Control
 								type="text"
@@ -141,9 +144,11 @@ function Register() {
 								value={formData.dni}
 								onChange={handleChange}
 								placeholder="Este será su usuario"
+								className="form-control-register"
 							/>
 						</Form.Group>
-						<Form.Group className="mb-3 position-relative">
+
+						<Form.Group className="mb-4 position-relative">
 							<Form.Label>Contraseña</Form.Label>
 							<div className="password-input-container">
 								<Form.Control
@@ -156,22 +161,19 @@ function Register() {
 								/>
 								<Button
 									variant="link"
-									onClick={() =>
-										setShowPassword(!showPassword)
-									}
+									onClick={() => setShowPassword(!showPassword)}
 									className="password-visibility-toggle"
 								>
 									{showPassword ? <FaEyeSlash /> : <FaEye />}
 								</Button>
 							</div>
 						</Form.Group>
-						<Form.Group className="mb-3 position-relative">
+
+						<Form.Group className="mb-4 position-relative">
 							<Form.Label>Repetir Contraseña</Form.Label>
 							<div className="password-input-container">
 								<Form.Control
-									type={
-										showRepeatPassword ? "text" : "password"
-									}
+									type={showRepeatPassword ? "text" : "password"}
 									name="repetirContrasenia"
 									value={formData.repetirContrasenia}
 									onChange={handleChange}
@@ -181,22 +183,16 @@ function Register() {
 								<Button
 									variant="link"
 									onClick={() =>
-										setShowRepeatPassword(
-											!showRepeatPassword
-										)
+										setShowRepeatPassword(!showRepeatPassword)
 									}
 									className="password-visibility-toggle"
 								>
-									{showRepeatPassword ? (
-										<FaEyeSlash />
-									) : (
-										<FaEye />
-									)}
+									{showRepeatPassword ? <FaEyeSlash /> : <FaEye />}
 								</Button>
 							</div>
 							<Form.Text className="text-muted">
-								La contraseña debe tener al menos 6 caracteres,
-								una mayúscula y un número.
+								La contraseña debe tener al menos 6 caracteres, una mayúscula
+								y un número.
 							</Form.Text>
 						</Form.Group>
 
@@ -204,7 +200,7 @@ function Register() {
 							variant="primary"
 							type="submit"
 							disabled={loading}
-							className="mt-3"
+							className="mt-3 submit-button"
 						>
 							{loading ? (
 								<Spinner animation="border" size="sm" />
@@ -213,13 +209,14 @@ function Register() {
 							)}
 						</Button>
 					</Form>
+
 					{error && (
-						<Alert variant="danger" className="mt-3">
+						<Alert variant="danger" className="mt-4">
 							{error}
 						</Alert>
 					)}
 					{success && (
-						<Alert variant="success" className="mt-3">
+						<Alert variant="success" className="mt-4">
 							{success}
 						</Alert>
 					)}

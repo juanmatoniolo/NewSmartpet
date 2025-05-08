@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "./login.css";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
-import Header from "../header/Header";
 import Footers from "../footer/Footer";
 import Barnav from "../nav/Nav";
 
@@ -66,8 +65,7 @@ function Login() {
 
 	return (
 		<>
-			<Header />
-			<Barnav/>
+			<Barnav />
 			<main className="main-login">
 				<section className="login-section">
 					<h2 className="login-title">Iniciar Sesión</h2>
@@ -82,7 +80,7 @@ function Login() {
 								required
 								value={dni}
 								onChange={handleInputChange}
-								className="input-user btnLoginConjunto"
+								className="input-user"
 								autoComplete="username"
 							/>
 						</div>
@@ -111,7 +109,6 @@ function Login() {
 							Entrar
 						</button>
 					</form>
-					
 				</section>
 			</main>
 			<Footers />
