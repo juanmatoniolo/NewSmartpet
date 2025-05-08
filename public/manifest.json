@@ -1,6 +1,8 @@
 {
 	"short_name": "SmartPet",
+
 	"name": "SmartPet - Collares Inteligentes para Mascotas",
+
 	"icons": [
 		{
 			"src": "/img/favicon.ico",
@@ -18,17 +20,24 @@
 			"sizes": "512x512"
 		}
 	],
+
 	"start_url": "/",
+
 	"display": "standalone",
+
 	"orientation": "portrait-primary",
+
 	"theme_color": "#6C5C94",
+
 	"background_color": "#FFFFFF",
+
 	"description": "SmartPet ofrece collares NFC y QR para identificar y proteger a tu mascota en caso de extravío.",
+
 	"shortcuts": [
 		{
-			"name": "Mis Mascotas",
-			"short_name": "Mascotas",
-			"description": "Ver todas mis mascotas registradas",
+			"name": "Mis Mascotas", 
+			"short_name": "Mascotas", 
+			"description": "Ver todas mis mascotas registradas", 
 			"url": "/mascotas",
 			"icons": [
 				{

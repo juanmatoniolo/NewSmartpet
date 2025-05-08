@@ -1,11 +1,10 @@
-
-/* General Styles */
 body {
-    font-size: 1.2rem; /* Increase overall font size */
+    font-size: 1.15rem;
+    background-color: #fff;
 }
 
 .title {
-    font-size: 3rem; /* Larger title */
+    font-size: 3rem;
     font-weight: bold;
     color: #6C5C94;
 }
@@ -19,82 +18,67 @@ body {
     color: #CD7FA7;
 }
 
-/* Card Slider Styles */
-.card-slider-container {
-    position: relative;
-    width: 100%;
+.text-brand {
+    color: #6C5C94;
 }
 
-.carousel-control-prev,
-.carousel-control-next {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 2rem;
-    background: rgba(0, 0, 0, 0.731);
-    border: none;
-    padding: 0.5rem;
-    cursor: pointer;
+/* Swiper Buttons */
+.swiper-button-prev,
+.swiper-button-next {
+    color: #6C5C94;
+    font-size: 1.5rem;
 }
 
-.carousel-control-prev {
-    left: 0;
-    height: 3em;
-    width: 2em;
-}
-
-.carousel-control-next {
-    right: 0;
-    height: 3em;
-    width: 2em;
-}
-
+/* Card Styles */
 .card {
-    border: 1px solid #ddd;
+    border: none;
     border-radius: 1rem;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #fdfcfe;
+}
+
+.card-shadow {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .card:hover {
-    transform: scale(1.05);
+    transform: scale(1.03);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
-/* Button Styles */
-.cta-button, .my-3 {
-    font-size: 1.25rem;
+/* CTA Buttons */
+.cta-button {
+    font-size: 1.2rem;
     padding: 0.75rem 2rem;
     background-color: #6C5C94;
     border: none;
+    border-radius: 0.75rem;
+    color: #fff;
+    transition: background-color 0.3s ease;
 }
 
-.cta-button:hover, .my-3:hover {
+.cta-button:hover {
     background-color: #CD7FA7;
+    color: #fff;
 }
-/* ✅ Responsive: Ajustes para tablets y móviles */
-@media (max-width: 991px) {
-    body {
-        font-size: 1rem; /* Más pequeño en tablets */
-    }
 
+/* Responsive */
+@media (max-width: 768px) {
     .title {
-        font-size: 2.2rem; /* Reducir tamaño de título */
+        font-size: 2.2rem;
     }
 
     .subtitle {
         font-size: 1.3rem;
     }
 
-    .cta-button, .my-3 {
-        font-size: 1.1rem;
+    .cta-button {
+        font-size: 1rem;
         padding: 0.6rem 1.5rem;
     }
 }
 
 @media (max-width: 576px) {
-    body {
-        font-size: 0.95rem; /* Aún más pequeño en móviles */
-    }
-
     .title {
         font-size: 1.8rem;
     }
@@ -103,15 +87,13 @@ body {
         font-size: 1.1rem;
     }
 
-    .cta-button, .my-3 {
-        font-size: 1rem;
+    .cta-button {
+        font-size: 0.95rem;
         padding: 0.5rem 1.2rem;
     }
 
-    .carousel-control-prev,
-    .carousel-control-next {
-        font-size: 1.5rem;
-        height: 2.5em;
-        width: 1.8em;
+    .swiper-button-prev,
+    .swiper-button-next {
+        font-size: 1.3rem;
     }
 }

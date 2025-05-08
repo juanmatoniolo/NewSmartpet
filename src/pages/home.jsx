@@ -12,7 +12,7 @@ function Homepage() {
 	return (
 		<div className="Homepage">
 			<SmartHeader/>
-			<WhatsAppButton			/>
+{/* 			<WhatsAppButton			/> */}
 			<Texto />
 			<Footers />
 		</div>
