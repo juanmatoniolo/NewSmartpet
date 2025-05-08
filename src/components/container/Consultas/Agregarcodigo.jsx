@@ -126,7 +126,7 @@ const Agregarcodigo = ({ id }) => {
 	};
 
 	return (
-		<section className="agregar-container section-validador">
+		<section className=" agregar-container section-validador ">
 			<div className="agregar-form-container">
 				{cargando ? (
 					<div className="agregar-loading-container">

@@ -5,6 +5,8 @@ import { Button } from "react-bootstrap";
 import img from "../../../assets/img5.jpg";
 import "./get.css";
 import GetMascota from "./getmascotas";
+import Register from "../../Register/Register";
+import Agregarcodigo from "./Agregarcodigo";
 
 function GetData({ id }) {
 	const [data, setData] = useState(null); // Estado para almacenar los datos del usuario
@@ -78,6 +80,8 @@ function GetData({ id }) {
 					<h1 className="container nombre-editable">
 						Hola {data.nombre}, aquí están tus mascotas
 					</h1>
+					
+					<Agregarcodigo id={id} />
 					<div className="container mensaje-mensaje">
 						<p>
 							Debajo del código de activación verás un botón que
