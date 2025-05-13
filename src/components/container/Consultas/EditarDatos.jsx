@@ -280,7 +280,7 @@ const EditarDatos = ({ show, handleClose, mascota, id, onSave }) => {
 				<Button variant="danger" onClick={handleCancel} className="w-40">
 					Cancelar
 				</Button>
-				<Button variant="primary" onClick={handleSaveChanges} className="w-40">
+				<Button variant="primary" onClick={handleSaveChanges} className="w-40 guardar-cambios-totales">
 					Guardar Cambios
 				</Button>
 			</Modal.Footer>

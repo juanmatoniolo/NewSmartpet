@@ -77,7 +77,7 @@ function GetData({ id }) {
   return (
     <main className="user-pets-container">
       <header className="text-center">
-        <h1 className="nombre-editable">
+        <h1 className="nombre-editable mt-3">
           {data ? `Hola ${data.nombre},` : "Hola,"} aquí están tus mascotas
         </h1>
       </header>
