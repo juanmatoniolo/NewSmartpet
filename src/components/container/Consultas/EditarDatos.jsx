@@ -6,6 +6,11 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import axios from "axios";
 import { app } from "../../db/db";
 import Spinner from "react-bootstrap/Spinner";
+import "./Editar.css"
+
+
+
+
 
 const EditarDatos = ({ show, handleClose, mascota, id, onSave }) => {
 	const [formData, setFormData] = useState(mascota); // Estado para almacenar los datos del formulario
@@ -130,234 +135,157 @@ const EditarDatos = ({ show, handleClose, mascota, id, onSave }) => {
 	};
 
 	return (
-		<Modal show={show} fullscreen onHide={handleCancel} animation={true}>
+		<Modal show={show} fullscreen onHide={handleCancel} animation>
 			<Modal.Header closeButton>
-				<Modal.Title className="text-center">
-					Editar Datos de la Mascota
-				</Modal.Title>
+				<Modal.Title className="text-center w-100">Editar Datos de la Mascota</Modal.Title>
 			</Modal.Header>
-			<Modal.Body>
-				<Form>
-					<div className="container">
-						<Form.Group className="mb-4">
-							<Form.Label>Imagen de la Mascota</Form.Label>
-							<div className="text-center">
-								{!archivoURL &&
-									formData?.datosMascotas?.img && (
-										<img
-											src={formData.datosMascotas.img}
-											alt="Imagen actual"
-											style={{
-												maxWidth: "12em",
-												maxHeight: "12em",
-												marginBottom: "1em",
-												borderRadius: "10px",
-												objectFit: "cover",
-											}}
-										/>
-									)}
-								<input
-									type="file"
-									onChange={archivoHandeler}
-									style={{ marginBottom: "1em" }}
-								/>
-								{error && (
-									<p style={{ color: "red" }}>{error}</p>
-								)}
-								{archivoURL && (
-									<div className="mt-3">
-										<img
-											src={archivoURL}
-											alt="Previsualización"
-											style={{
-												maxWidth: "12em",
-												maxHeight: "12em",
-												borderRadius: "10px",
-												objectFit: "cover",
-											}}
-										/>
-									</div>
-								)}
-								<Button
-									variant="primary"
-									className="mt-3"
-									onClick={guardarArchivo}
-								>
-									Guardar Imagen
-								</Button>
-								{cargando && (
-									<div className="mt-3">
-										<Spinner animation="border" />
-										<p>Cargando...</p>
-									</div>
-								)}
+
+			<Modal.Body className="container-fluid">
+				<Form className="row g-4">
+					{/* Imagen */}
+					<Form.Group className="col-12 text-center">
+						<Form.Label className="fw-bold col-12">Imagen de la Mascota</Form.Label>
+						{!archivoURL && formData?.datosMascotas?.img && (
+							<img src={formData.datosMascotas.img} alt="Imagen actual" className="img-mascota-editar img-fluid rounded mb-2" style={{ maxHeight: 200 }} />
+						)}
+						<input type="file" onChange={archivoHandeler} className="form-control mb-2 col-12" />
+						{error && <p className="text-danger">{error}</p>}
+						{archivoURL && (
+							<img src={archivoURL} alt="Previsualización" className="img-mascota-editar img-fluid rounded mb-2" style={{ maxHeight: 200 }} />
+						)}
+						<Button variant="primary" onClick={guardarArchivo} className="col-5 mb-2">Guardar Imagen</Button>
+						{cargando && (
+							<div className="text-center mt-2">
+								<Spinner animation="border" />
+								<p className="mt-2">Cargando...</p>
 							</div>
-						</Form.Group>
+						)}
+					</Form.Group>
 
-						<Form.Group className="mb-4">
-							<Form.Label>Nombre</Form.Label>
-							<Form.Control
-								type="text"
-								placeholder="Nombre de la mascota"
-								name="nombre"
-								value={formData?.datosMascotas?.nombre || ""}
+					{/* Datos Básicos */}
+					<Form.Group className="col-md-6 col-12">
+						<Form.Label className="Form-labl-editar" >Nombre</Form.Label>
+						<Form.Control
+							type="text"
+							placeholder="Nombre de la mascota"
+							name="nombre"
+							value={formData?.datosMascotas?.nombre || ""}
+							onChange={handleChange}
+						/>
+					</Form.Group>
+
+					<Form.Group className="col-md-6 col-12">
+						<Form.Label className="Form-labl-editar" >Edad</Form.Label>
+						<Form.Control
+							type="text"
+							placeholder="Edad de la mascota"
+							name="edad"
+							value={formData?.datosMascotas?.edad || ""}
+							onChange={handleChange}
+						/>
+					</Form.Group>
+
+					{/* Sexo */}
+					<Form.Group className="col-md-6 col-12">
+						<Form.Label className="Form-labl-editar" >Sexo</Form.Label>
+						<div className="d-flex gap-3">
+							<Form.Check
+								type="radio"
+								label="Macho"
+								name="sexo"
+								value="Macho"
+								checked={formData?.datosMascotas?.sexo === "Macho"}
 								onChange={handleChange}
-								className="form-control-lg"
 							/>
-						</Form.Group>
-
-						<Form.Group className="mb-4">
-							<Form.Label>Sexo</Form.Label>
-							<div className="d-flex flex-column">
-								<Form.Check
-									type="radio"
-									label="Macho"
-									name="sexo"
-									value="Macho"
-									checked={
-										formData?.datosMascotas?.sexo ===
-										"Macho"
-									}
-									onChange={handleChange}
-								/>
-								<Form.Check
-									type="radio"
-									label="Hembra"
-									name="sexo"
-									value="Hembra"
-									checked={
-										formData?.datosMascotas?.sexo ===
-										"Hembra"
-									}
-									onChange={handleChange}
-								/>
-							</div>
-						</Form.Group>
-
-						<Form.Group className="mb-4">
-							<Form.Label>Edad</Form.Label>
-							<Form.Control
-								type="text"
-								placeholder="Edad de la mascota"
-								name="edad"
-								value={formData?.datosMascotas?.edad || ""}
+							<Form.Check
+								type="radio"
+								label="Hembra"
+								name="sexo"
+								value="Hembra"
+								checked={formData?.datosMascotas?.sexo === "Hembra"}
 								onChange={handleChange}
-								className="form-control-lg"
 							/>
-						</Form.Group>
+						</div>
+					</Form.Group>
 
-						<Form.Group className="mb-4">
-							<Form.Label>Ciudad y provincia</Form.Label>
-							<Form.Control
-								type="text"
-								placeholder="Ubicación"
-								name="ubicacion"
-								value={formData?.datosMascotas?.ubicacion || ""}
-								onChange={handleChange}
-								className="form-control-lg"
-							/>
-						</Form.Group>
+					<Form.Group className="col-md-6 col-12">
+						<Form.Label className="Form-labl-editar" >Ciudad y Provincia</Form.Label>
+						<Form.Control
+							type="text"
+							placeholder="Ubicación"
+							name="ubicacion"
+							value={formData?.datosMascotas?.ubicacion || ""}
+							onChange={handleChange}
+						/>
+					</Form.Group>
 
-						<hr />
+					{/* Descripción */}
+					<Form.Group className="col-12">
+						<Form.Label className="Form-labl-editar" >Descripción</Form.Label>
+						<Form.Control
+							as="textarea"
+							rows={3}
+							placeholder="Breve descripción o datos relevantes"
+							name="descripcion"
+							value={formData?.datosMascotas?.descripcion || ""}
+							onChange={handleChange}
+						/>
+					</Form.Group>
 
-						<Form.Group className="mb-4">
-							<Form.Label>Descripción</Form.Label>
-							<Form.Control
-								as="textarea"
-								rows={3}
-								placeholder="Breve descripción o datos que considere relevantes"
-								name="descripcion"
-								value={
-									formData?.datosMascotas?.descripcion || ""
-								}
-								onChange={handleChange}
-								className="form-control-lg"
-							/>
-						</Form.Group>
+					{/* Mensaje predeterminado */}
+					<Form.Group className="col-12">
+						<Form.Label className="Form-labl-editar" >Mensaje predeterminado de WhatsApp</Form.Label>
+						<Form.Control
+							type="text"
+							placeholder="Mensaje predeterminado para WhatsApp"
+							name="mensaje"
+							value={formData?.datosMascotas?.mensaje || ""}
+							onChange={handleChange}
+						/>
+					</Form.Group>
 
-						<hr />
-
-						<Form.Group className="mb-4">
-							<Form.Label>
-								Mensaje predeterminado de Whatsapp
-							</Form.Label>
-							<Form.Control
-								type="text"
-								placeholder="Escribe el mensaje predeterminado para whatsapp"
-								name="mensaje"
-								value={formData?.datosMascotas?.mensaje || ""}
-								onChange={handleChange}
-								className="form-control-lg"
-							/>
-						</Form.Group>
-
-						<Form.Group className="mb-4">
-							<Form.Label>Contacto 1</Form.Label>
+					{/* Contactos */}
+					{[1, 2].map((index) => (
+						<Form.Group className="col-md-6 col-12" key={index}>
+							<Form.Label className="Form-labl-editar" >Contacto {index}</Form.Label>
 							<Form.Control
 								type="text"
 								placeholder="Nombre del dueño/a"
-								name="persona1"
-								value={formData?.datosMascotas?.persona1 || ""}
+								name={`persona${index}`}
+								value={formData?.datosMascotas?.[`persona${index}`] || ""}
 								onChange={handleChange}
-								className="form-control-lg"
+								className="mb-2"
 							/>
 							<Form.Control
 								type="text"
-								placeholder="Telefono sin 0 ni 15. Ej.: 3412275598"
-								name="telefono1"
-								value={formData?.datosMascotas?.telefono1 || ""}
+								placeholder="Teléfono sin 0 ni 15. Ej.: 3412275598"
+								name={`telefono${index}`}
+								value={formData?.datosMascotas?.[`telefono${index}`] || ""}
 								onChange={handleChange}
-								className="form-control-lg mt-2"
+								className="mb-2"
 							/>
 							<Form.Control
 								type="text"
 								placeholder="@UsuarioDeInstagram"
-								name="ig1"
-								value={formData?.datosMascotas?.ig1 || ""}
+								name={`ig${index}`}
+								value={formData?.datosMascotas?.[`ig${index}`] || ""}
 								onChange={handleChange}
-								className="form-control-lg mt-2"
 							/>
 						</Form.Group>
-
-						<Form.Group className="mb-4">
-							<Form.Label>Contacto 2</Form.Label>
-							<Form.Control
-								type="text"
-								placeholder="Nombre del dueño/a"
-								name="persona2"
-								value={formData?.datosMascotas?.persona2 || ""}
-								onChange={handleChange}
-								className="form-control-lg"
-							/>
-							<Form.Control
-								type="text"
-								placeholder="Telefono sin 0 ni 15. Ej.: 3412275598"
-								name="telefono2"
-								value={formData?.datosMascotas?.telefono2 || ""}
-								onChange={handleChange}
-								className="form-control-lg mt-2"
-							/>
-							<Form.Control
-								type="text"
-								placeholder="@UsuarioDeInstagram"
-								name="ig2"
-								value={formData?.datosMascotas?.ig2 || ""}
-								onChange={handleChange}
-								className="form-control-lg mt-2"
-							/>
-						</Form.Group>
-					</div>
+					))}
 				</Form>
 			</Modal.Body>
-			<Modal.Footer>
-				<Button variant="secondary" onClick={handleCancel}>
+
+			<Modal.Footer className="d-flex flex-row flex-md-row gap-2">
+				<Button variant="danger" onClick={handleCancel} className="w-40">
 					Cancelar
 				</Button>
-				<Button variant="primary" onClick={handleSaveChanges}>
+				<Button variant="primary" onClick={handleSaveChanges} className="w-40">
 					Guardar Cambios
 				</Button>
 			</Modal.Footer>
 		</Modal>
+
 	);
 };
 

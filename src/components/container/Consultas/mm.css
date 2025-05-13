@@ -1,5 +1,14 @@
+/*==============================        Global        ==============================*/
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css");
+
+
+
+
+
 .container-main {
-    width: 100%;
+    width: 100% !important;
+    margin-top: 2em;
+    margin-bottom: 4em;
 
 }
 
@@ -15,7 +24,7 @@
 }
 
 .imagenen-mascota {
-    width: 50%;
+    width: 50% !important;
     height: 12em !important;
 
     display: flex;
@@ -26,7 +35,7 @@
 
 .imagenen-mascota img {
     object-fit: cover;
-    width: 100%;
+    min-width: 100%;
     border-radius: 1em;
     -webkit-border-radius: 1em;
     -moz-border-radius: 1em;
@@ -59,6 +68,17 @@
     margin-bottom: 0;
 }
 
+.iconos-datos-mascota {
+    width: 1.5em;
+    height: 1.5em;
+}
+
+.contenedor-datos-mascota {
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+
 .sexo-mascota {
     margin-bottom: 0;
     /* Estilos para el sexo de la mascota */
@@ -78,10 +98,10 @@
     margin-right: 3px;
 }
 
-.descripcion-1 {
+.descripcion {
     background-color: #bab7b725;
     box-shadow: 3px 3px 6px 4px #d3d3d3d1;
-    margin: 2em  auto 0em;
+    margin: 1em;
     padding: 1em 6px;
     border-radius: 10px;
     width: 100%;
@@ -91,28 +111,40 @@
     font-family: "Blinker", sans-serif;
     color: #696868;
     font-size: 14px;
+
 }
 
 .contactos-masctoa {
     width: 100%;
+
 }
 
-.contacto {
+.contacto-a {
     color: black;
     font-weight: 600;
     margin-top: 1.2em;
+    width: 100% !important;
+
 }
 
-.contenenedor-contacto {
+
+
+.contenedor-contacto-a {
+    width: 100% !important;
+    
     background-color: #bab7b725;
     box-shadow: 3px 3px 15px 8px #d3d3d3d1;
     border-radius: 10px;
-    width: 100%;
-    margin-top: 1em;
-    margin-bottom: 2em;
+    height: 5.3em;
+    margin-bottom: 1.6em;
     display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
+    flex-flow: column;
+    align-content: space-around;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: space-evenly;
+    align-items: stretch;
+    margin-top: 2em;
 }
 
 .nombre-contacto {
@@ -125,35 +157,20 @@
 }
 
 .redes-sociales {
+    width: 100%;
     display: flex;
     flex-flow: row nowrap;
     gap: 3px;
-    margin-bottom: .5em;
-    justify-content: space-evenly;
+    margin-bottom: 0.1em;
     height: auto;
     flex-direction: row;
     flex-wrap: wrap;
-    align-content: space-around;
-    align-items: baseline;
+    align-content: space-between;
+    align-items: stretch;
+    justify-content: space-evenly;
 
 }
 
-.redes-sociales .btn {
-    font-size: 12px;
-}
-
-.iconos-redes {
-    margin-right: .4em;
-    max-width: 100%;
-    height: auto;
-
-}
-
-
-.redes-sociales button:active {
-    background-color: #db96ba !important;
-    /* Color de fondo cuando se presiona */
-}
 
 
 /* Estilos para pantallas pequeñas */
@@ -244,11 +261,7 @@
     }
 
 
-    .iconos-redes {
-        margin-right: .4em;
-
-
-    }
+    .iconos-redes {}
 
 }
 
@@ -320,19 +333,18 @@
 
 
 
-    .redes-sociales {
+    .redes-sociales .btn {
+        font-size: 12px;
         display: flex;
         flex-flow: row nowrap;
-        gap: 3px;
-        margin-bottom: .5em;
-        justify-content: space-evenly;
-        height: auto;
-        flex-direction: row;
-        flex-wrap: wrap;
-        align-content: space-around;
-        align-items: baseline;
-        margin-bottom: .8em;
-
+        background-color: #cd7fa7;
+        border-radius: 12px;
+        width: 32%;
+        height: 2.6em;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        /* Espacio añadido aquí */
     }
 
     .redes-sociales .btn {
@@ -399,4 +411,258 @@
         font-size: .8em;
         width: 30%;
     }
+}
+
+
+/*========================   Footer   ===========================*/
+/* CSS para footer discreto */
+.sp-footer {
+    background-color: #f8f9fa;
+    padding: 1.5rem 1rem;
+    border-top: 1px solid #e9ecef;
+    font-family: 'Signika Negative', sans-serif;
+}
+
+.sp-footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.sp-footer-intro {
+    margin-bottom: 1rem;
+}
+
+.sp-footer-title {
+    color: #6C5C94;
+    font-size: 1.2rem;
+    margin-bottom: 0.3rem;
+    font-weight: 500;
+}
+
+.sp-footer-subtitle {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.sp-footer-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.sp-social-group {
+    display: flex;
+    gap: 0.8rem;
+}
+
+.sp-social-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.sp-social-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sp-social-btn i {
+    font-size: 1.1rem;
+}
+
+.sp-fb-btn {
+    color: #4267B2;
+    border-color: #4267B2;
+}
+
+.sp-ig-btn {
+    color: #E1306C;
+    border-color: #E1306C;
+}
+
+.sp-wa-btn {
+    color: #25D366;
+    border-color: #25D366;
+}
+
+.sp-legal-text {
+    color: #6c757d;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    margin-top: 1rem;
+}
+
+.sp-tooltip {
+    visibility: hidden;
+    background-color: #495057;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    position: absolute;
+    transform: translateY(8px);
+    white-space: nowrap;
+}
+
+.sp-social-btn:hover .sp-tooltip {
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sp-footer {
+        padding: 1rem;
+    }
+
+    .sp-social-group {
+        gap: 0.5rem;
+    }
+
+    .sp-social-btn {
+        width: 36px;
+        height: 36px;
+    }
+
+    .sp-social-btn i {
+        font-size: 1rem;
+    }
+}
+
+/* Añade estos estilos al CSS existente */
+.sp-social-btn i {
+    font-size: 1.2rem;
+    transition: transform 0.2s ease;
+}
+
+.sp-social-btn:hover i {
+    transform: scale(1.1);
+}
+
+/* Ajuste para alinear tooltips */
+.sp-tooltip {
+    margin-top: 45px;
+}
+
+/*========================   Footer   ===========================*/
+
+
+
+/* Estilos para pantallas grandes */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .redes-creador {
+        margin: 10px;
+        display: flex;
+        justify-content: center;
+        gap: 12em;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+}
+
+/* Estilos para pantallas extra grandes */
+@media (min-width: 1200px) {
+    .redes-creador {
+        margin: 10px;
+        display: flex;
+        justify-content: center;
+        gap: 12em;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+}
+
+
+/*==============================        Global        ==============================*/
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css");
+
+.btn-2 {
+    background-color: #cd7fa7;
+    color: aliceblue;
+    border-radius: 10px;
+}
+
+
+
+.redes-sociales .btn {
+    font-size: 12px;
+    display: flex;
+    flex-flow: row nowrap;
+    border-radius: 12px;
+    width: 25%;
+    height: 3em;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+    border: none !important;
+    color: white !important;
+}
+
+/* Colores específicos para cada tipo de botón */
+.redes-sociales .whatsapp-redes {
+    background-color: #25D366 !important;
+}
+
+.redes-sociales .llamar-redes {
+    background-color: #007bff !important;
+}
+
+.redes-sociales .ig {
+    background: linear-gradient(45deg, #405DE6, #833AB4, #C13584, #E1306C, #FD1D1D) !important;
+}
+
+/* Efectos hover */
+.redes-sociales .btn:hover {
+    filter: brightness(0.9);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Iconos blancos */
+.redes-sociales .btn svg {
+    fill: white;
+}
+
+/* Mejor espaciado */
+.iconos-redes {
+    width: 18px !important;
+    height: 18px !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .redes-sociales .btn {
+        font-size: 14px !important;
+        padding: 8px 12px;
+    }
+    
+.redes-sociales .btn {
+    font-size: 12px;
+    display: flex;
+    flex-flow: row nowrap;
+    border-radius: 12px;
+    width: 32%;
+    height: 2.6em;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+    border: none !important;
+    color: white !important;
+}
+
+}
+
+.contactos-mascota{
+    width: 100%;
 }
