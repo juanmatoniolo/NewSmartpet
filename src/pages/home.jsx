@@ -11,8 +11,8 @@ import SmartHeader from "../components/nav/Nav";
 function Homepage() {
 	return (
 		<div className="Homepage">
-			<SmartHeader/>
-{/* 			<WhatsAppButton			/> */}
+			<SmartHeader />
+			{/* 			<WhatsAppButton			/> */}
 			<Texto />
 			<Footers />
 		</div>

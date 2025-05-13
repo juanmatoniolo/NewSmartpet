@@ -21,6 +21,37 @@ import imga10 from "./collares/a (10).jpg";
 import imga11 from "./collares/a (11).jpg";
 import video from "./collares/b.mp4"; // Importa el video
 
+
+
+
+
+const imagenes = {
+	img1: require("./letrasBlancas.svg"),
+	img2: require("./logobien.svg"),
+	img3: require("./SMARTPET.png"),
+	img4: require("./mine.jfif"),
+	img5: require("./a.jpg"),
+	imgs1: require("./img1.jpg"),
+	imgs2: require("./img2.jpg"),
+	imgs3: require("./img3.jpg"),
+	imgs4: require("./img4.jpg"),
+	imgs5: require("./img5.jpg"),
+	imga1: require("./collares/a (1).jpg"),
+	imga2: require("./collares/a (2).jpg"),
+	imga3: require("./collares/a (3).jpg"),
+	imga4: require("./collares/a (4).jpg"),
+	imga5: require("./collares/a (5).jpg"),
+	imga6: require("./collares/a (6).jpg"),
+	imga7: require("./collares/a (7).jpg"),
+	imga8: require("./collares/a (8).jpg"),
+	imga9: require("./collares/a (9).jpg"),
+	imga10: require("./collares/a (10).jpg"),
+	imga11: require("./collares/a (11).jpg"),
+	video: require("./collares/b.mp4"), // video también puede ser requerido así
+};
+
+
+
 export default {
 	img1: letrasblancas,
 	img2: logo,
@@ -43,5 +74,7 @@ export default {
 	imga9: imga9,
 	imga10: imga10,
 	imga11: imga11,
+
+	imagenes: imagenes,
 	video: video, // Agrega el video a la exportación
 };

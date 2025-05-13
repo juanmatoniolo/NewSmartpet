@@ -1,82 +1,282 @@
-/* get.css */
+/* Paleta de colores */
+:root {
+    --color1: #6C5C94;
+    /* Morado principal */
+    --color2: #DDB3C9;
+    /* Rosa claro */
+    --color3: #FFFFFF;
+    /* Blanco */
+    --variant-color2: #CD7FA7;
+    /* Rosa oscuro */
+}
 
-/* Estilo del encabezado de saludo */
-.nombre-editable {
-    font-size: 2rem;
-    font-weight: 600;
-    color: #6C5C94;
-    margin-top: 30px;
-    margin-bottom: 20px;
+
+/* Estilos generales */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+.card-pet img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.card-body {
+    padding: 15px;
     text-align: center;
 }
 
-/* Estilo para el mensaje explicativo */
-.mensaje-mensaje {
-    background-color: #F8F6FB;
-    color: #444;
-    border-left: 5px solid #DDB3C9;
-    padding: 20px;
-    margin-bottom: 30px;
-    border-radius: 8px;
-    font-size: 1rem;
+.card-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
 }
 
-/* Contenedor de cards */
-.contenedor-cards-user {
+.skeleton-img {
+    width: 100%;
+    height: 200px;
+    background-color: #e0e0e0;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    animation: pulse 1.5s infinite;
+}
+
+.skeleton-text {
+    height: 1rem;
+    background-color: #e0e0e0;
+    margin-bottom: 0.5rem;
+    border-radius: 5px;
+    animation: pulse 1.5s infinite;
+}
+
+.btn-loading {
+    background-color: #0d6efd;
+    border: none;
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .nombre-editable {
+        font-size: 1.5rem;
+    }
+
+    .info-tooltip-container button {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+    }
+
+
+
+    .card-title {
+        font-size: 1rem;
+    }
+
+    .pets-grid {
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .user-pets-container {
+        padding: 10px;
+    }
+
+    .nombre-editable {
+        font-size: 1.2rem;
+    }
+
+    .info-tooltip-container button {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+
+
+    .card-title {
+        font-size: 0.9rem;
+    }
+
+    .pets-grid {
+        gap: 0.8rem;
+    }
+}
+
+.info-toast-container,
+.info-modal-container {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
-    gap: 25px;
-    padding: 20px 10px;
+    margin-bottom: 1.5rem;
 }
 
-/* Card de mascota */
+
+
+
+/* Tarjeta principal */
 .card-pet {
+    background-color: var(--color3);
     border: none;
     border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease-in-out;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+
+.card-pet .titulo-card {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--color1);
+    margin-bottom: 0.5rem;
+}
+
+.card-pet p {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 0.5rem;
+}
+
+.card-pet .link-mapa {
+    color: var(--color1);
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.card-pet .link-mapa:hover {
+    color: red;
+}
+
+.card-pet .btn-editar,
+.card-pet .btn-editar2 {
+    width: 100%;
+    margin-top: 10px;
+    padding: 0.6rem;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.card-pet .btn-editar {
+    background-color: var(--color1);
+    color: var(--color3);
+}
+
+.card-pet .btn-editar:hover {
+    background-color: #6c5c94e5;
+}
+
+.card-pet .btn-editar2 {
+    background-color: var(--color2);
+    color: var(--color1);
+}
+
+.card-pet .btn-editar2:hover {
+    background-color: var(--variant-color2);
+}
+
+/* Esqueleto de carga */
+.skeleton-card {
+    animation: pulse 1.5s infinite;
+}
+
+.skeleton-img {
+    width: 100%;
+    height: 150px;
+    background-color: #e0e0e0;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.skeleton-text {
+    height: 1rem;
+    background-color: #e0e0e0;
+    margin-bottom: 0.5rem;
+    border-radius: 5px;
+}
+
+/* Animación para el esqueleto de carga */
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Estilo para las cards de mascotas */
+.card-pet {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s;
 }
 
 .card-pet:hover {
     transform: translateY(-5px);
 }
 
-/* Imagen de la mascota */
+/* Imágenes de mascotas */
 .img-card-pet {
-    height: 220px;
     object-fit: cover;
+    height: 200px;
+    width: 100%;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 }
 
-/* Título dentro de la card */
+/* Título de la card */
 .titulo-card {
-    font-size: 1.2rem;
-    font-weight: bold;
     color: #6C5C94;
+    font-weight: 600;
     margin-bottom: 10px;
 }
 
-/* Botón dentro de la card */
+/* Botón editar */
 .btn-editar {
-    background-color: #6C5C94;
+    background-color: #DDB3C9;
     border: none;
+    color: #fff;
+    margin: 5px 0;
     width: 100%;
-    transition: background-color 0.2s ease-in-out;
+    transition: background-color 0.3s ease;
 }
 
-.btn-editar:hover {
+.btn-editar:hover,
+.btn-mostrar:hover {
+    background-color: #cd7fa7d9;
+}
+
+.btn-mostrar {
     background-color: #CD7FA7;
+    border: none;
+    color: #fff;
+    margin: 5px 0;
+    width: 100%;
+    transition: background-color 0.3s ease;
 }
 
-/* Responsive para pantallas pequeñas */
-@media (max-width: 576px) {
-    .contenedor-cards-user {
-        flex-direction: column;
-        align-items: center;
-    }
+/* Contenedor de cards */
+.contenedor-cards-user {
+    padding-top: 20px;
+}
 
-    .mensaje-mensaje {
-        font-size: 0.95rem;
+/* Responsive ajustes (opcional) */
+@media (max-width: 576px) {
+    .nombre-editable {
+        font-size: 1.5rem;
     }
 }

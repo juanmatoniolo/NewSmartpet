@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Button, Modal } from "react-bootstrap"; // Importamos Modal
 import "./agregar.css";
 
 const Agregarcodigo = ({ id }) => {
@@ -7,6 +8,7 @@ const Agregarcodigo = ({ id }) => {
 	const [mensaje, setMensaje] = useState(""); // Estado para mostrar mensajes de éxito o error
 	const [cargando, setCargando] = useState(false); // Estado para controlar la carga
 	const [codigosUnicos, setCodigosUnicos] = useState(new Set()); // Estado para almacenar los códigos de activación únicos
+	const [showModal, setShowModal] = useState(false); // Estado para controlar el modal
 
 	const urlMascotas = `https://smartpet-1d59e-default-rtdb.firebaseio.com/smartpet/mascotas.json`;
 	const urlUsuario = `https://smartpet-1d59e-default-rtdb.firebaseio.com/usuario/${id}.json`;
@@ -78,7 +80,7 @@ const Agregarcodigo = ({ id }) => {
 		e.preventDefault(); // Evita el comportamiento predeterminado del formulario
 
 		// Validación del formato del código
-        const codigoValido = /^[\w@#&]{4}[0-9]{4}$/.test(codigo);
+		const codigoValido = /^[\w@#&]{4}[0-9]{4}$/.test(codigo);
 		if (!codigoValido) {
 			setMensaje("El código debe tener 4 letras seguidas de 4 números.");
 			return;
@@ -148,15 +150,40 @@ const Agregarcodigo = ({ id }) => {
 								placeholder="Ej. ABCD1234"
 								required
 							/>
-							<button type="submit">Agregar</button>
+							<div className="contenedor-btns">
+
+								<button type="submit">Agregar</button>
+								{/* Botón para abrir el modal */}
+								<div className="info-modal-container text-center my-3">
+									<Button variant="outline-info" onClick={() => setShowModal(true)}>
+										Info
+									</Button>
+								</div>
+
+								{/* Modal */}
+								<Modal show={showModal} onHide={() => setShowModal(false)} centered>
+									<Modal.Header closeButton>
+										<Modal.Title>Información Adicional</Modal.Title>
+									</Modal.Header>
+									<Modal.Body>
+										<p className="mb-3">
+											Debajo del código de activación verás un botón que dice "Ver mapa" si la ubicación
+											está disponible, o "Ubicación no disponible" si no se compartió.
+										</p>
+										<p className="mb-0">
+											<strong>Recomendación:</strong> Revisa el perfil desde "Mostrar mascota". Al escanear
+											el collar, la ubicación podría actualizarse.
+										</p>
+									</Modal.Body>
+								</Modal>
+							</div>
 						</form>
 						{mensaje && (
 							<p
-								className={`agregar-mensaje ${
-									mensaje.includes("correctamente")
-										? "mensaje-exito"
-										: ""
-								}`}
+								className={`agregar-mensaje ${mensaje.includes("correctamente")
+									? "mensaje-exito"
+									: ""
+									}`}
 							>
 								{mensaje}
 							</p>

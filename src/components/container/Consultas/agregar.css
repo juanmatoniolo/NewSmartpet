@@ -5,7 +5,7 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-    background-color: #F4F4F4;
+	background-color: #F4F4F4;
 }
 
 .agregar-form-container {
@@ -15,7 +15,7 @@
 	padding: 1rem;
 	width: 100%;
 	text-align: center;
-    
+
 }
 
 .agregar-h2 {
@@ -90,6 +90,7 @@
 	0% {
 		transform: rotate(0deg);
 	}
+
 	100% {
 		transform: rotate(360deg);
 	}
@@ -101,7 +102,7 @@
 
 	.agregar-form-container {
 		max-width: 60%;
-        height: auto;
+		height: auto;
 		border-radius: 24px;
 	}
 
@@ -117,11 +118,51 @@
 
 	.agregar-codigo-form button {
 		font-size: 1rem;
-        width: 60%;
-        margin: auto;
+		width: 60%;
+		margin: auto;
 	}
 
 	.agregar-mensaje {
 		font-size: 1rem;
 	}
+}
+
+.info-toast-container button,
+.info-modal-container button {
+	padding: 0.6rem 1.2rem;
+	font-size: 1rem;
+	border-radius: 5px;
+	background-color: #CD7FA7;
+	width: 100%;
+	/*Azulclaro*/
+	color: white;
+	border: none;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+	border-radius: 12px;
+	-webkit-border-radius: 12px;
+	-moz-border-radius: 12px;
+	-ms-border-radius: 12px;
+	-o-border-radius: 12px;
+}
+
+.info-toast-container button:hover,
+.info-modal-container button:hover {
+	background-color: #DDB3C9;
+
+}
+
+.contenedor-btns {
+	display: flex;
+	width: 100%;
+	flex-flow: row - nowrap;
+	justify-content: space-evenly;
+	align-items: center;
+	gap: 1em;
+
+}
+
+.contenedor-btns>button {
+	width: 70%;
+
 }
