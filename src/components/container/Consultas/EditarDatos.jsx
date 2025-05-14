@@ -11,15 +11,14 @@ import "./Editar.css"
 
 
 
-
 const EditarDatos = ({ show, handleClose, mascota, id, onSave }) => {
-	const [formData, setFormData] = useState(mascota); // Estado para almacenar los datos del formulario
-	const [archivo, setArchivo] = useState(null); // Estado para almacenar el archivo seleccionado
-	const [archivoURL, setArchivoURL] = useState(null); // Estado para almacenar la URL del archivo previsualizado
-	const [error, setError] = useState(null); // Estado para manejar errores de validación
-	const [linkFirestore, setLinkFirestore] = useState(""); // Estado para almacenar el link de Firestore
-	const [cargando, setCargando] = useState(false); // Estado para manejar el estado de carga
+	const [formData, setFormData] = useState(mascota);
+	const [archivo, setArchivo] = useState(null);
+	const [archivoURL, setArchivoURL] = useState(null);
+	const [error, setError] = useState(null);
+	const [cargando, setCargando] = useState(false);
 
+	// Función para manejar el cambio de los datos del formulario
 	const handleChange = (e) => {
 		const { name, value } = e.target;
 		setFormData({
@@ -31,6 +30,20 @@ const EditarDatos = ({ show, handleClose, mascota, id, onSave }) => {
 		});
 	};
 
+	// Función para subir la imagen a Firebase Storage y obtener la URL
+	const subirImagen = async (archivo) => {
+		const storage = getStorage();
+		const archivoRef = ref(storage, `${archivo.name}`);
+
+		// Subir la imagen
+		await uploadBytes(archivoRef, archivo);
+
+		// Obtener la URL de la imagen subida
+		const url = await getDownloadURL(archivoRef);
+		return url; // Devuelve la URL obtenida
+	};
+
+	// Función para guardar los datos de la mascota en Firebase Realtime Database
 	const guardarDatos = async (id, formData) => {
 		const url = `https://smartpet-1d59e-default-rtdb.firebaseio.com/smartpet/mascotas/${id}.json`;
 
@@ -45,89 +58,58 @@ const EditarDatos = ({ show, handleClose, mascota, id, onSave }) => {
 	};
 
 	const handleSaveChanges = async () => {
-		if (linkFirestore) {
-			// Actualiza el campo de la imagen en formData
-			setFormData((prevFormData) => ({
-				...prevFormData,
-				datosMascotas: {
-					...prevFormData.datosMascotas,
-					img: linkFirestore,
-				},
-			}));
-		}
+		setCargando(true);
 
 		try {
-			// Guardar los cambios en la base de datos
-			await guardarDatos(id, formData);
-			console.log("Datos actualizados:", formData);
-			if (onSave) {
-				onSave(); // Llama a la función de actualización pasada como prop
+			let imgUrl = formData.datosMascotas.img;
+
+			if (archivo) {
+				imgUrl = await subirImagen(archivo);
 			}
-			handleClose(); // Cierra el modal después de guardar
+
+			// Crear un nuevo objeto con todos los datos actualizados
+			const formDataActualizado = {
+				...formData,
+				datosMascotas: {
+					...formData.datosMascotas,
+					img: imgUrl, // ahora sí se actualiza correctamente
+				},
+			};
+
+			// Guardar los datos actualizados
+			await guardarDatos(id, formDataActualizado);
+
+			if (onSave) onSave();
+			handleClose();
 		} catch (error) {
 			console.error("Error al guardar cambios:", error);
+		} finally {
+			setCargando(false);
 		}
 	};
 
+	// Función para manejar la selección de archivos
 	const archivoHandeler = (e) => {
 		const archivoSeleccionado = e.target.files[0];
 
-		// Validación del tamaño del archivo
 		if (archivoSeleccionado.size > 5 * 1024 * 1024) {
 			setError("El archivo no puede pesar más de 5MB");
 			setArchivo(null);
 			setArchivoURL(null);
 		} else {
 			setError(null);
-			setArchivo(archivoSeleccionado); // Almacena el archivo seleccionado en el estado
+			setArchivo(archivoSeleccionado); // Almacena el archivo seleccionado
 
-			// Previsualiza la imagen seleccionada
+			// Previsualizar la imagen seleccionada
 			const reader = new FileReader();
 			reader.onload = () => {
-				setArchivoURL(reader.result); // Almacena la URL del archivo previsualizado en el estado
+				setArchivoURL(reader.result); // Almacena la URL del archivo previsualizado
 			};
 			reader.readAsDataURL(archivoSeleccionado);
 		}
 	};
 
-	const guardarArchivo = async () => {
-		if (!archivo) {
-			setError("Por favor selecciona un archivo antes de guardar.");
-			return;
-		}
-
-		setCargando(true); // Muestra el indicador de carga
-		try {
-			const storage = getStorage(app);
-			const archivoRef = ref(storage, archivo.name);
-			await uploadBytes(archivoRef, archivo);
-			const url = await getDownloadURL(archivoRef);
-			setLinkFirestore(url); // Almacena la URL del archivo guardado en Firestore
-			console.log("Archivo cargado y guardado en:", url);
-
-			// Reiniciar el archivo
-			setArchivo(null);
-			setArchivoURL(null);
-			setError(null);
-
-			// Actualiza la previsualización con la nueva URL
-			setFormData((prevFormData) => ({
-				...prevFormData,
-				datosMascotas: {
-					...prevFormData.datosMascotas,
-					img: url,
-				},
-			}));
-		} catch (error) {
-			console.error("Error al guardar el archivo:", error);
-			setError("Error al cargar la imagen. Inténtalo de nuevo.");
-		} finally {
-			setCargando(false); // Oculta el indicador de carga
-		}
-	};
-
 	const handleCancel = () => {
-		// Limpia el archivo y la previsualización si se cancela
 		setArchivo(null);
 		setArchivoURL(null);
 		setCargando(false);
@@ -146,19 +128,22 @@ const EditarDatos = ({ show, handleClose, mascota, id, onSave }) => {
 					<Form.Group className="col-12 text-center">
 						<Form.Label className="fw-bold col-12">Imagen de la Mascota</Form.Label>
 						{!archivoURL && formData?.datosMascotas?.img && (
-							<img src={formData.datosMascotas.img} alt="Imagen actual" className="img-mascota-editar img-fluid rounded mb-2" style={{ maxHeight: 200 }} />
+							<img
+								src={formData.datosMascotas.img}
+								alt="Imagen actual"
+								className="img-mascota-editar img-fluid rounded mb-2"
+								style={{ maxHeight: 200 }}
+							/>
 						)}
 						<input type="file" onChange={archivoHandeler} className="form-control mb-2 col-12" />
 						{error && <p className="text-danger">{error}</p>}
 						{archivoURL && (
-							<img src={archivoURL} alt="Previsualización" className="img-mascota-editar img-fluid rounded mb-2" style={{ maxHeight: 200 }} />
-						)}
-						<Button variant="primary" onClick={guardarArchivo} className="col-5 mb-2">Guardar Imagen</Button>
-						{cargando && (
-							<div className="text-center mt-2">
-								<Spinner animation="border" />
-								<p className="mt-2">Cargando...</p>
-							</div>
+							<img
+								src={archivoURL}
+								alt="Previsualización"
+								className="img-mascota-editar img-fluid rounded mb-2"
+								style={{ maxHeight: 200 }}
+							/>
 						)}
 					</Form.Group>
 
@@ -280,12 +265,22 @@ const EditarDatos = ({ show, handleClose, mascota, id, onSave }) => {
 				<Button variant="danger" onClick={handleCancel} className="w-40">
 					Cancelar
 				</Button>
-				<Button variant="primary" onClick={handleSaveChanges} className="w-40 guardar-cambios-totales">
-					Guardar Cambios
+				<Button
+					variant="primary"
+					onClick={handleSaveChanges}
+					className="w-40 guardar-cambios-totales"
+					disabled={cargando} // Deshabilitar el botón mientras se está cargando la imagen
+				>
+					{cargando ? (
+						<div className="d-flex justify-content-center">
+							<Spinner animation="border" size="sm" /> Cargando...
+						</div>
+					) : (
+						"Guardar Cambios"
+					)}
 				</Button>
 			</Modal.Footer>
 		</Modal>
-
 	);
 };
 
