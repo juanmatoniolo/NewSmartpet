@@ -18,6 +18,74 @@ const EditarDatos = ({ show, handleClose, mascota, id, onSave }) => {
 	const [error, setError] = useState(null);
 	const [cargando, setCargando] = useState(false);
 
+
+const subirImagen = async (archivoOriginal) => {
+	return new Promise((resolve, reject) => {
+		// Verificar que el archivo sea una imagen válida
+		if (!archivoOriginal.type.startsWith("image/")) {
+			reject(new Error("El archivo no es una imagen válida."));
+			return;
+		}
+
+		const reader = new FileReader();
+
+		reader.onload = async () => {
+			const img = new Image();
+			img.src = reader.result;
+
+			img.onload = async () => {
+				// Crear un canvas para convertir la imagen
+				const canvas = document.createElement("canvas");
+				canvas.width = img.width;
+				canvas.height = img.height;
+
+				const ctx = canvas.getContext("2d");
+				ctx.drawImage(img, 0, 0);
+
+				// Convertir a WebP
+				canvas.toBlob(
+					async (blob) => {
+						if (!blob) {
+							reject(new Error("No se pudo convertir la imagen a WebP."));
+							return;
+						}
+
+						// Subir la imagen convertida a Firebase Storage
+						const storage = getStorage();
+						const archivoWebP = new File([blob], archivoOriginal.name.replace(/\.[^/.]+$/, ".webp"), {
+							type: "image/webp",
+						});
+						const archivoRef = ref(storage, archivoWebP.name);
+
+						try {
+							await uploadBytes(archivoRef, archivoWebP);
+							const url = await getDownloadURL(archivoRef);
+							resolve(url);
+						} catch (error) {
+							reject(error);
+						}
+					},
+					"image/webp",
+					0.8 // Calidad opcional (0 a 1)
+				);
+			};
+
+			img.onerror = () => {
+				reject(new Error("Error al cargar la imagen para convertir."));
+			};
+		};
+
+		reader.onerror = () => {
+			reject(new Error("Error al leer el archivo."));
+		};
+
+		reader.readAsDataURL(archivoOriginal);
+	});
+};
+
+
+
+
 	// Función para manejar el cambio de los datos del formulario
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -31,17 +99,18 @@ const EditarDatos = ({ show, handleClose, mascota, id, onSave }) => {
 	};
 
 	// Función para subir la imagen a Firebase Storage y obtener la URL
-	const subirImagen = async (archivo) => {
+/* 	const subirImagen = async (archivoOriginal) => {
 		const storage = getStorage();
-		const archivoRef = ref(storage, `${archivo.name}`);
 
-		// Subir la imagen
-		await uploadBytes(archivoRef, archivo);
+		// Convertir a WebP antes de subir
+		const archivoWebP = await convertirAWebP(archivoOriginal);
 
-		// Obtener la URL de la imagen subida
+		const archivoRef = ref(storage, `${archivoWebP.name}`);
+		await uploadBytes(archivoRef, archivoWebP);
+
 		const url = await getDownloadURL(archivoRef);
-		return url; // Devuelve la URL obtenida
-	};
+		return url;
+	}; */
 
 	// Función para guardar los datos de la mascota en Firebase Realtime Database
 	const guardarDatos = async (id, formData) => {
@@ -125,8 +194,8 @@ const EditarDatos = ({ show, handleClose, mascota, id, onSave }) => {
 			<Modal.Body className="container-fluid">
 				<Form className="row g-4">
 					{/* Imagen */}
-					<Form.Group className="col-12 text-center">
-						<Form.Label className="fw-bold col-12">Imagen de la Mascota</Form.Label>
+					<Form.Group className="col-5 col-sm-12  text-center">
+						<Form.Label className="fw-bold col-4 col-sm12">Imagen de la Mascota</Form.Label>
 						{!archivoURL && formData?.datosMascotas?.img && (
 							<img
 								src={formData.datosMascotas.img}
