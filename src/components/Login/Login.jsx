@@ -49,16 +49,22 @@ function Login() {
 			}
 
 			if (usuarioEncontrado) {
-				localStorage.setItem("authenticated", "true");
-				localStorage.setItem("userRol", usuarioEncontrado.rol || "user");
+				// Determinar el rol
+				const rol = usuarioEncontrado.rol === "admin" ? "admin" : "usuario";
 
-				if (usuarioEncontrado.rol === "admin") {
+				// Guardar en localStorage
+				localStorage.setItem("authenticated", "true");
+				localStorage.setItem("userId", registroId);
+				localStorage.setItem("rol", rol);
+
+				// Redireccionar según rol
+				if (rol === "admin") {
 					navigate("/MasterCrud");
 				} else {
 					navigate(`/Consultas/${registroId}`);
 				}
 			} else {
-				setError("Usuario o contraseña incorrectos. Inténtelo nuevamente");
+				setError("Usuario o contraseña incorrectos. Inténtelo nuevamente.");
 			}
 		} catch (error) {
 			alert("Ha ocurrido un error. Por favor, intenta nuevamente.");

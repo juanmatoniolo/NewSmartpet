@@ -1,0 +1,64 @@
+.usuarios-wrapper {
+    padding: 1rem;
+    max-width: 800px;
+    margin: auto;
+    font-family: sans-serif;
+}
+
+.btn-toggle {
+    padding: 0.5rem 1rem;
+    background-color: #6C5C94;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+}
+
+.accordion-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+.accordion-item {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #fdfdfd;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.accordion-header {
+    padding: 0.75rem 1rem;
+    background-color: #eee;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.accordion-header:hover {
+    background-color: #e0d8f0;
+}
+
+.accordion-body {
+    padding: 0.75rem 1rem;
+    background-color: white;
+    border-top: 1px solid #ddd;
+}
+
+.accordion-body p {
+    margin: 0.5rem 0;
+}
+
+.input-buscador {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}

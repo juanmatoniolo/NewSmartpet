@@ -11,6 +11,8 @@ import Consultas from "./components/container/Users/Consultas";
 import MisMascotas from "./components/container/Users/MisMascotas";
 import MasterCrud from "./components/container/Master/MasterCrud";
 import ProtectedRoute from "./components/Login/ProtectedRoute";
+import ListarMascotas from "./components/container/Master/obtener/ListarMascotas";
+import ListarUsuarios from "./components/container/Master/obtener/ListarUsuarios";
 
 function App() {
 	return (
@@ -20,6 +22,8 @@ function App() {
 				<Route path="/NewSmartpet" element={<Homepage />} />
 				<Route path="/Login" element={<Login />} />
 				<Route path="/Register" element={<Register />} />
+
+				{/* Rutas protegidas por autenticación */}
 				<Route
 					path="/Consultas/:id"
 					element={
@@ -28,6 +32,7 @@ function App() {
 						</ProtectedRoute>
 					}
 				/>
+
 				<Route
 					path="/MisMascotas/:id"
 					element={
@@ -36,11 +41,32 @@ function App() {
 						</ProtectedRoute>
 					}
 				/>
+
+				{/* Ruta de MasterCrud solo accesible para admins */}
 				<Route
 					path="/MasterCrud"
 					element={
-						<ProtectedRoute>
+						<ProtectedRoute requiredRole="admin">
 							<MasterCrud />
+						</ProtectedRoute>
+					}
+				/>
+
+				{/* Rutas de ListarMascotas y ListarUsuarios solo accesibles para admins */}
+				<Route
+					path="/ListarMascotas"
+					element={
+						<ProtectedRoute requiredRole="admin">
+							<ListarMascotas />
+						</ProtectedRoute>
+					}
+				/>
+
+				<Route
+					path="/ListarUsuarios"
+					element={
+						<ProtectedRoute requiredRole="admin">
+							<ListarUsuarios />
 						</ProtectedRoute>
 					}
 				/>
