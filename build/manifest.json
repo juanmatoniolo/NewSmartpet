@@ -1,29 +1,35 @@
 {
-	"short_name": "SmartPet",
 	"name": "SmartPet - Collares Inteligentes para Mascotas",
-	"icons": [
-		{
-			"src": "/img/favicon.ico",
-			"sizes": "64x64 32x32 24x24 16x16",
-			"type": "image/x-icon"
-		},
-		{
-			"src": "/img/logo192.png",
-			"type": "image/png",
-			"sizes": "192x192"
-		},
-		{
-			"src": "/img/logo512.png",
-			"type": "image/png",
-			"sizes": "512x512"
-		}
-	],
-	"start_url": "/",
+	"short_name": "SmartPet",
+	"description": "SmartPet ofrece collares NFC y QR personalizados para identificar y proteger a tu mascota en caso de extravío.",
+	"lang": "es-AR",
+	"start_url": "/?source=pwa",
+	"scope": "/",
 	"display": "standalone",
-	"orientation": "portrait-primary",
+	"orientation": "portrait",
 	"theme_color": "#6C5C94",
 	"background_color": "#FFFFFF",
-	"description": "SmartPet ofrece collares NFC y QR para identificar y proteger a tu mascota en caso de extravío.",
+	"prefer_related_applications": false,
+	"icons": [
+		{
+			"src": "/img/icono.png",
+			"type": "image/png",
+			"sizes": "192x192",
+			"purpose": "any"
+		},
+		{
+			"src": "/img/icono.png",
+			"type": "image/png",
+			"sizes": "512x512",
+			"purpose": "any maskable"
+		},
+		{
+			"src": "/img/icono.ico",
+			"sizes": "48x48",
+			"type": "image/x-icon",
+			"purpose": "any"
+		}
+	],
 	"shortcuts": [
 		{
 			"name": "Mis Mascotas",
@@ -32,7 +38,7 @@
 			"url": "/mascotas",
 			"icons": [
 				{
-					"src": "/img/mascotas.png",
+					"src": "/img/icono.png",
 					"sizes": "192x192",
 					"type": "image/png"
 				}
@@ -41,13 +47,13 @@
 		{
 			"name": "Escanear Código",
 			"short_name": "Escanear",
-			"description": "Escanear un código NFC o QR",
+			"description": "Escanear un código NFC o QR de tu mascota",
 			"url": "/escanear",
 			"icons": [
 				{
-					"src": "/img/escanear.png",
+					"src": "/img/a.jpg",
 					"sizes": "192x192",
-					"type": "image/png"
+					"type": "image/jpg"
 				}
 			]
 		}

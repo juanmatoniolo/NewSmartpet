@@ -194,8 +194,8 @@ const subirImagen = async (archivoOriginal) => {
 			<Modal.Body className="container-fluid">
 				<Form className="row g-4">
 					{/* Imagen */}
-					<Form.Group className="col-5 col-sm-12  text-center">
-						<Form.Label className="fw-bold col-4 col-sm12">Imagen de la Mascota</Form.Label>
+					<Form.Group className="col-12 col-sm-12  text-center">
+						<Form.Label className="fw-bold col-12 col-sm-12">Imagen de la Mascota</Form.Label>
 						{!archivoURL && formData?.datosMascotas?.img && (
 							<img
 								src={formData.datosMascotas.img}

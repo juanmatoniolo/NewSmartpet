@@ -22,7 +22,7 @@ const ListarUsuarios = () => {
 					id: key,
 					...respuesta.data[key],
 				}));
-				setUsuarios(usuariosArray.slice(0, 10)); // Muestra hasta 10 usuarios
+				setUsuarios(usuariosArray.slice(0, 100)); // Muestra hasta 10 usuarios
 				setMostrarUsuarios(true); // Cambia el estado para mostrarlos
 			} catch (e) {
 				console.log(e);

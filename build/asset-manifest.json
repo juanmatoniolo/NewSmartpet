@@ -1,9 +1,11 @@
 {
   "files": {
-    "main.css": "./static/css/main.5fd6f6f0.css",
-    "main.js": "./static/js/main.c2e9b6a9.js",
+    "main.css": "./static/css/main.1e18498b.css",
+    "main.js": "./static/js/main.7eddbe7e.js",
     "static/js/453.196594ef.chunk.js": "./static/js/453.196594ef.chunk.js",
+    "static/media/funcionamiento.mp4": "./static/media/funcionamiento.1dc3da1dc7536275a8c4.mp4",
     "static/media/b.mp4": "./static/media/b.970135a237a5d2c50771.mp4",
+    "static/media/clientes (4).webp": "./static/media/clientes (4).b43e2bb8c36221c7ad59.webp",
     "static/media/img5.jpg": "./static/media/img5.1a6cc66ee98352d4d92c.jpg",
     "static/media/img2.jpg": "./static/media/img2.1d7303ef264ff3008ac0.jpg",
     "static/media/img1.jpg": "./static/media/img1.ee6c13094eef66e15563.jpg",
@@ -12,10 +14,14 @@
     "static/media/img3.jpg": "./static/media/img3.f90a967c108e028f845e.jpg",
     "static/media/mine.jfif": "./static/media/mine.7d1b346743bde38f86d8.jfif",
     "static/media/img-jm-minerva.jpg": "./static/media/img-jm-minerva.4741be84396a61128a55.jpg",
+    "static/media/clientes (5).webp": "./static/media/clientes (5).246719d39921db923ce2.webp",
     "static/media/a (10).jpg": "./static/media/a (10).c510418035daf497652c.jpg",
+    "static/media/clientes (2).webp": "./static/media/clientes (2).772d8e74376b7d6177ca.webp",
     "static/media/a (11).jpg": "./static/media/a (11).427983bdc6ab62f797ee.jpg",
+    "static/media/clientes (1).webp": "./static/media/clientes (1).7ab483c9d45fec33d9ac.webp",
     "static/media/a (9).jpg": "./static/media/a (9).47b6fb829639e9b3ee9c.jpg",
     "static/media/a (6).jpg": "./static/media/a (6).4564bfe6c5d8ba5a4721.jpg",
+    "static/media/clientes (3).webp": "./static/media/clientes (3).7fc86644d6f682cf81a0.webp",
     "static/media/a (5).jpg": "./static/media/a (5).14546b95a599519fd80a.jpg",
     "static/media/a (8).jpg": "./static/media/a (8).ed556df68f9492051093.jpg",
     "static/media/a (7).jpg": "./static/media/a (7).808ec1f411849c144faf.jpg",
@@ -27,12 +33,12 @@
     "static/media/slick.eot": "./static/media/slick.a4e97f5a2a64f0ab1323.eot",
     "static/media/slick.ttf": "./static/media/slick.c94f7671dcc99dce43e2.ttf",
     "static/media/slick.woff": "./static/media/slick.295183786cd8a1389865.woff",
-    "main.5fd6f6f0.css.map": "./static/css/main.5fd6f6f0.css.map",
-    "main.c2e9b6a9.js.map": "./static/js/main.c2e9b6a9.js.map",
+    "main.1e18498b.css.map": "./static/css/main.1e18498b.css.map",
+    "main.7eddbe7e.js.map": "./static/js/main.7eddbe7e.js.map",
     "453.196594ef.chunk.js.map": "./static/js/453.196594ef.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.5fd6f6f0.css",
-    "static/js/main.c2e9b6a9.js"
+    "static/css/main.1e18498b.css",
+    "static/js/main.7eddbe7e.js"
   ]
 }

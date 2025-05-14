@@ -1,0 +1,65 @@
+/* Contenedor general */
+.faq-container {
+    padding: 3em;
+    margin: 0 auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+}
+
+/* Título principal */
+.faq-title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+    color: #6C5C94;
+    margin-bottom: .5em;
+}
+
+/* Descripción del bloque FAQ */
+.faq-description {
+    font-size: 1rem;
+    color: #666;
+    text-align: center;
+    margin-bottom: 2rem;
+    margin-inline: auto;
+}
+
+/* Acordeón */
+.faq-accordion {
+    border-top: 1px solid #ddd;
+}
+
+/* Ítem individual del acordeón */
+.elementor-accordion-item {
+    border-bottom: 1px solid #ddd;
+    padding: 1rem 0;
+}
+
+/* Pregunta (título de pestaña) */
+.elementor-tab-title {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    font-size: 1.05rem;
+    font-weight: 500;
+    cursor: pointer;
+    color: #222;
+    transition: color 0.2s;
+}
+
+/* Icono + / - */
+.elementor-accordion-icon {
+    font-size: 1.2rem;
+    margin-right: 0.5rem;
+    color: #6C5C94;
+    /* Color1 de tu marca */
+}
+
+/* Contenido de respuesta */
+.elementor-tab-content {
+    font-size: 0.95rem;
+    color: #444;
+    margin-top: 0.5rem;
+    line-height: 1.5;
+}

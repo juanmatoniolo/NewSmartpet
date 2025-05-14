@@ -33,8 +33,8 @@ function Login() {
 			);
 			const data = await response.json();
 
-			let registroEncontrado = false;
-			let registroId;
+			let usuarioEncontrado = null;
+			let registroId = null;
 
 			for (const key in data) {
 				if (
@@ -42,18 +42,21 @@ function Login() {
 					data[key].dni === dni.trim() &&
 					data[key].contrasenia === contrasenia.trim()
 				) {
-					registroEncontrado = true;
+					usuarioEncontrado = data[key];
 					registroId = key;
 					break;
 				}
 			}
 
-			if (dni === "JuanmaToniolo" && contrasenia === "Sarmiento.846") {
+			if (usuarioEncontrado) {
 				localStorage.setItem("authenticated", "true");
-				navigate("/MasterCrud");
-			} else if (registroEncontrado) {
-				localStorage.setItem("authenticated", "true");
-				navigate(`/Consultas/${registroId}`);
+				localStorage.setItem("userRol", usuarioEncontrado.rol || "user");
+
+				if (usuarioEncontrado.rol === "admin") {
+					navigate("/MasterCrud");
+				} else {
+					navigate(`/Consultas/${registroId}`);
+				}
 			} else {
 				setError("Usuario o contraseña incorrectos. Inténtelo nuevamente");
 			}

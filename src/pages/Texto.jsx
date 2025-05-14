@@ -8,6 +8,7 @@ import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import videoSmartPet from "../assets/video/funcionamiento.mp4";
+import FAQComponent from "./FAQ";
 
 const cardsData = [
     {
@@ -172,13 +173,16 @@ const Texto = () => {
                 </div>
             </section>
 
-            <section className="contacto-section mt-5">
-                <Contacto />
-            </section>
             <div className="seo-keywords">
                 Collares inteligentes para mascotas, chapitas con QR para perros y gatos, identificador digital para mascotas, etiquetas NFC para perros, SmartPet collar, collar con chip NFC, collar QR gato, collar QR perro, accesorios inteligentes para mascotas, collar con geolocalización para perros, identificación rápida para mascotas, SmartPet Argentina, tag con chip para mascotas, QR en chapa, tags inteligentes para animales domésticos.
             </div>
-
+            
+            <section className="p-4 w-100 ">
+                <FAQComponent />
+            </section>
+            <section className="contacto-section mt-5">
+                <Contacto />
+            </section>
         </main>
     );
 };
