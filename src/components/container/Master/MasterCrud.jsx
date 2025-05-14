@@ -8,7 +8,6 @@ function MasterCrud() {
 		<>
 			<Logout />
 			<NavRoot />
-
 			<Footers />
 		</>
 	);

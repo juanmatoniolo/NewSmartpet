@@ -101,10 +101,14 @@
 .descripcion {
     background-color: #bab7b725;
     box-shadow: 3px 3px 6px 4px #d3d3d3d1;
-    margin: 1em;
-    padding: 1em 6px;
+    margin-top: 2em;
+    padding: 1em 6px !important;
     border-radius: 10px;
-    width: 100%;
+    width: 100% !important;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -ms-border-radius: 10px;
+    -o-border-radius: 10px;
 }
 
 .descripcion-mascota {
@@ -131,7 +135,7 @@
 
 .contenedor-contacto-a {
     width: 100% !important;
-    
+
     background-color: #bab7b725;
     box-shadow: 3px 3px 15px 8px #d3d3d3d1;
     border-radius: 10px;
@@ -352,7 +356,10 @@
         width: 30%;
     }
 
-
+    .modal-body {
+        width: 70% !important;
+        margin: auto;
+    }
 
 }
 
@@ -383,6 +390,12 @@
         font-size: .8em;
         width: 30%;
     }
+
+
+    .modal-body {
+        width: 60% !important;
+        margin: auto;
+    }
 }
 
 /* Estilos para pantallas extra grandes */
@@ -410,6 +423,11 @@
     .redes-sociales .btn {
         font-size: .8em;
         width: 30%;
+    }
+
+    .modal-body {
+        width: 50% !important;
+        margin: auto;
     }
 }
 
@@ -646,23 +664,23 @@
         font-size: 14px !important;
         padding: 8px 12px;
     }
-    
-.redes-sociales .btn {
-    font-size: 12px;
-    display: flex;
-    flex-flow: row nowrap;
-    border-radius: 12px;
-    width: 32%;
-    height: 2.6em;
-    justify-content: center;
-    align-items: center;
-    transition: all 0.3s ease;
-    border: none !important;
-    color: white !important;
-}
+
+    .redes-sociales .btn {
+        font-size: 12px;
+        display: flex;
+        flex-flow: row nowrap;
+        border-radius: 12px;
+        width: 32%;
+        height: 2.6em;
+        justify-content: center;
+        align-items: center;
+        transition: all 0.3s ease;
+        border: none !important;
+        color: white !important;
+    }
 
 }
 
-.contactos-mascota{
+.contactos-mascota {
     width: 100%;
 }

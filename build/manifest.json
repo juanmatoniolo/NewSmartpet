@@ -12,19 +12,19 @@
 	"prefer_related_applications": false,
 	"icons": [
 		{
-			"src": "/img/icono.png",
+			"src": "/icono.png",
 			"type": "image/png",
 			"sizes": "192x192",
 			"purpose": "any"
 		},
 		{
-			"src": "/img/icono.png",
+			"src": "/icono.png",
 			"type": "image/png",
 			"sizes": "512x512",
 			"purpose": "any maskable"
 		},
 		{
-			"src": "/img/icono.ico",
+			"src": "/icono.ico",
 			"sizes": "48x48",
 			"type": "image/x-icon",
 			"purpose": "any"
@@ -38,7 +38,7 @@
 			"url": "/mascotas",
 			"icons": [
 				{
-					"src": "/img/icono.png",
+					"src": "/icono.png",
 					"sizes": "192x192",
 					"type": "image/png"
 				}
@@ -51,7 +51,7 @@
 			"url": "/escanear",
 			"icons": [
 				{
-					"src": "/img/a.jpg",
+					"src": "/a.jpg",
 					"sizes": "192x192",
 					"type": "image/jpg"
 				}

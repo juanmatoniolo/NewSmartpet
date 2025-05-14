@@ -6,10 +6,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import axios from "axios";
 import { app } from "../../db/db";
 import Spinner from "react-bootstrap/Spinner";
-import "./Editar.css"
-
-
-
+import "./Editar.css";
 
 const EditarDatos = ({ show, handleClose, mascota, id, onSave }) => {
 	const [formData, setFormData] = useState(mascota);
@@ -18,75 +15,62 @@ const EditarDatos = ({ show, handleClose, mascota, id, onSave }) => {
 	const [error, setError] = useState(null);
 	const [cargando, setCargando] = useState(false);
 
+	// Función para subir imagen y convertirla a WebP
+	const subirImagen = async (archivoOriginal) => {
+		return new Promise((resolve, reject) => {
+			if (!archivoOriginal.type.startsWith("image/")) {
+				reject(new Error("El archivo no es una imagen válida."));
+				return;
+			}
 
-const subirImagen = async (archivoOriginal) => {
-	return new Promise((resolve, reject) => {
-		// Verificar que el archivo sea una imagen válida
-		if (!archivoOriginal.type.startsWith("image/")) {
-			reject(new Error("El archivo no es una imagen válida."));
-			return;
-		}
+			const reader = new FileReader();
+			reader.onload = async () => {
+				const img = new Image();
+				img.src = reader.result;
+				img.onload = async () => {
+					const canvas = document.createElement("canvas");
+					canvas.width = img.width;
+					canvas.height = img.height;
+					const ctx = canvas.getContext("2d");
+					ctx.drawImage(img, 0, 0);
 
-		const reader = new FileReader();
+					canvas.toBlob(
+						async (blob) => {
+							if (!blob) {
+								reject(new Error("No se pudo convertir la imagen a WebP."));
+								return;
+							}
 
-		reader.onload = async () => {
-			const img = new Image();
-			img.src = reader.result;
+							const storage = getStorage();
+							const archivoWebP = new File([blob], archivoOriginal.name.replace(/\.[^/.]+$/, ".webp"), {
+								type: "image/webp",
+							});
 
-			img.onload = async () => {
-				// Crear un canvas para convertir la imagen
-				const canvas = document.createElement("canvas");
-				canvas.width = img.width;
-				canvas.height = img.height;
-
-				const ctx = canvas.getContext("2d");
-				ctx.drawImage(img, 0, 0);
-
-				// Convertir a WebP
-				canvas.toBlob(
-					async (blob) => {
-						if (!blob) {
-							reject(new Error("No se pudo convertir la imagen a WebP."));
-							return;
-						}
-
-						// Subir la imagen convertida a Firebase Storage
-						const storage = getStorage();
-						const archivoWebP = new File([blob], archivoOriginal.name.replace(/\.[^/.]+$/, ".webp"), {
-							type: "image/webp",
-						});
-						const archivoRef = ref(storage, archivoWebP.name);
-
-						try {
-							await uploadBytes(archivoRef, archivoWebP);
-							const url = await getDownloadURL(archivoRef);
-							resolve(url);
-						} catch (error) {
-							reject(error);
-						}
-					},
-					"image/webp",
-					0.8 // Calidad opcional (0 a 1)
-				);
+							const archivoRef = ref(storage, archivoWebP.name);
+							try {
+								await uploadBytes(archivoRef, archivoWebP);
+								const url = await getDownloadURL(archivoRef);
+								resolve(url);
+							} catch (error) {
+								reject(error);
+							}
+						},
+						"image/webp",
+						0.8
+					);
+				};
+				img.onerror = () => {
+					reject(new Error("Error al cargar la imagen para convertir."));
+				};
 			};
-
-			img.onerror = () => {
-				reject(new Error("Error al cargar la imagen para convertir."));
+			reader.onerror = () => {
+				reject(new Error("Error al leer el archivo."));
 			};
-		};
+			reader.readAsDataURL(archivoOriginal);
+		});
+	};
 
-		reader.onerror = () => {
-			reject(new Error("Error al leer el archivo."));
-		};
-
-		reader.readAsDataURL(archivoOriginal);
-	});
-};
-
-
-
-
-	// Función para manejar el cambio de los datos del formulario
+	// Manejo de cambios en los campos del formulario
 	const handleChange = (e) => {
 		const { name, value } = e.target;
 		setFormData({
@@ -98,24 +82,9 @@ const subirImagen = async (archivoOriginal) => {
 		});
 	};
 
-	// Función para subir la imagen a Firebase Storage y obtener la URL
-/* 	const subirImagen = async (archivoOriginal) => {
-		const storage = getStorage();
-
-		// Convertir a WebP antes de subir
-		const archivoWebP = await convertirAWebP(archivoOriginal);
-
-		const archivoRef = ref(storage, `${archivoWebP.name}`);
-		await uploadBytes(archivoRef, archivoWebP);
-
-		const url = await getDownloadURL(archivoRef);
-		return url;
-	}; */
-
-	// Función para guardar los datos de la mascota en Firebase Realtime Database
+	// Guardar datos en Firebase Realtime Database
 	const guardarDatos = async (id, formData) => {
 		const url = `https://smartpet-1d59e-default-rtdb.firebaseio.com/smartpet/mascotas/${id}.json`;
-
 		try {
 			const response = await axios.patch(url, formData);
 			console.log("Datos guardados correctamente:", response.data);
@@ -128,26 +97,21 @@ const subirImagen = async (archivoOriginal) => {
 
 	const handleSaveChanges = async () => {
 		setCargando(true);
-
 		try {
 			let imgUrl = formData.datosMascotas.img;
-
 			if (archivo) {
 				imgUrl = await subirImagen(archivo);
 			}
 
-			// Crear un nuevo objeto con todos los datos actualizados
 			const formDataActualizado = {
 				...formData,
 				datosMascotas: {
 					...formData.datosMascotas,
-					img: imgUrl, // ahora sí se actualiza correctamente
+					img: imgUrl,
 				},
 			};
 
-			// Guardar los datos actualizados
 			await guardarDatos(id, formDataActualizado);
-
 			if (onSave) onSave();
 			handleClose();
 		} catch (error) {
@@ -157,22 +121,18 @@ const subirImagen = async (archivoOriginal) => {
 		}
 	};
 
-	// Función para manejar la selección de archivos
 	const archivoHandeler = (e) => {
 		const archivoSeleccionado = e.target.files[0];
-
 		if (archivoSeleccionado.size > 5 * 1024 * 1024) {
 			setError("El archivo no puede pesar más de 5MB");
 			setArchivo(null);
 			setArchivoURL(null);
 		} else {
 			setError(null);
-			setArchivo(archivoSeleccionado); // Almacena el archivo seleccionado
-
-			// Previsualizar la imagen seleccionada
+			setArchivo(archivoSeleccionado);
 			const reader = new FileReader();
 			reader.onload = () => {
-				setArchivoURL(reader.result); // Almacena la URL del archivo previsualizado
+				setArchivoURL(reader.result);
 			};
 			reader.readAsDataURL(archivoSeleccionado);
 		}
@@ -185,16 +145,18 @@ const subirImagen = async (archivoOriginal) => {
 		handleClose();
 	};
 
+
+	console.log(mascota)
+
 	return (
 		<Modal show={show} fullscreen onHide={handleCancel} animation>
 			<Modal.Header closeButton>
 				<Modal.Title className="text-center w-100">Editar Datos de la Mascota</Modal.Title>
 			</Modal.Header>
-
 			<Modal.Body className="container-fluid">
 				<Form className="row g-4">
 					{/* Imagen */}
-					<Form.Group className="col-12 col-sm-12  text-center">
+					<Form.Group className="col-12 col-sm-12 text-center">
 						<Form.Label className="fw-bold col-12 col-sm-12">Imagen de la Mascota</Form.Label>
 						{!archivoURL && formData?.datosMascotas?.img && (
 							<img
@@ -216,9 +178,9 @@ const subirImagen = async (archivoOriginal) => {
 						)}
 					</Form.Group>
 
-					{/* Datos Básicos */}
+					{/* Nombre y Fecha de Nacimiento */}
 					<Form.Group className="col-md-6 col-12">
-						<Form.Label className="Form-labl-editar" >Nombre</Form.Label>
+						<Form.Label className="Form-labl-editar">Nombre</Form.Label>
 						<Form.Control
 							type="text"
 							placeholder="Nombre de la mascota"
@@ -228,7 +190,43 @@ const subirImagen = async (archivoOriginal) => {
 						/>
 					</Form.Group>
 
+
 					<Form.Group className="col-md-6 col-12">
+						<Form.Label className="Form-labl-editar">Fecha de Nacimiento</Form.Label>
+						<Form.Control
+							type="date"
+							name="fechaNacimiento"
+							value={
+								formData?.datosMascotas?.fechaNacimiento
+									? (() => {
+										const [dia, mes, año] = formData.datosMascotas.fechaNacimiento.split("/");
+										return `${año}-${mes.padStart(2, "0")}-${dia.padStart(2, "0")}`;
+									})()
+									: ""
+							}
+							onChange={(e) => {
+								const fechaSeleccionada = e.target.value;
+								if (fechaSeleccionada) {
+									const [año, mes, dia] = fechaSeleccionada.split("-");
+									handleChange({
+										target: {
+											name: "fechaNacimiento",
+											value: `${dia}/${mes}/${año}`,
+										},
+									});
+								} else {
+									handleChange({
+										target: {
+											name: "fechaNacimiento",
+											value: "",
+										},
+									});
+								}
+							}}
+						/>
+					</Form.Group>
+
+					{/* 	<Form.Group className="col-md-6 col-12">
 						<Form.Label className="Form-labl-editar" >Edad</Form.Label>
 						<Form.Control
 							type="text"
@@ -238,10 +236,11 @@ const subirImagen = async (archivoOriginal) => {
 							onChange={handleChange}
 						/>
 					</Form.Group>
+ */}
 
 					{/* Sexo */}
 					<Form.Group className="col-md-6 col-12">
-						<Form.Label className="Form-labl-editar" >Sexo</Form.Label>
+						<Form.Label className="Form-labl-editar">Sexo</Form.Label>
 						<div className="d-flex gap-3">
 							<Form.Check
 								type="radio"
@@ -261,9 +260,8 @@ const subirImagen = async (archivoOriginal) => {
 							/>
 						</div>
 					</Form.Group>
-
 					<Form.Group className="col-md-6 col-12">
-						<Form.Label className="Form-labl-editar" >Ciudad y Provincia</Form.Label>
+						<Form.Label className="Form-labl-editar">Ciudad y Provincia</Form.Label>
 						<Form.Control
 							type="text"
 							placeholder="Ubicación"
@@ -275,7 +273,7 @@ const subirImagen = async (archivoOriginal) => {
 
 					{/* Descripción */}
 					<Form.Group className="col-12">
-						<Form.Label className="Form-labl-editar" >Descripción</Form.Label>
+						<Form.Label className="Form-labl-editar">Descripción</Form.Label>
 						<Form.Control
 							as="textarea"
 							rows={3}
@@ -288,7 +286,7 @@ const subirImagen = async (archivoOriginal) => {
 
 					{/* Mensaje predeterminado */}
 					<Form.Group className="col-12">
-						<Form.Label className="Form-labl-editar" >Mensaje predeterminado de WhatsApp</Form.Label>
+						<Form.Label className="Form-labl-editar">Mensaje predeterminado de WhatsApp</Form.Label>
 						<Form.Control
 							type="text"
 							placeholder="Mensaje predeterminado para WhatsApp"
@@ -301,7 +299,7 @@ const subirImagen = async (archivoOriginal) => {
 					{/* Contactos */}
 					{[1, 2].map((index) => (
 						<Form.Group className="col-md-6 col-12" key={index}>
-							<Form.Label className="Form-labl-editar" >Contacto {index}</Form.Label>
+							<Form.Label className="Form-labl-editar">Contacto {index}</Form.Label>
 							<Form.Control
 								type="text"
 								placeholder="Nombre del dueño/a"
@@ -329,7 +327,6 @@ const subirImagen = async (archivoOriginal) => {
 					))}
 				</Form>
 			</Modal.Body>
-
 			<Modal.Footer className="d-flex flex-row flex-md-row gap-2">
 				<Button variant="danger" onClick={handleCancel} className="w-40">
 					Cancelar
@@ -338,7 +335,7 @@ const subirImagen = async (archivoOriginal) => {
 					variant="primary"
 					onClick={handleSaveChanges}
 					className="w-40 guardar-cambios-totales"
-					disabled={cargando} // Deshabilitar el botón mientras se está cargando la imagen
+					disabled={cargando}
 				>
 					{cargando ? (
 						<div className="d-flex justify-content-center">
