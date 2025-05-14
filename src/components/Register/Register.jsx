@@ -81,7 +81,7 @@ function Register() {
 				"https://smartpet-1d59e-default-rtdb.firebaseio.com/usuario.json",
 				{
 					nombre: formData.nombre,
-					apellido: formData.apellido,
+					apellnombreyapellido:formData.apellnombreyapellido, 
 					dni: formData.dni,
 					contrasenia: formData.contrasenia,
 				}
@@ -90,7 +90,7 @@ function Register() {
 			setError("");
 			setFormData({
 				nombre: "",
-				apellido: "",
+				apellnombreyapellido: "",
 				dni: "",
 				contrasenia: "",
 				repetirContrasenia: "",
@@ -129,7 +129,7 @@ function Register() {
 							<Form.Control
 								type="text"
 								name="apellido"
-								value={formData.apellido}
+								value={formData.apellapellnombreyapellidoido}
 								onChange={handleChange}
 								placeholder="Apellido"
 								className="form-control-register"

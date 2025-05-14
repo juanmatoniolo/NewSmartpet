@@ -1,18 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./style.css";
+import Logout from "../../../Logout/Logout";
+import NavRoot from "../NavRoot";
 
 const ListarUsuarios = () => {
 	const [usuarios, setUsuarios] = useState([]);
-	const [mostrarUsuarios, setMostrarUsuarios] = useState(false);
 	const [activo, setActivo] = useState(null);
 	const [filtroTexto, setFiltroTexto] = useState(""); // NUEVO: texto del input de búsqueda
 
-	const obtenerUsuarios = async () => {
-		if (mostrarUsuarios) {
-			setUsuarios([]);
-			setMostrarUsuarios(false);
-		} else {
+	// Cargar los usuarios al inicio
+	useEffect(() => {
+		const obtenerUsuarios = async () => {
 			try {
 				const res = await axios.get(
 					"https://smartpet-1d59e-default-rtdb.firebaseio.com/usuario.json"
@@ -21,13 +20,14 @@ const ListarUsuarios = () => {
 					id,
 					...data,
 				}));
-				setUsuarios(usuariosArray.slice(0, 100));
-				setMostrarUsuarios(true);
+				setUsuarios(usuariosArray.slice(0, 100)); // Limitar a 100 usuarios si es necesario
 			} catch (error) {
 				console.error("Error al obtener usuarios:", error);
 			}
-		}
-	};
+		};
+
+		obtenerUsuarios();
+	}, []); // Se ejecuta una sola vez al montar el componente
 
 	const toggleActivo = (id) => {
 		setActivo((prev) => (prev === id ? null : id));
@@ -51,13 +51,11 @@ const ListarUsuarios = () => {
 	});
 
 	return (
-		<div className="usuarios-wrapper">
-			<button onClick={obtenerUsuarios} className="btn-toggle">
-				{mostrarUsuarios ? "Ocultar Usuarios" : "Obtener Usuarios"}
-			</button>
-
-			{/* Input de búsqueda */}
-			{mostrarUsuarios && (
+		<>
+			<Logout />
+			<NavRoot />
+			<div className="usuarios-wrapper">
+				{/* Input de búsqueda */}
 				<input
 					type="text"
 					placeholder="Buscar por nombre o DNI..."
@@ -65,9 +63,7 @@ const ListarUsuarios = () => {
 					onChange={(e) => setFiltroTexto(e.target.value)}
 					className="input-buscador"
 				/>
-			)}
 
-			{mostrarUsuarios && (
 				<div className="accordion-container">
 					{usuariosFiltrados.map((usuario, index) => (
 						<div key={usuario.id} className="accordion-item">
@@ -76,7 +72,7 @@ const ListarUsuarios = () => {
 								onClick={() => toggleActivo(usuario.id)}
 							>
 								<span>
-									{index + 1}. {usuario.nombre || "Sin nombre"}
+									{index + 1}. {usuario.nombre + " " + usuario.apellido || "Sin nombre"}
 								</span>
 								<span>{activo === usuario.id ? "−" : "+"}</span>
 							</div>
@@ -84,12 +80,18 @@ const ListarUsuarios = () => {
 							{activo === usuario.id && (
 								<div className="accordion-body">
 									<p>
+										<strong>Nombre y apellido :</strong> {usuario.nombre + " " + usuario.apellido
+										}
+									</p>
+									<p>
 										<strong>DNI:</strong> {usuario.dni}
 									</p>
 									<p>
 										<strong>Contraseña:</strong> {usuario.contrasenia}
 									</p>
+									<hr />
 									<h4>Códigos de Activación:</h4>
+									<hr />
 									{Object.values(usuario)
 										.filter((item) => item?.codAct)
 										.map((item, i) => (
@@ -108,8 +110,8 @@ const ListarUsuarios = () => {
 						</p>
 					)}
 				</div>
-			)}
-		</div>
+			</div>
+		</>
 	);
 };
 

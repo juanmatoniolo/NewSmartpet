@@ -1,0 +1,41 @@
+/* Estilos generales del Navbar */
+.navbar {
+    background-color: #6C5C94;
+    /* Color de fondo con un tono suave */
+    padding: 10px 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Sombras sutiles */
+}
+
+.navbar-list {
+    list-style-type: none;
+    /* Elimina los puntos de lista */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    /* Centra los elementos */
+}
+
+.navbar-list li {
+    margin: 0 15px;
+    /* Espacio entre los elementos */
+}
+
+.navbar-link {
+    text-decoration: none;
+    /* Elimina subrayado */
+    color: #FFFFFF;
+    /* Color blanco para el texto */
+    font-size: 16px;
+    /* Tamaño de la fuente */
+    font-weight: 500;
+    /* Peso de la fuente */
+    transition: color 0.3s ease;
+    /* Efecto de transición al pasar el ratón */
+}
+
+.navbar-link:hover {
+    color: #DDB3C9;
+    /* Color de resaltado al pasar el ratón */
+}
