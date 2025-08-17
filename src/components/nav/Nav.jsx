@@ -1,15 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Navbar, Nav, Container, Button, NavDropdown } from "react-bootstrap";
+import { Navbar, Nav, Container, Button } from "react-bootstrap";
 import "./nav.css";
 import Img from "../../assets/Imagenes";
 
 function SmartHeader() {
-	const [menuOpen, setMenuOpen] = useState(false);
 	const navigate = useNavigate();
 
 	const handleNavClick = (sectionId) => {
-		setMenuOpen(false);
 		navigate("/");
 		setTimeout(() => {
 			document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
@@ -18,16 +16,14 @@ function SmartHeader() {
 
 	return (
 		<header className="smart-header">
-			{/* Navbar con gradiente y con estilo similar al ejemplo */}
-			<Navbar expand="lg" className="navbar-gradient container-navbar-header" sticky="top">
+			<Navbar className="navbar-gradient container-navbar-header" sticky="top">
 				<div className="container-fluid container-header">
-					<div className="contenedor-img-header">
+					<div className="contenedor-header-1">
 
-						<Navbar.Brand href="#home" className="d-flex align-items-center">
+						{/* Logo */}
+						<Navbar.Brand href="/" className="d-flex align-items-center contenedor-img-header">
 							<img src={Img.img1} alt="SmartPet Logo" className="logo-img" />
 						</Navbar.Brand>
-
-						{/* Botones siempre visibles */}
 						<div className="auth-buttons d-flex gap-2">
 							<Link to="/login">
 								<Button variant="light" className="rounded-pill px-4 fw-bold btn1">
@@ -41,26 +37,23 @@ function SmartHeader() {
 							</Link>
 						</div>
 					</div>
-					<div className="contendor-links-header">
-						<Navbar.Toggle aria-controls="basic-navbar-nav" className="menu-hamburguesa" />
 
-						<Navbar.Collapse id="basic-navbar-nav hamburguesa">
-							<Nav className="me-auto hamburguesa">
-								<Nav.Link as={Link} to="/" onClick={() => setMenuOpen(false)}>
-									Inicio
-								</Nav.Link>
-								<button className="btn btn-link nav-link" onClick={() => handleNavClick("About")}>
-									Nosotros
-								</button>
-								<button className="btn btn-link nav-link" onClick={() => handleNavClick("Contact")}>
-									Contacto
-								</button>
-								<button className="btn btn-link nav-link" onClick={() => handleNavClick("Buy")}>
-									Comprar
-								</button>
-							</Nav>
-						</Navbar.Collapse>
-					</div>
+					{/* Enlaces del menú (siempre visibles) */}
+					<Nav className="d-flex gap-4 contendor-links-header align-items-center">
+
+						<button className="btn btn-link nav-link fw-bold text-white" onClick={() => handleNavClick("About")}>
+							Nosotros
+						</button>
+						<button className="btn btn-link nav-link fw-bold text-white" onClick={() => handleNavClick("Contact")}>
+							Contacto
+						</button>
+						<button className="btn btn-link nav-link fw-bold text-white" onClick={() => handleNavClick("Buy")}>
+							Comprar
+						</button>
+					</Nav>
+
+					{/* Botones de autenticación */}
+
 				</div>
 			</Navbar>
 		</header>

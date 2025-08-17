@@ -1,139 +1,112 @@
-/* nav.css */
-.smart-header {
+/* Fondo del header */
+.smart-header,
+.navbar-gradient {
 	background: linear-gradient(to bottom, #6C5C94, rgba(221, 179, 201, 0.805));
 	color: white;
-}
-
-.navbar-gradient {
-	background: linear-gradient(to bottom, #6C5C94, rgba(221, 179, 201, 0.805)) !important;
 	width: 100%;
 }
 
+/* Logo */
 .logo-img {
 	width: 4em;
 	object-fit: cover;
 }
 
-/* Estilo para el menú desplegable */
+/* Links del navbar */
 .navbar-nav .nav-link {
 	color: white !important;
+	font-weight: 600;
 }
 
 .navbar-nav .nav-link:hover {
 	color: #CD7FA7 !important;
 }
 
-.navbar-toggle .navbar-toggler-icon {
-	background-color: white;
-}
-
-/* Estilos para los botones de autenticación */
+/* Botones de autenticación */
 .auth-buttons .btn {
 	padding: 0.5rem 1.5rem;
-
 }
-
-/* Asegura que los botones Entrar y Registro estén siempre visibles */
-@media (max-width: 991px) {
-	.auth-buttons {
-		display: flex;
-		justify-content: center;
-		gap: 1rem;
-		margin-left: 1rem;
-	}
-
-	.navbar-toggler {
-		margin-top: 10px;
-	}
-}
-
-/* Estilo para el navbar y su contenido */
-.navbar>.container {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	justify-content: space-between;
-}
-
-.navbar-nav {
-	display: flex;
-	flex-direction: row;
-	flex-wrap: nowrap;
-	gap: 2em;
-	justify-content: flex-end;
-}
-
-
 
 .btn2 {
 	margin-left: 10px;
 }
 
+/* Navbar container general */
 .container-navbar-header {
-	width: 100%;
 	display: flex;
-	flex-flow: row wrap;
+	flex-direction: row;
 	justify-content: space-around;
-
-
+	width: 100%;
 }
 
+/* Contenido del header */
 .container-header {
-	width: 100% !important;
 	display: flex;
 	flex-wrap: wrap;
-	justify-content: flex-end !important;
-	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
 }
 
-.contenedor-img-header {
-	width: 100% !important;
+/* Contenedor del logo y botones de login/registro */
+.contenedor-header-1 {
 	display: flex;
-	flex-flow: row nowrap;
-	justify-content: space-around;
+	flex-flow: row nowrap !important;
 	align-items: center;
 	gap: 1em;
+	flex-wrap: wrap;
 }
 
-
+/* Enlaces visibles del menú */
 .contendor-links-header {
-	width: 100% !important;
 	display: flex;
-	flex-flow: column nowrap;
-	align-items: flex-start;
-	flex-direction: row;
+	align-items: center;
+	gap: 2em;
 	flex-wrap: wrap;
-	justify-content: flex-end;
-	align-content: stretch;
-	margin-left: 1em;
 	margin-right: 2em;
 }
 
-.menu-hamburguesa {
-	width: 100%;
-	width: 3.4em;
-	align-items: end;
-	justify-content: end;
-}
-
-.hamburguesa {
-	width: 100%;
-	display: flex;
-	flex-flow: row nowrap !important;
-	justify-content: space-between !important;
-	align-items: center;
-	font-weight: 600;
 
 
-}
+@media (max-width: 750px) {
 
 
-@media (min-width: 992px) {
-	.hamburguesa {
-		width: 100% !important;
+	.container-navbar-header {
 		display: flex;
-		flex-flow: row nowrap;
-		justify-content: space-evenly !important;
+		flex-flow: row wrap;
+
 	}
 
+	.contenedor-header-1 {
+		width: 100%;
+		display: flex;
+		flex-flow: row nowrap;
+	}
+
+
+	.contendor-links-header {
+		width: 100%;
+		display: flex;
+		flex-flow: row nowrap;
+		justify-content: space-around;
+
+	}
+
+
+
+}
+
+.contenedor-img-header{
+	width: 100%;
+	display: flex;
+	flex-flow: row nowrap;
+	gap: 2em;
+}
+.contenedor-img-header > a{
+	width: 80%;
+	padding:0.2em 1em;
+}
+.btn-logout{
+	min-width: 20%;
+	max-width: 50%;
 }

@@ -2,9 +2,28 @@ import React from "react";
 import { Modal, Button } from "react-bootstrap";
 import "./mm.css";
 
+// Función para calcular la edad dinámicamente
+const calcularEdad = (fechaNac) => {
+  if (!fechaNac) return "";
+  const [dia, mes, año] = fechaNac.split("/").map(Number);
+  const fechaNacimiento = new Date(año, mes - 1, dia); // Mes comienza en 0
+  const hoy = new Date();
+  let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+  const mesDiferencia = hoy.getMonth() - fechaNacimiento.getMonth();
+
+  if (
+    mesDiferencia < 0 ||
+    (mesDiferencia === 0 && hoy.getDate() < fechaNacimiento.getDate())
+  ) {
+    edad--;
+  }
+
+  return `${edad} año(s)`;
+};
+
 function MostrarMascota({ show, handleClose, mascota }) {
   const handleWhatsapp = (numero, mensaje) => {
-    const whatsappUrl = `https://wa.me/+549${numero}?text=${mensaje}`;
+    const whatsappUrl = `https://wa.me/+549 ${numero}?text=${mensaje}`;
     window.open(whatsappUrl, "_blank");
   };
 
@@ -17,7 +36,7 @@ function MostrarMascota({ show, handleClose, mascota }) {
     if (ig && ig.startsWith("@")) {
       ig = ig.substring(1); // Elimina el @ si está presente
     }
-    const igUrl = `https://www.instagram.com/${ig}`;
+    const igUrl = `https://www.instagram.com/ ${ig}`;
     window.open(igUrl, "_blank");
   };
 
@@ -47,7 +66,7 @@ function MostrarMascota({ show, handleClose, mascota }) {
                   <h4 className="nombre-mascota">{mascota.datosMascotas.nombre}</h4>
                   <div className="contenedor-datos-mascota">
                     <img
-                      src="https://juanmatoniolo.github.io/SmartPet/assets/heterosexual.png"
+                      src="https://juanmatoniolo.github.io/SmartPet/assets/heterosexual.png "
                       className="iconos-datos-mascota"
                       alt="Icono de sexo"
                     />
@@ -55,28 +74,27 @@ function MostrarMascota({ show, handleClose, mascota }) {
                   </div>
                   <div className="contenedor-datos-mascota">
                     <img
-                      src="https://juanmatoniolo.github.io/SmartPet/assets/latido-del-corazon.png"
+                      src="https://juanmatoniolo.github.io/SmartPet/assets/latido-del-corazon.png "
                       className="iconos-datos-mascota"
                       alt="Icono de edad"
                     />
-                    <p className="edad-mascota">&nbsp;{mascota.datosMascotas.edad}</p>
+                    <p className="edad-mascota">
+                      &nbsp;
+                      {mascota.datosMascotas.fechaNacimiento
+                        ? calcularEdad(mascota.datosMascotas.fechaNacimiento)
+                        : mascota.datosMascotas.edad || "Desconocida"}
+                    </p>
                   </div>
                   <div className="contenedor-datos-mascota">
                     <img
-                      src="https://juanmatoniolo.github.io/SmartPet/assets/locato.png"
+                      src="https://juanmatoniolo.github.io/SmartPet/assets/locato.png "
                       className="iconos-datos-mascota"
                       alt="Icono de ubicación"
                     />
-                    <p className="ubicacion-mascota">&nbsp;
-                      {mascota.datosMascotas.ubicacion}
-                    </p>
+                    <p className="ubicacion-mascota">&nbsp;{mascota.datosMascotas.ubicacion}</p>
                   </div>
                 </div>
-
-
               </section>
-
-
               {/* Descripción */}
               {mascota.datosMascotas.descripcion ? (
                 <section className="descripcion" style={{ display: "block" }}>
