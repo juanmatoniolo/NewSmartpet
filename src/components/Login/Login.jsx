@@ -1,32 +1,27 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./login.css";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import Footers from "../footer/Footer";
-import Barnav from "../nav/Nav";
+import SmartHeader from "../nav/SmartHeader";
 
 function Login() {
 	const [dni, setDni] = useState("");
 	const [contrasenia, setContrasenia] = useState("");
 	const [error, setError] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
+	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate();
 
 	const handleInputChange = (e) => {
-		if (e.target.id === "dni") {
-			setDni(e.target.value);
-		} else if (e.target.id === "contrasenia") {
-			setContrasenia(e.target.value);
-		}
-	};
-
-	const togglePasswordVisibility = () => {
-		setShowPassword(!showPassword);
+		if (e.target.id === "dni") setDni(e.target.value);
+		else if (e.target.id === "contrasenia") setContrasenia(e.target.value);
+		if (error) setError("");
 	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-
+		setLoading(true);
 		try {
 			const response = await fetch(
 				"https://smartpet-1d59e-default-rtdb.firebaseio.com/usuario.json"
@@ -49,76 +44,99 @@ function Login() {
 			}
 
 			if (usuarioEncontrado) {
-				// Determinar el rol
 				const rol = usuarioEncontrado.rol === "admin" ? "admin" : "usuario";
-
-				// Guardar en localStorage
 				localStorage.setItem("authenticated", "true");
 				localStorage.setItem("userId", registroId);
 				localStorage.setItem("rol", rol);
-
-				// Redireccionar según rol
-				if (rol === "admin") {
-					navigate("/MasterCrud");
-				} else {
-					navigate(`/Consultas/${registroId}`);
-				}
+				if (rol === "admin") navigate("/MasterCrud");
+				else navigate(`/Consultas/${registroId}`);
 			} else {
-				setError("Usuario o contraseña incorrectos. Inténtelo nuevamente.");
+				setError("Usuario o contraseña incorrectos. Intentá nuevamente.");
 			}
-		} catch (error) {
-			alert("Ha ocurrido un error. Por favor, intenta nuevamente.");
-			console.error(error);
+		} catch (err) {
+			setError("Error de conexión. Por favor, intentá nuevamente.");
+			console.error(err);
+		} finally {
+			setLoading(false);
 		}
 	};
 
 	return (
 		<>
-			<Barnav />
-			<main className="main-login">
-				<section className="login-section">
-					<h2 className="login-title">Iniciar Sesión</h2>
-					<form className="login-form" onSubmit={handleSubmit}>
-						<div className="input-group">
-							<label htmlFor="dni">Usuario:</label>
+			<SmartHeader />
+			<main className="login-main">
+				<div className="login-card">
+
+					{/* Header de la card */}
+					<div className="login-card-header">
+						<h1 className="login-title">Bienvenido a SmartPet</h1>
+						<p className="login-sub">Ingresá para gestionar tu mascota</p>
+					</div>
+
+					<form className="login-form" onSubmit={handleSubmit} noValidate>
+
+						<div className="login-field">
+							<label htmlFor="dni">Usuario</label>
 							<input
 								type="text"
 								id="dni"
 								name="usuario"
-								placeholder="Username"
+								placeholder="Tu usuario"
 								required
 								value={dni}
 								onChange={handleInputChange}
-								className="input-user"
 								autoComplete="username"
+								className={error ? "input-error" : ""}
 							/>
 						</div>
-						<div className="input-group">
-							<label htmlFor="contrasenia">Contraseña:</label>
-							<div className="password-input-container">
+
+						<div className="login-field">
+							<label htmlFor="contrasenia">Contraseña</label>
+							<div className="login-password-wrap">
 								<input
 									type={showPassword ? "text" : "password"}
 									id="contrasenia"
 									name="contrasenia"
-									className="password-input"
+									placeholder="Tu contraseña"
+									required
 									value={contrasenia}
 									onChange={handleInputChange}
 									autoComplete="current-password"
+									className={error ? "input-error" : ""}
 								/>
-								<div
-									className="password-toggle-btn"
-									onClick={togglePasswordVisibility}
+								<button
+									type="button"
+									className="login-eye"
+									onClick={() => setShowPassword(!showPassword)}
+									aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
 								>
 									{showPassword ? <IoMdEyeOff /> : <IoMdEye />}
-								</div>
+								</button>
 							</div>
 						</div>
-						{error && <p className="error-message">{error}</p>}
-						<button type="submit" className="login-btn">
-							Entrar
+
+						{error && (
+							<div className="login-error" role="alert">
+								{error}
+							</div>
+						)}
+
+						<button
+							type="submit"
+							className="login-btn"
+							disabled={loading}
+						>
+							{loading ? "Ingresando..." : "Entrar"}
 						</button>
+
 					</form>
-				</section>
+
+					<p className="login-register">
+						¿No tenés cuenta?{" "}
+						<Link to="/Register">Registrate acá</Link>
+					</p>
+
+				</div>
 			</main>
 			<Footers />
 		</>

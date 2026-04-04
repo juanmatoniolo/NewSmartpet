@@ -1,18 +1,18 @@
 import React from "react";
 import "./about.css";
 import Header from "../components/header/Header";
-import Barnav from "../components/nav/Nav";
 import Footers from "../components/footer/Footer";
 
 import equipo from "../assets/img-jm-minerva.jpg";
 import WhatsAppButton from "../components/btnWhatsapp/Whatsapp";
+import SmartHeader from "../components/nav/SmartHeader";
 // Puedes agregar más imágenes aquí si es necesario
 
 function About() {
 	return (
 		<>
 			<Header />
-			<Barnav />
+			<SmartHeader />
 			<WhatsAppButton
 				mensaje={"Hola estoy interesado en adquirir un collar smartpet"}
 			/>

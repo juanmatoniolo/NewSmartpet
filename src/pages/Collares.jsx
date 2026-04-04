@@ -2,7 +2,7 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./collares.css";
 import Header from "../components/header/Header";
-import Barnav from "../components/nav/Nav";
+import Barnav from "../components/nav/SmartHeader";
 import Footers from "../components/footer/Footer";
 import Imagenes from "../assets/Imagenes";
 import Carousel3D from "../assets/collares/modelos";
@@ -76,10 +76,10 @@ function Collares() {
 			<h2 className="section-title">¿Como funciona? </h2>
 
 			<section className="collares-videos  col-10 col-sm-10 col-md-8 col-lg-8 mt-5">
-					<video controls className="video-fluid controlarVideo">
-						<source src={Imagenes.video} type="video/mp4" />
-						Tu navegador no soporta la etiqueta de video.
-					</video>
+				<video controls className="video-fluid controlarVideo">
+					<source src={Imagenes.video} type="video/mp4" />
+					Tu navegador no soporta la etiqueta de video.
+				</video>
 			</section>
 
 			<Footers />

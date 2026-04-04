@@ -1,210 +1,268 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { Button, Modal } from "react-bootstrap"; // Importamos Modal
-import "./agregar.css";
+import { Modal } from "react-bootstrap";
+import { FaInfoCircle, FaSpinner } from "react-icons/fa";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Agregarcodigo = ({ id }) => {
- const [codigo, setCodigo] = useState(""); // Estado para almacenar el código a agregar
- const [mensaje, setMensaje] = useState(""); // Estado para mostrar mensajes de éxito o error
- const [cargando, setCargando] = useState(false); // Estado para controlar la carga
- const [codigosUnicos, setCodigosUnicos] = useState(new Set()); // Estado para almacenar los códigos de activación únicos
- const [showModal, setShowModal] = useState(false); // Estado para controlar el modal
+  const [codigo, setCodigo] = useState("");
+  const [mensaje, setMensaje] = useState("");
+  const [cargando, setCargando] = useState(false);
+  const [codigosUnicos, setCodigosUnicos] = useState(new Set());
+  const [showModal, setShowModal] = useState(false);
+  const inputRef = useRef(null);
 
- const urlMascotas = `https://smartpet-1d59e-default-rtdb.firebaseio.com/smartpet/mascotas.json`;
- const urlUsuario = `https://smartpet-1d59e-default-rtdb.firebaseio.com/usuario/${id}.json`;
+  const urlMascotas = `https://smartpet-1d59e-default-rtdb.firebaseio.com/smartpet/mascotas.json`;
+  const urlUsuario = `https://smartpet-1d59e-default-rtdb.firebaseio.com/usuario/${id}.json`;
 
- // Función para obtener los códigos de activación desde la base de datos de mascotas
- const fetchCodigosMascotas = async () => {
-  try {
-   const response = await axios.get(urlMascotas);
-   const fetchedData = response.data;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const resM = await axios.get(urlMascotas);
+        const dataM = resM.data || {};
+        const codigosM = new Set();
+        Object.values(dataM).forEach((m) => {
+          if (m?.codAct) codigosM.add(m.codAct);
+        });
 
-   // Extrae y guarda los códigos de activación únicos en un set
-   const codigos = new Set();
-   Object.keys(fetchedData).forEach((key) => {
-    if (fetchedData[key]?.codAct) {
-     codigos.add(fetchedData[key].codAct);
+        const resU = await axios.get(urlUsuario);
+        const dataU = resU.data || {};
+        const codigosU = new Set();
+        Object.values(dataU).forEach((u) => {
+          if (u?.codAct) codigosU.add(u.codAct);
+        });
+
+        const filtrados = Array.from(codigosM).filter((c) => !codigosU.has(c));
+        setCodigosUnicos(new Set(filtrados));
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, [id]);
+
+  useEffect(() => {
+    // Forzar foco en el input al montar
+    if (inputRef.current) {
+      inputRef.current.focus();
     }
-   });
+  }, []);
 
+  const validarFormato = (valor) => /^[\w@#&]{4}[0-9]{4}$/.test(valor);
 
-   return codigos; // Retorna el set de códigos únicos de mascotas
-  } catch (error) {
-   console.error("Error al obtener datos de mascotas:", error);
-   throw new Error("Error al obtener datos de mascotas");
-  }
- };
-
- // Función para obtener los códigos de activación desde la base de datos de usuario
- const fetchCodigosUsuario = async () => {
-  try {
-   const response = await axios.get(urlUsuario);
-   const fetchedData = response.data;
-
-   // Extrae y guarda los códigos de activación únicos en un set
-   const codigos = new Set();
-   Object.keys(fetchedData).forEach((key) => {
-    if (fetchedData[key]?.codAct) {
-     codigos.add(fetchedData[key].codAct);
-    }
-   });
-   return codigos; // Retorna el set de códigos únicos de usuario
-  } catch (error) {
-   console.error("Error al obtener datos de usuario:", error);
-   throw new Error("Error al obtener datos de usuario");
-  }
- };
-
- // Efecto para cargar los códigos únicos al montar el componente y cuando 'id' cambia
- useEffect(() => {
-  const fetchData = async () => {
-   try {
-    const codigosMascotas = await fetchCodigosMascotas();
-    const codigosUsuario = await fetchCodigosUsuario();
-
-    // Filtra los códigos que están en mascotas pero no en usuario
-    const codigosFiltrados = Array.from(codigosMascotas).filter(
-     (codigo) => !codigosUsuario.has(codigo)
-    );
-    setCodigosUnicos(new Set(codigosFiltrados)); // Actualiza el estado con los códigos filtrados
-   } catch (error) {
-    console.error("Error al obtener códigos únicos:", error);
-   }
+  const handleChange = (e) => {
+    const valor = e.target.value.toUpperCase();
+    setCodigo(valor);
+    if (mensaje) setMensaje("");
   };
 
-  fetchData(); // Llama a la función fetchData al montar el componente y cuando 'id' cambia
- }, [id]);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validarFormato(codigo)) {
+      setMensaje("Formato inválido: 4 letras + 4 números (ej: ABCD1234)");
+      return;
+    }
+    if (!codigosUnicos.has(codigo)) {
+      setMensaje("Código no válido o ya fue utilizado");
+      return;
+    }
+    setCargando(true);
+    try {
+      const instance = axios.create({
+        baseURL: "https://smartpet-1d59e-default-rtdb.firebaseio.com",
+        timeout: 5000,
+        headers: { "Content-Type": "application/json" },
+      });
+      await instance.post(urlUsuario, { codAct: codigo });
+      setMensaje("✅ Código agregado correctamente");
+      setCodigo("");
+      if (inputRef.current) inputRef.current.focus();
+    } catch (error) {
+      setMensaje("❌ Error al agregar código. Intentá de nuevo");
+    } finally {
+      setCargando(false);
+    }
+  };
 
- // Función para manejar el envío del formulario
- const handleSubmit = async (e) => {
-  e.preventDefault(); // Evita el comportamiento predeterminado del formulario
+  const styles = {
+    container: {
+      minHeight: "100vh",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "linear-gradient(145deg, #f8f9fc 0%, #eef2f7 100%)",
+      padding: "2rem",
+    },
+    card: {
+      maxWidth: 550,
+      width: "100%",
+      background: "rgba(255, 255, 255, 0.96)",
+      borderRadius: "2rem",
+      boxShadow: "0 20px 35px -12px rgba(0,0,0,0.2)",
+      padding: "2rem 1.8rem",
+    },
+    title: {
+      fontSize: "1.8rem",
+      fontWeight: 700,
+      background: "linear-gradient(135deg, #6C5C94, #9b89b5)",
+      backgroundClip: "text",
+      WebkitBackgroundClip: "text",
+      color: "transparent",
+      marginBottom: "1.5rem",
+      textAlign: "center",
+    },
+    form: {
+      display: "flex",
+      flexDirection: "column",
+      gap: "1.5rem",
+    },
+    inputGroup: {
+      display: "flex",
+      alignItems: "center",
+      gap: "0.8rem",
+    },
+    input: {
+      flex: 1,
+      padding: "0.9rem 1rem",
+      fontSize: "1rem",
+      border: "2px solid #e2e8f0",
+      borderRadius: "1.2rem",
+      background: "#fff",
+      fontFamily: "monospace",
+      letterSpacing: "1px",
+      textTransform: "uppercase",
+      outline: "none",
+      transition: "all 0.2s",
+    },
+    infoButton: {
+      background: "transparent",
+      border: "none",
+      color: "#6C5C94",
+      fontSize: "1.4rem",
+      cursor: "pointer",
+      padding: "0.5rem",
+      display: "flex",
+      alignItems: "center",
+    },
+    messageBanner: {
+      padding: "0.7rem",
+      borderRadius: "1rem",
+      textAlign: "center",
+      fontWeight: 500,
+    },
+    submitButton: {
+      background: "linear-gradient(105deg, #6C5C94, #574a83)",
+      border: "none",
+      padding: "0.9rem",
+      fontSize: "1rem",
+      fontWeight: 600,
+      color: "white",
+      borderRadius: "1.5rem",
+      cursor: "pointer",
+      transition: "all 0.2s",
+      boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+    },
+    hint: {
+      fontSize: "0.75rem",
+      textAlign: "center",
+      color: "#718096",
+      marginTop: "1rem",
+    },
+    loadingOverlay: {
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      gap: "1rem",
+      padding: "2rem",
+      color: "#6C5C94",
+    },
+  };
 
-  // Validación del formato del código
-  const codigoValido = /^[\w@#&]{4}[0-9]{4}$/.test(codigo);
-  if (!codigoValido) {
-   setMensaje("El código debe tener 4 letras seguidas de 4 números.");
-   return;
-  }
+  return (
+    <div style={styles.container}>
+      <div style={styles.card}>
+        {cargando ? (
+          <div style={styles.loadingOverlay}>
+            <FaSpinner className="spinner-icon" style={{ fontSize: "2.5rem", animation: "spin 1s linear infinite" }} />
+            <p>Verificando código...</p>
+          </div>
+        ) : (
+          <>
+            <h2 style={styles.title}>Agregar código de activación</h2>
+            <form onSubmit={handleSubmit} style={styles.form}>
+              <div style={styles.inputGroup}>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={codigo}
+                  onChange={handleChange}
+                  placeholder="Ej: ABCD1234"
+                  style={styles.input}
+                  aria-label="Código de activación"
+                  autoComplete="off"
+                />
+                <button
+                  type="button"
+                  style={styles.infoButton}
+                  onClick={() => setShowModal(true)}
+                  aria-label="Información"
+                >
+                  <FaInfoCircle />
+                </button>
+              </div>
+              {mensaje && (
+                <div
+                  style={{
+                    ...styles.messageBanner,
+                    background: mensaje.includes("✅") ? "#e6ffed" : "#fff5f5",
+                    color: mensaje.includes("✅") ? "#2c7a3e" : "#c53030",
+                    borderLeft: `5px solid ${mensaje.includes("✅") ? "#2c7a3e" : "#c53030"}`,
+                  }}
+                >
+                  {mensaje}
+                </div>
+              )}
+              <button
+                type="submit"
+                style={styles.submitButton}
+                disabled={!codigo}
+                onMouseEnter={(e) => {
+                  if (!e.target.disabled) e.target.style.transform = "translateY(-2px)";
+                }}
+                onMouseLeave={(e) => {
+                  if (!e.target.disabled) e.target.style.transform = "translateY(0)";
+                }}
+              >
+                Activar código
+              </button>
+            </form>
+            <p style={styles.hint}>
+              * El código tiene 4 letras seguidas de 4 números (mayúsculas)
+            </p>
+          </>
+        )}
+      </div>
 
-  // Validación de existencia del código en los códigos únicos
-  if (codigosUnicos.has(codigo)) {
-   setCargando(true); // Establece el estado de carga a verdadero
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>¿Cómo funciona SmartPet?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Ingresá el <strong>código de activación</strong> que viene con el collar. Es único y vincula tu cuenta con tu mascota.</p>
+          <p>Una vez validado, podrás cargar los datos de tu mascota: foto, nombre, edad, sexo, cuidados y contactos de emergencia.</p>
+          <p>Al escanear el collar (QR/NFC) con un celular, si tiene permisos de ubicación, se actualizará automáticamente la última ubicación.</p>
+          <p>Usá el botón <strong>"Mostrar mascota"</strong> para ver la vista previa del perfil público.</p>
+        </Modal.Body>
+      </Modal>
 
-   try {
-    // Realiza una solicitud POST para agregar el código en la ruta específica según el 'id'
-    const instance = axios.create({
-     baseURL:
-      "https://smartpet-1d59e-default-rtdb.firebaseio.com", // URL base de la base de datos
-     timeout: 5000, // Tiempo máximo de espera para la solicitud en milisegundos
-     headers: {
-      "Content-Type": "application/json", // Tipo de contenido de la solicitud
-     },
-    });
-
-    const response = await instance.post(urlUsuario, {
-     codAct: codigo, // Datos a enviar en el cuerpo de la solicitud
-    });
-
-    console.log("Respuesta del servidor:", response.data);
-    setMensaje("Código agregado correctamente."); // Actualiza el estado del mensaje
-   } catch (error) {
-    console.error("Error al agregar código:", error);
-    setMensaje(
-     "Error al agregar código. Por favor, intenta nuevamente."
-    ); // Actualiza el estado del mensaje de error
-   }
-
-   setCargando(false); // Establece el estado de carga a falso
-  } else {
-   setMensaje(
-    "El código ingresado no es válido o ya ha sido utilizado."
-   ); // Mensaje de error si el código no es válido o ya existe
-  }
- };
-
- // Función para manejar cambios en el input de código
- const handleChange = (e) => {
-  setCodigo(e.target.value); // Actualiza el estado del código con el valor del input
- };
-
- return (
-  <section className=" agregar-container section-validador ">
-   <div className="agregar-form-container">
-    {cargando ? (
-     <div className="agregar-loading-container">
-      <p>Aguarde mientras se inicia la base de datos...</p>
-      <div className="agregar-loading-ring"></div>
-     </div>
-    ) : (
-     <>
-      <h2 className="agregar-h2">Agregar Código</h2>
-      <form
-       onSubmit={handleSubmit}
-       className="agregar-codigo-form"
-      >
-       <input
-        type="text"
-        id="codigo"
-        value={codigo}
-        onChange={handleChange}
-        placeholder="Ej. ABCD1234"
-        required
-       />
-       <div className="contenedor-btns">
-
-        <button type="submit">Agregar</button>
-        {/* Botón para abrir el modal */}
-        <div className="info-modal-container text-center my-3">
-         <Button variant="btn-info" onClick={() => setShowModal(true)}>
-          Info
-         </Button>
-        </div>
-
-        {/* Modal */}
-        <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-         <Modal.Header closeButton>
-          <Modal.Title>Información Adicional</Modal.Title>
-         </Modal.Header>
-         <Modal.Body>
-          <p className="mb-3">
-           Para comenzar a usar SmartPet, primero debes ingresar el <strong>código de activación</strong> que vino junto al collar que compraste. Este código es único y permite vincular tu cuenta con la mascota correspondiente.
-          </p>
-
-          <p className="mb-3">
-           Una vez ingresado el código, se habilitará un formulario para que puedas <strong>cargar los datos de tu mascota</strong>. Allí podrás subir una imagen, agregar su nombre, edad, sexo, descripción médica o de cuidados importantes, y los contactos de emergencia con acceso rápido por llamada, WhatsApp o Instagram.
-          </p>
-
-          <p className="mb-3">
-           Cuando alguien escanee el collar de tu mascota con su teléfono (mediante QR o chip NFC), si el dispositivo tiene permisos de ubicación, se actualizará automáticamente la <strong>última ubicación</strong> en la base de datos. Esta se puede visualizar desde el botón <strong>"Ver mapa"</strong>.
-          </p>
-
-          <p className="mb-3">
-           Si aún no se ha escaneado el collar o no se compartió la ubicación, en su lugar verás el botón <strong>"Ubicación no disponible"</strong>.
-          </p>
-
-          <p className="mb-0">
-           <strong>Recomendación:</strong> Luego de completar los datos, presioná el botón <strong>"Mostrar mascota"</strong> para visualizar cómo se verá el perfil público que otros verán al escanear el collar. Esto te ayuda a verificar que todo esté correcto. Importante: <strong>este botón no guarda ubicación</strong>, solo sirve como vista previa.
-          </p>
-
-         </Modal.Body>
-        </Modal>
-       </div>
-      </form>
-      {mensaje && (
-       <p
-        className={`agregar-mensaje ${mensaje.includes("correctamente")
-         ? "mensaje-exito"
-         : ""
-         }`}
-       >
-        {mensaje}
-       </p>
-      )}
-     </>
-    )}
-   </div>
-  </section>
- );
+      <style>{`
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
+    </div>
+  );
 };
 
 export default Agregarcodigo;

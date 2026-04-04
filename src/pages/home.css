@@ -1,122 +1,287 @@
-.smartpet-main {
-    background-color: #f9f9fb;
-    font-family: "Segoe UI", sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+/* ── BASE ── */
+.sp-main {
+    background: #f4f1f9;
+    font-family: 'Nunito', sans-serif;
+    color: #2a1f3d;
 }
 
-.title {
-    font-size: 2.5rem;
-    color: #333;
+/* ── HERO ── */
+.sp-hero {
+    background-color: #4A3B7A;
+    padding: 5rem 1.5rem 6rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.sp-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background: #f4f1f9;
+    clip-path: ellipse(55% 100% at 50% 100%);
+}
+
+.sp-eyebrow {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.8rem;
     font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
 }
 
-.highlight {
-    color: #6C5C94;
+.sp-hero-title {
+    color: #fff;
+    font-size: clamp(1.8rem, 4vw, 2.9rem);
+    font-weight: 900;
+    line-height: 1.2;
+    max-width: 700px;
+    margin: 0 auto 1rem;
 }
 
-.subtitle {
-    font-size: 1.2rem;
-    color: #666;
+.sp-highlight {
+    color: #f7c3dc;
 }
 
-.text-brand {
-    color: #6C5C94;
+.sp-hero-sub {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    max-width: 540px;
+    margin: 0 auto 2rem;
+    font-weight: 600;
 }
 
-.card-custom {
-    background-color: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-    transition: transform 0.2s ease;
-}
-
-.card-custom:hover {
-    transform: scale(1.02);
-}
-
-.card-shadow {
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
-}
-
-.cta-button {
-    background-color: #CD7FA7;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    font-size: 1.1rem;
-    font-weight: bold;
-    border-radius: 8px;
-    transition: background-color 0.3s ease;
-    color: white;
-}
-
-.cta-button:hover {
-    background-color: #b7688f;
-    color: white;
-}
-
-.hero,
-.cards-section,
-.clientes-section,
-.video-section {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.smartpet-main {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f9f9f9;
-    color: #333;
-}
-
-.title {
-    font-size: 2.5rem;
-    font-weight: 700;
-}
-
-.highlight {
-    color: #6C5C94;
-}
-
-.subtitle {
-    font-size: 1.25rem;
-    margin-top: 10px;
-    color: #555;
-}
-
-.cta-button {
-    background-color: #DDB3C9;
-    border: none;
-    font-weight: bold;
-    padding: 10px 20px;
-    border-radius: 2rem;
-    transition: 0.3s ease-in-out;
-}
-
-.cta-button:hover {
-    background-color: #CD7FA7;
-    color: white;
-}
-
-.text-brand {
-    color: #6C5C94;
-}
-
-.card-custom {
+/* ── BOTONES CTA ── */
+.sp-cta {
+    display: inline-block;
     background: #fff;
+    color: #6C5C94;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1.05rem;
+    padding: 0.75rem 2rem;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
+}
+
+.sp-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22);
+}
+
+.sp-cta-green {
+    background: #25D366;
+    color: #fff;
+}
+
+.sp-cta-green:hover {
+    background: #1eb858;
+}
+
+.sp-cta-center {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+/* ── SECTIONS ── */
+.sp-section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+}
+
+.sp-label {
+    display: inline-block;
+    background: #ede8f9;
+    color: #6C5C94;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 0.25rem 0.85rem;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 0.6rem;
+}
+
+.sp-section-title {
+    font-size: clamp(1.3rem, 3vw, 1.9rem);
+    font-weight: 900;
+    color: #6C5C94;
+    text-align: center;
+    margin-bottom: 0.4rem;
+}
+
+.sp-section-sub {
+    text-align: center;
+    color: #888;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+}
+
+/* ── CARDS ── */
+.sp-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 1.5rem;
+    box-shadow: 0 3px 16px rgba(108, 92, 148, 0.1);
+    border-top: 4px solid #CD7FA7;
+    height: 100%;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.sp-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 28px rgba(108, 92, 148, 0.18);
+}
+
+.sp-card-icon {
+    font-size: 1.6rem;
+    display: block;
+    margin-bottom: 0.6rem;
+}
+
+.sp-card-title {
+    color: #6C5C94;
+    font-size: 1rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+}
+
+.sp-card-text {
+    font-size: 0.88rem;
+    color: #555;
+    margin-bottom: 0.4rem;
+    line-height: 1.55;
+    font-weight: 600;
+}
+
+/* ── FOTOS CLIENTES ── */
+.sp-photo-card {
     border-radius: 16px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease;
+    overflow: hidden;
+    aspect-ratio: 1;
+    background: #e8e0f5;
 }
 
-.card-custom:hover {
-    transform: translateY(-5px);
+.sp-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s;
 }
 
-.video-card {
-    background-color: #f8f8f8;
-    padding: 1rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+.sp-photo-card:hover .sp-photo {
+    transform: scale(1.04);
 }
 
-.seo-keywords {
+/* ── VIDEO ── */
+.sp-video-wrap {
+    background: #fff;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(108, 92, 148, 0.1);
+    text-align: center;
+}
+
+.sp-video-container {
+    background: #f4f1f9;
+    border-radius: 18px;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
+}
+
+.sp-video {
+    width: 100%;
+    max-width: 360px;
+    max-height: 640px;
+    border-radius: 14px;
+    object-fit: contain;
+    display: block;
+}
+
+.sp-video-caption {
+    color: #888;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* ── HISTORIA ── */
+.sp-historia {
+    background: linear-gradient(135deg, #6C5C94, #CD7FA7);
+    border-radius: 20px;
+    padding: 2rem 2.5rem;
+    color: #fff;
+    box-shadow: 0 8px 32px rgba(108, 92, 148, 0.25);
+}
+
+.sp-historia h3 {
+    font-size: 1.3rem;
+    font-weight: 900;
+    margin-bottom: 0.75rem;
+}
+
+.sp-historia p {
+    font-size: 0.98rem;
+    opacity: 0.9;
+    line-height: 1.65;
+    font-weight: 600;
+}
+
+/* ── SEO oculto ── */
+.sp-seo {
     display: none;
+    visibility: hidden;
+}
+
+/* ── Swiper overrides ── */
+.swiper-button-next,
+.swiper-button-prev {
+    color: #6C5C94 !important;
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+    font-size: 1.2rem !important;
+    font-weight: 900;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 576px) {
+    .sp-hero {
+        padding: 3.5rem 1rem 5rem;
+    }
+
+    .sp-section {
+        padding: 2rem 1rem;
+    }
+
+    .sp-historia {
+        padding: 1.5rem;
+    }
+
+    .sp-video-wrap {
+        padding: 1.2rem;
+    }
+
+    .sp-video-container {
+        padding: 0.75rem;
+    }
+
+    .sp-video {
+        max-width: 100%;
+    }
 }

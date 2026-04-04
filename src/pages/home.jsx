@@ -6,7 +6,7 @@ import "./home.css";
 
 
 import WhatsAppButton from "../components/btnWhatsapp/Whatsapp";
-import SmartHeader from "../components/nav/Nav";
+import SmartHeader from "../components/nav/SmartHeader";
 
 function Homepage() {
 	return (

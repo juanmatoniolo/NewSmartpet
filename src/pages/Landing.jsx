@@ -1,85 +1,82 @@
 import React from "react";
 import {
-    FaInstagram,
-    FaFacebook,
-    FaTiktok,
-    FaTwitter,
-    FaLinkedin,
-    FaWhatsapp,
-    FaEnvelope
+    FaInstagram, FaFacebook, FaTiktok,
+    FaTwitter, FaLinkedin, FaWhatsapp, FaEnvelope,
 } from "react-icons/fa";
-import "./Landing.css"
+import "./Landing.css";
 
-const Contacto = () => {
-    return (
-        <div className="contacto-container text-center py-4" id="Contact">
-            <h3 className="mb-4">¡Conectá con nosotros!</h3>
-            <div className="d-flex justify-content-center flex-wrap gap-4 fs-2">
+const redes = [
+    {
+        icon: <FaWhatsapp />,
+        label: "WhatsApp",
+        sub: "Escribinos ahora",
+        href: "https://wa.me/5493412275598",
+        color: "#25D366",
+    },
+    {
+        icon: <FaInstagram />,
+        label: "Instagram",
+        sub: "@smartpet",
+        href: "https://www.instagram.com/smartpet",
+        color: "#E1306C",
+    },
+    {
+        icon: <FaFacebook />,
+        label: "Facebook",
+        sub: "Seguinos",
+        href: "https://www.facebook.com/juanmatoniolo",
+        color: "#1877F2",
+    },
+    {
+        icon: <FaTiktok />,
+        label: "TikTok",
+        sub: "Mirá nuestros videos",
+        href: "https://www.tiktok.com/",
+        color: "#010101",
+    },
+    {
+        icon: <FaTwitter />,
+        label: "Twitter / X",
+        sub: "@jmtoniolo",
+        href: "https://twitter.com/jmtoniolo",
+        color: "#1DA1F2",
+    },
+    {
+        icon: <FaLinkedin />,
+        label: "LinkedIn",
+        sub: "Conectá con nosotros",
+        href: "https://www.linkedin.com/in/juanmatoniolo/",
+        color: "#0A66C2",
+    },
+
+];
+
+const Contacto = () => (
+    <section className="contacto-wrap" id="Contact" aria-labelledby="contacto-title">
+        <span className="sp-label">Contacto</span>
+        <h2 id="contacto-title" className="contacto-title">¿Hablamos?</h2>
+        <p className="contacto-sub">Estamos en todos lados — elegí cómo contactarnos</p>
+
+        <div className="contacto-grid">
+            {redes.map((r) => (
                 <a
-                    href="https://wa.me/5493412275598"
+                    key={r.label}
+                    href={r.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    title="WhatsApp"
+                    className="contacto-btn"
+                    style={{ "--accent": r.color }}
+                    aria-label={`Contactar por ${r.label}`}
                 >
-                    <FaWhatsapp className="text-success" />
+                    <span className="contacto-btn-icon">{r.icon}</span>
+                    <span className="contacto-btn-text">
+                        <span className="contacto-btn-label">{r.label}</span>
+                        <span className="contacto-btn-sub">{r.sub}</span>
+                    </span>
                 </a>
-
-                <a
-                    href="https://www.instagram.com/smartpet"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title="Instagram"
-                >
-                    <FaInstagram className="text-danger" />
-                </a>
-
-                <a
-                    href="https://www.facebook.com/juanmatoniolo"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title="Facebook"
-                >
-                    <FaFacebook className="text-primary" />
-                </a>
-
-                <a
-                    href="https://www.tiktok.com/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title="TikTok"
-                >
-                    <FaTiktok className="text-dark" />
-                </a>
-
-                <a
-                    href="https://twitter.com/jmtoniolo"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title="Twitter / X"
-                >
-                    <FaTwitter className="text-info" />
-                </a>
-
-                <a
-                    href="https://www.linkedin.com/in/juanmatoniolo/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title="LinkedIn"
-                >
-                    <FaLinkedin className="text-primary" />
-                </a>
-
-
-
-                <a
-                    href="mailto:juanmatoniolo2@gmail.com"
-                    title="Email"
-                >
-                    <FaEnvelope className="text-secondary" />
-                </a>
-            </div>
+            ))}
         </div>
-    );
-};
+    </section>
+);
 
 export default Contacto;
