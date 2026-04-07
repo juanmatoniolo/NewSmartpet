@@ -1,33 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+
 /* Header principal */
 .smart-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.8rem 2rem;
-    background: linear-gradient(135deg, #6C5C94 0%, #9b89b5 100%);
-    color: white;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-bottom: 2px solid #DDB3C9;
+    font-family: 'Nunito', sans-serif;
+    background-color: #4a3b7a !important;
+    box-shadow: 0 2px 20px rgba(108, 92, 148, 0.35);
     position: sticky;
     top: 0;
     z-index: 1000;
+    width: 100%;
+    padding: 0.8rem 2rem;
 }
 
-/* Logo */
-.logo-link {
+.sp-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Logo y marca */
+.sp-logo {
     display: flex;
     align-items: center;
+    gap: 0.65rem;
     text-decoration: none;
+    flex-shrink: 0;
 }
 
-.logo-img {
-    width: 3.5rem;
-    height: auto;
-    transition: transform 0.2s ease;
+.sp-logo-img {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    padding: 3px;
 }
 
-.logo-img:hover {
-    transform: scale(1.05);
+.sp-brand {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: white;
+    letter-spacing: -0.5px;
+}
+
+.sp-brand span {
+    color: #DDB3C9;
 }
 
 /* Botón de logout */
@@ -69,8 +89,8 @@
         padding: 0.5rem 1rem;
     }
 
-    .logo-img {
-        width: 2.8rem;
+    .sp-brand {
+        font-size: 1.3rem;
     }
 
     .btn-logout {
@@ -80,14 +100,12 @@
 
     .btn-logout span {
         display: inline;
-        /* mantiene el texto en móvil */
     }
 }
 
 @media (max-width: 480px) {
     .btn-logout span {
         display: none;
-        /* oculta texto, solo icono en pantallas muy chicas */
     }
 
     .btn-logout {
@@ -97,5 +115,9 @@
 
     .logout-icon {
         margin: 0;
+    }
+
+    .sp-brand {
+        font-size: 1.1rem;
     }
 }

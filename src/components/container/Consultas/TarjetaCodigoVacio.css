@@ -1,0 +1,21 @@
+/* TarjetaCodigoVacio.css */
+.tarjeta-codigo-vacio {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    position: relative;
+    min-height: 350px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.tarjeta-codigo-vacio .card-body {
+    padding: 2rem 1rem;
+}
+
+.icono-vacio {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}

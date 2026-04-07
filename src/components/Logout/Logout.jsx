@@ -1,36 +1,38 @@
 import React from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaSignOutAlt } from "react-icons/fa";
 import Img from "../../assets/Imagenes";
-import "./HeaderLogout.css"; // Renombrado para consistencia
+import "./HeaderLogout.css";
 
 const HeaderLogout = () => {
-	const { id } = useParams();
 	const navigate = useNavigate();
 
 	const handleLogout = () => {
-		const confirmLogout = window.confirm("¿Estás seguro de que deseas cerrar sesión?");
-		if (confirmLogout) {
-			// Aquí puedes limpiar tokens, localStorage, contexto, etc.
-			localStorage.removeItem("userToken"); // Ejemplo
-			sessionStorage.clear();
-			console.log("Sesión cerrada correctamente");
-			navigate("/");
-		}
+		localStorage.removeItem("authenticated");
+		localStorage.removeItem("userId");
+		localStorage.removeItem("userEmail");
+		localStorage.removeItem("rol");
+		navigate("/login");
 	};
 
 	return (
 		<header className="smart-header">
-			<div className="header-left">
-				<Link to={`/Consultas/${id}`} className="logo-link">
-					<img src={Img.img1} className="logo-img" alt="SmartPet logo" />
+			<div className="sp-inner">
+
+				{/* Logo */}
+				<Link to="/" className="sp-logo" aria-label="SmartPet - Inicio">
+					{/* <img src={Img.img1} alt="SmartPet" className="sp-logo-img" /> */}
+					<span className="sp-brand">Smart<span>Pet</span></span>
 				</Link>
-			</div>
-			<div className="header-right">
-				<button className="btn-logout" onClick={handleLogout} aria-label="Cerrar sesión">
-					<FaSignOutAlt className="logout-icon" />
-					<span>Cerrar sesión</span>
-				</button>
+
+
+
+				<div className="header-right">
+					<button className="btn-logout" onClick={handleLogout} aria-label="Cerrar sesión">
+						<FaSignOutAlt className="logout-icon" />
+						<span>Cerrar sesión</span>
+					</button>
+				</div>
 			</div>
 		</header>
 	);

@@ -1,0 +1,40 @@
+/* TarjetaMascota.css */
+.tarjeta-mascota-card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+.tarjeta-mascota-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.codigo-badge-wrapper {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+}
+
+.codigo-badge {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.7rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.tarjeta-mascota-card .card-body {
+    padding: 1rem;
+}
+
+.tarjeta-mascota-card .card-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.tarjeta-mascota-card .d-flex.gap-2 {
+    margin-top: 1rem;
+}

@@ -1,0 +1,53 @@
+.vincular-codigo-container {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.vincular-codigo-container h3 {
+    margin-bottom: 1rem;
+    color: #4a3b7a;
+}
+
+.vincular-form {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.vincular-input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 1rem;
+}
+
+.vincular-btn {
+    background: #6C5C94;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.vincular-btn:hover:not(:disabled) {
+    background: #574a83;
+}
+
+.vincular-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.vincular-mensaje {
+    margin-top: 1rem;
+    padding: 0.5rem;
+    border-radius: 6px;
+    background: #e9ecef;
+}

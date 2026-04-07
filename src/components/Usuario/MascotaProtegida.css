@@ -1,0 +1,386 @@
+/* ========== BASE (mobile‑first) ========== */
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css");
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #f5f7fb;
+    font-family: 'Nunito', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.5;
+}
+
+/* Contenedor principal */
+.container-main {
+    width: 92%;
+    max-width: 500px;
+    /* para móvil se ve como tarjeta centrada */
+    margin: 1rem auto;
+    padding: 0 0.5rem;
+}
+
+/* ========== SKELETON LOADER ========== */
+.skeleton-card {
+    background: white;
+    border-radius: 28px;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.skeleton-img {
+    width: 100%;
+    height: 180px;
+    background: linear-gradient(90deg, #e2e2e2 25%, #f0f0f0 50%, #e2e2e2 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 20px;
+}
+
+.skeleton-text {
+    height: 18px;
+    background: #e2e2e2;
+    margin: 12px 0;
+    border-radius: 12px;
+    width: 100%;
+}
+
+.skeleton-text.short {
+    width: 60%;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* ========== TARJETA PRINCIPAL ========== */
+.datos-principales {
+    background: white;
+    border-radius: 28px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    margin-bottom: 1.2rem;
+    transition: transform 0.2s;
+}
+
+.imagenen-mascota {
+    width: 100%;
+    background: #f3efff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+
+.img-mostrar-mascota {
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: 24px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.datos-mascota {
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+.nombre-mascota {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #2c2a4a;
+    margin: 0 0 0.2rem 0;
+    word-break: break-word;
+}
+
+.contenedor-datos-mascota {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1rem;
+    color: #4a4a6e;
+    flex-wrap: wrap;
+}
+
+.icono-texto {
+    font-size: 1.2rem;
+    min-width: 28px;
+    text-align: center;
+}
+
+.ubicacion-mascota {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    word-break: break-word;
+}
+
+.btn-maps {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.1s;
+    padding: 0 2px;
+}
+
+.btn-maps:hover {
+    transform: scale(1.1);
+}
+
+/* ========== DESCRIPCIÓN ========== */
+.descripcion {
+    background: white;
+    border-radius: 24px;
+    padding: 1rem;
+    margin: 1rem 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.descripcion-mascota {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #2d2d3a;
+    margin: 0;
+}
+
+/* ========== CONTACTOS ========== */
+.contactos-mascota {
+    margin-top: 1.5rem;
+}
+
+.contacto {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #4a3b7a;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.contenedor-contacto {
+    background: white;
+    border-radius: 24px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+.contenedor-contacto:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.nombre-contacto {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e1a3a;
+    margin-bottom: 0.8rem;
+    word-break: break-word;
+}
+
+.redes-sociales {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.redes-sociales .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.4rem 1rem;
+    border-radius: 40px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: none;
+    color: white;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.redes-sociales .btn svg {
+    fill: white;
+    width: 14px;
+    height: 14px;
+}
+
+.whatsapp-redes {
+    background-color: #25D366;
+}
+
+.whatsapp-redes:hover {
+    background-color: #1da15a;
+    transform: scale(1.02);
+}
+
+.llamar-redes {
+    background-color: #007bff;
+}
+
+.llamar-redes:hover {
+    background-color: #0056b3;
+}
+
+.ig {
+    background: linear-gradient(45deg, #405DE6, #833AB4, #C13584, #E1306C, #FD1D1D);
+}
+
+.ig:hover {
+    filter: brightness(1.05);
+    transform: scale(1.02);
+}
+
+/* ========== FOOTER (responsive) ========== */
+.sp-footer {
+    background-color: #f8f9fa;
+    padding: 1.5rem 1rem;
+    border-top: 1px solid #e9ecef;
+    font-family: 'Nunito', sans-serif;
+    margin-top: 2rem;
+}
+
+.sp-footer-container {
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.sp-footer-title {
+    color: #6C5C94;
+    font-size: 1.1rem;
+    margin-bottom: 0.3rem;
+}
+
+.sp-footer-subtitle {
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.sp-social-group {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.sp-social-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.sp-social-btn i {
+    font-size: 1.2rem;
+}
+
+.sp-fb-btn {
+    color: #4267B2;
+    border: 1px solid #4267B2;
+}
+
+.sp-ig-btn {
+    color: #E1306C;
+    border: 1px solid #E1306C;
+}
+
+.sp-wa-btn {
+    color: #25D366;
+    border: 1px solid #25D366;
+}
+
+.sp-social-btn:hover {
+    transform: translateY(-3px);
+}
+
+.sp-legal-text {
+    font-size: 0.7rem;
+    color: #6c757d;
+}
+
+/* ========== MENSAJE DE ERROR ========== */
+.error-message {
+    background: white;
+    border-radius: 24px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.error-message p {
+    margin-bottom: 1rem;
+    color: #d9534f;
+}
+
+.btn-volver {
+    display: inline-block;
+    background: #6C5C94;
+    color: white;
+    padding: 0.5rem 1.2rem;
+    border-radius: 40px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* ========== RESPONSIVE (tablet y escritorio) ========== */
+@media (min-width: 768px) {
+    .container-main {
+        max-width: 700px;
+    }
+
+    .nombre-mascota {
+        font-size: 1.8rem;
+    }
+
+    .redes-sociales .btn {
+        font-size: 0.9rem;
+        padding: 0.5rem 1.2rem;
+    }
+
+    .redes-sociales .btn svg {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container-main {
+        max-width: 900px;
+    }
+
+    .datos-principales {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .imagenen-mascota {
+        width: 40%;
+        padding: 1.5rem;
+    }
+
+    .datos-mascota {
+        width: 60%;
+    }
+
+    .nombre-mascota {
+        font-size: 2rem;
+    }
+}

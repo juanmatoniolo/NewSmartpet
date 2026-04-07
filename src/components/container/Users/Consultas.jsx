@@ -1,18 +1,16 @@
-import {  useParams } from "react-router-dom";
-import Logout from "../../Logout/Logout";
+import React from "react";
+import { useParams } from "react-router-dom";
+import HeaderLogout from "../../Logout/Logout";
 import Footers from "../../footer/Footer";
-import "./consultas.css"; // Asegúrate de crear y usar un archivo CSS para estos estilos
-import EditarDatos from "../Consultas/EditarDatos";
-import GetData from "../Consultas/Getapi";
+import PanelUsuario from "../Consultas/PanelUsuario"
+
 
 function Consultas() {
     const { id } = useParams();
-
     return (
         <>
-            <Logout />
-            <GetData id={id} />
-            <EditarDatos />
+            <HeaderLogout />
+            <PanelUsuario usuarioId={id} />
             <Footers />
         </>
     );

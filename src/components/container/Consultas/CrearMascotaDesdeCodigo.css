@@ -1,0 +1,26 @@
+.crear-mascota-card {
+    width: 18rem;
+    background: #f0f0f0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px dashed #6C5C94;
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.crear-mascota-card:hover {
+    background: #e9ecef;
+    transform: scale(1.02);
+}
+
+.crear-mascota-icono {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.crear-mascota-contenido h4 {
+    color: #4a3b7a;
+    margin: 0.5rem 0;
+}

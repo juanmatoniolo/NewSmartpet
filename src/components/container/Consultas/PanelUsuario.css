@@ -1,0 +1,54 @@
+/* PanelUsuario.css */
+.panel-usuario-container {
+    padding: 2rem 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.bienvenida-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.bienvenida-section h2 {
+    margin: 0;
+    color: #333;
+}
+
+.mascotas-section h3 {
+    margin-bottom: 1.5rem;
+    color: #555;
+}
+
+.mascotas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.sin-mascotas {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #666;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+    .bienvenida-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .bienvenida-section button {
+        width: 100%;
+    }
+
+    .mascotas-grid {
+        grid-template-columns: 1fr;
+    }
+}

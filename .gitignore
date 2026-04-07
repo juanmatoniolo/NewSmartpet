@@ -21,3 +21,48 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+
+
+Backend SmartPet
+
+API REST en PHP puro + PDO + MySQL.
+El router principal está en index.php.
+
+Responsabilidades actuales:
+- login de usuarios
+- CRUD de usuarios
+- CRUD de mascotas
+- vinculación de códigos a usuarios
+- asociación de mascota a código
+- subida de imagen de mascota
+- historial de ubicaciones / scaners
+- agenda de contactos de mascota
+- historial / notas rápidas por mascota
+
+Flujo general:
+1. usuario inicia sesión
+2. usuario vincula código
+3. usuario crea mascota asociada al código
+4. puede subir imagen y consultar scaners
+5. puede cargar agenda e historial de la mascota
+
+Notas técnicas:
+- no hay auth robusta (sin JWT/session middleware)
+- CORS abierto
+- validación básica
+- router centralizado en index.php
+- controllers con CRUD directo usando PDO
+
+Endpoint especial importante:
+GET /mascotas?codigo_id=...&usuario_id=...
+Debe evaluarse antes que GET /mascotas?usuario_id=...
+porque el front depende de eso para saber si un código ya tiene mascota.
+
+Módulos:
+- usuarios
+- mascotas
+- codigos
+- ubicaciones
+- contactos-mascota
+- historial-mascota
