@@ -1,57 +1,367 @@
-/* ========== BASE (mobile‑first) ========== */
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css");
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+.pet-page {
+    min-height: 100vh;
+    padding: 28px 16px 40px;
+    background:
+        radial-gradient(circle at top left, rgba(108, 92, 148, 0.14), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(205, 127, 167, 0.10), transparent 24%),
+        linear-gradient(180deg, #f8f8fc 0%, #eef2f8 100%);
 }
 
-body {
-    background: #f5f7fb;
-    font-family: 'Nunito', 'Segoe UI', system-ui, -apple-system, sans-serif;
+.pet-shell {
+    width: 100%;
+    max-width: 1080px;
+    margin: 0 auto;
+}
+
+.pet-card-main {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 32px;
+    padding: 22px;
+    box-shadow: 0 18px 40px rgba(31, 41, 55, 0.08);
+    margin-bottom: 28px;
+}
+
+.pet-image-wrap {
+    background: linear-gradient(180deg, #f2ecff 0%, #edf1f8 100%);
+    border-radius: 28px;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 280px;
+}
+
+.pet-image {
+    width: 100%;
+    max-height: 460px;
+    object-fit: cover;
+    border-radius: 24px;
+    box-shadow: 0 12px 24px rgba(17, 24, 39, 0.10);
+}
+
+.pet-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.pet-status {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(108, 92, 148, 0.12);
+    color: #5c4d8b;
+    font-size: 0.82rem;
+    font-weight: 800;
+    margin-bottom: 14px;
+}
+
+.pet-name {
+    margin: 0 0 10px;
+    color: #1f2540;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1.05;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+}
+
+.pet-message {
+    margin: 0 0 20px;
+    color: #667085;
+    font-size: 1rem;
+    line-height: 1.6;
+    max-width: 58ch;
+}
+
+.pet-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 22px;
+}
+
+.pet-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: #ffffff;
+    border: 1px solid #e8eaf3;
+    color: #344054;
+    font-size: 0.95rem;
+    font-weight: 700;
+    box-shadow: 0 6px 18px rgba(17, 24, 39, 0.04);
+}
+
+.pet-tag-soft {
+    background: #f8f5ff;
+}
+
+.pet-tag-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(108, 92, 148, 0.12);
+    color: #5c4d8b;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.pet-description-card {
+    background: #fafbff;
+    border: 1px solid #eceff6;
+    border-radius: 22px;
+    padding: 18px;
+    margin-bottom: 18px;
+}
+
+.pet-description-card h2 {
+    margin: 0 0 10px;
+    color: #20263f;
+    font-size: 1.1rem;
+    font-weight: 800;
+}
+
+.pet-description-card p {
+    margin: 0;
+    color: #475467;
+    line-height: 1.7;
+    font-size: 0.97rem;
+}
+
+.pet-contact-highlight {
+    background: linear-gradient(135deg, rgba(108, 92, 148, 0.08), rgba(205, 127, 167, 0.08));
+    border: 1px solid rgba(108, 92, 148, 0.10);
+    border-radius: 22px;
+    padding: 18px;
+}
+
+.pet-contact-highlight h3 {
+    margin: 0 0 8px;
+    color: #20263f;
+    font-size: 1.08rem;
+    font-weight: 800;
+}
+
+.pet-contact-highlight p {
+    margin: 0 0 14px;
+    color: #667085;
     line-height: 1.5;
 }
 
-/* Contenedor principal */
-.container-main {
-    width: 92%;
-    max-width: 500px;
-    /* para móvil se ve como tarjeta centrada */
-    margin: 1rem auto;
-    padding: 0 0.5rem;
+.pet-quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
 }
 
-/* ========== SKELETON LOADER ========== */
-.skeleton-card {
-    background: white;
+.pet-main-btn,
+.pet-alt-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 18px;
+    border-radius: 14px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 800;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.pet-main-btn {
+    background: linear-gradient(135deg, #6c5c94, #7c6ba8);
+    color: #fff;
+    box-shadow: 0 10px 24px rgba(108, 92, 148, 0.22);
+}
+
+.pet-main-btn:hover {
+    transform: translateY(-1px);
+}
+
+.pet-alt-btn {
+    background: #fff;
+    color: #4a3b7a;
+    border: 1px solid #d8ddea;
+}
+
+.pet-alt-btn:hover {
+    transform: translateY(-1px);
+}
+
+.pet-contacts-section {
+    margin-top: 6px;
+}
+
+.pet-section-heading {
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.pet-section-heading h2 {
+    margin: 0 0 6px;
+    color: #20263f;
+    font-size: 1.5rem;
+    font-weight: 900;
+}
+
+.pet-section-heading p {
+    margin: 0;
+    color: #667085;
+}
+
+.pet-contacts-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+}
+
+.pet-contact-card {
+    background: rgba(255, 255, 255, 0.97);
+    border-radius: 24px;
+    padding: 20px;
+    border: 1px solid #edf0f6;
+    box-shadow: 0 10px 24px rgba(17, 24, 39, 0.06);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.pet-contact-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 32px rgba(17, 24, 39, 0.08);
+}
+
+.pet-contact-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.pet-contact-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: rgba(108, 92, 148, 0.12);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.pet-contact-header h3 {
+    margin: 0 0 4px;
+    color: #20263f;
+    font-size: 1.06rem;
+    font-weight: 800;
+}
+
+.pet-contact-header p {
+    margin: 0;
+    color: #667085;
+    font-size: 0.92rem;
+}
+
+.pet-contact-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.pet-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0 16px;
+    border-radius: 999px;
+    text-decoration: none;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 800;
+    transition: transform 0.18s ease, filter 0.18s ease;
+}
+
+.pet-action-btn:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.03);
+}
+
+.pet-action-btn.whatsapp {
+    background: #25d366;
+}
+
+.pet-action-btn.call {
+    background: #1877f2;
+}
+
+.pet-action-btn.instagram {
+    background: linear-gradient(45deg, #405de6, #833ab4, #c13584, #e1306c, #fd1d1d);
+}
+
+.pet-footer {
+    margin-top: 30px;
+    padding: 28px 16px 36px;
+    background: transparent;
+}
+
+.pet-footer-container {
+    max-width: 1080px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.pet-footer-container h3 {
+    margin: 0 0 6px;
+    color: #4a3b7a;
+    font-size: 1.1rem;
+    font-weight: 800;
+}
+
+.pet-footer-container p {
+    margin: 0;
+    color: #667085;
+}
+
+.pet-error-card {
+    background: #fff;
     border-radius: 28px;
-    padding: 1rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    padding: 32px 20px;
+    text-align: center;
+    box-shadow: 0 10px 26px rgba(17, 24, 39, 0.06);
+    border: 1px solid #edf0f6;
 }
 
-.skeleton-img {
-    width: 100%;
-    height: 180px;
-    background: linear-gradient(90deg, #e2e2e2 25%, #f0f0f0 50%, #e2e2e2 75%);
+.pet-error-card h2 {
+    margin: 0 0 10px;
+    color: #20263f;
+}
+
+.pet-error-card p {
+    margin: 0 0 18px;
+    color: #667085;
+}
+
+.pet-skeleton-card {
+    height: 520px;
+    border-radius: 28px;
+    background: linear-gradient(90deg, #eceff5 25%, #f7f8fb 50%, #eceff5 75%);
     background-size: 200% 100%;
-    animation: loading 1.5s infinite;
-    border-radius: 20px;
+    animation: petLoading 1.4s infinite linear;
 }
 
-.skeleton-text {
-    height: 18px;
-    background: #e2e2e2;
-    margin: 12px 0;
-    border-radius: 12px;
-    width: 100%;
-}
-
-.skeleton-text.short {
-    width: 60%;
-}
-
-@keyframes loading {
+@keyframes petLoading {
     0% {
         background-position: 200% 0;
     }
@@ -61,326 +371,33 @@ body {
     }
 }
 
-/* ========== TARJETA PRINCIPAL ========== */
-.datos-principales {
-    background: white;
-    border-radius: 28px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-    margin-bottom: 1.2rem;
-    transition: transform 0.2s;
-}
-
-.imagenen-mascota {
-    width: 100%;
-    background: #f3efff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 1rem;
-}
-
-.img-mostrar-mascota {
-    width: 100%;
-    max-height: 220px;
-    object-fit: cover;
-    border-radius: 24px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.datos-mascota {
-    padding: 1.2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.7rem;
-}
-
-.nombre-mascota {
-    font-size: 1.6rem;
-    font-weight: 800;
-    color: #2c2a4a;
-    margin: 0 0 0.2rem 0;
-    word-break: break-word;
-}
-
-.contenedor-datos-mascota {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    font-size: 1rem;
-    color: #4a4a6e;
-    flex-wrap: wrap;
-}
-
-.icono-texto {
-    font-size: 1.2rem;
-    min-width: 28px;
-    text-align: center;
-}
-
-.ubicacion-mascota {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
-    word-break: break-word;
-}
-
-.btn-maps {
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: transform 0.1s;
-    padding: 0 2px;
-}
-
-.btn-maps:hover {
-    transform: scale(1.1);
-}
-
-/* ========== DESCRIPCIÓN ========== */
-.descripcion {
-    background: white;
-    border-radius: 24px;
-    padding: 1rem;
-    margin: 1rem 0;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
-
-.descripcion-mascota {
-    font-size: 0.95rem;
-    line-height: 1.5;
-    color: #2d2d3a;
-    margin: 0;
-}
-
-/* ========== CONTACTOS ========== */
-.contactos-mascota {
-    margin-top: 1.5rem;
-}
-
-.contacto {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: #4a3b7a;
-    margin-bottom: 1rem;
-    text-align: center;
-}
-
-.contenedor-contacto {
-    background: white;
-    border-radius: 24px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    transition: all 0.2s ease;
-}
-
-.contenedor-contacto:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
-
-.nombre-contacto {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #1e1a3a;
-    margin-bottom: 0.8rem;
-    word-break: break-word;
-}
-
-.redes-sociales {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.redes-sociales .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 0.4rem 1rem;
-    border-radius: 40px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    border: none;
-    color: white;
-    text-decoration: none;
-    transition: all 0.2s;
-}
-
-.redes-sociales .btn svg {
-    fill: white;
-    width: 14px;
-    height: 14px;
-}
-
-.whatsapp-redes {
-    background-color: #25D366;
-}
-
-.whatsapp-redes:hover {
-    background-color: #1da15a;
-    transform: scale(1.02);
-}
-
-.llamar-redes {
-    background-color: #007bff;
-}
-
-.llamar-redes:hover {
-    background-color: #0056b3;
-}
-
-.ig {
-    background: linear-gradient(45deg, #405DE6, #833AB4, #C13584, #E1306C, #FD1D1D);
-}
-
-.ig:hover {
-    filter: brightness(1.05);
-    transform: scale(1.02);
-}
-
-/* ========== FOOTER (responsive) ========== */
-.sp-footer {
-    background-color: #f8f9fa;
-    padding: 1.5rem 1rem;
-    border-top: 1px solid #e9ecef;
-    font-family: 'Nunito', sans-serif;
-    margin-top: 2rem;
-}
-
-.sp-footer-container {
-    max-width: 500px;
-    margin: 0 auto;
-    text-align: center;
-}
-
-.sp-footer-title {
-    color: #6C5C94;
-    font-size: 1.1rem;
-    margin-bottom: 0.3rem;
-}
-
-.sp-footer-subtitle {
-    color: #6c757d;
-    font-size: 0.85rem;
-}
-
-.sp-social-group {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin: 1rem 0;
-}
-
-.sp-social-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: white;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    transition: all 0.2s;
-    text-decoration: none;
-}
-
-.sp-social-btn i {
-    font-size: 1.2rem;
-}
-
-.sp-fb-btn {
-    color: #4267B2;
-    border: 1px solid #4267B2;
-}
-
-.sp-ig-btn {
-    color: #E1306C;
-    border: 1px solid #E1306C;
-}
-
-.sp-wa-btn {
-    color: #25D366;
-    border: 1px solid #25D366;
-}
-
-.sp-social-btn:hover {
-    transform: translateY(-3px);
-}
-
-.sp-legal-text {
-    font-size: 0.7rem;
-    color: #6c757d;
-}
-
-/* ========== MENSAJE DE ERROR ========== */
-.error-message {
-    background: white;
-    border-radius: 24px;
-    padding: 2rem;
-    text-align: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.error-message p {
-    margin-bottom: 1rem;
-    color: #d9534f;
-}
-
-.btn-volver {
-    display: inline-block;
-    background: #6C5C94;
-    color: white;
-    padding: 0.5rem 1.2rem;
-    border-radius: 40px;
-    text-decoration: none;
-    font-weight: 600;
-}
-
-/* ========== RESPONSIVE (tablet y escritorio) ========== */
-@media (min-width: 768px) {
-    .container-main {
-        max-width: 700px;
+@media (min-width: 900px) {
+    .pet-card-main {
+        grid-template-columns: 420px 1fr;
+        padding: 26px;
     }
 
-    .nombre-mascota {
-        font-size: 1.8rem;
-    }
-
-    .redes-sociales .btn {
-        font-size: 0.9rem;
-        padding: 0.5rem 1.2rem;
-    }
-
-    .redes-sociales .btn svg {
-        width: 16px;
-        height: 16px;
+    .pet-contacts-grid {
+        grid-template-columns: 1fr 1fr;
     }
 }
 
-@media (min-width: 1024px) {
-    .container-main {
-        max-width: 900px;
+@media (max-width: 520px) {
+
+    .pet-card-main,
+    .pet-contact-card,
+    .pet-error-card {
+        border-radius: 22px;
     }
 
-    .datos-principales {
-        display: flex;
-        flex-direction: row;
+    .pet-name {
+        font-size: 2.1rem;
     }
 
-    .imagenen-mascota {
-        width: 40%;
-        padding: 1.5rem;
-    }
-
-    .datos-mascota {
-        width: 60%;
-    }
-
-    .nombre-mascota {
-        font-size: 2rem;
+    .pet-tag,
+    .pet-main-btn,
+    .pet-alt-btn,
+    .pet-action-btn {
+        width: 100%;
     }
 }

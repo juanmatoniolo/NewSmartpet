@@ -1,13 +1,15 @@
+// App.jsx
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Homepage from "./pages/home";
-import { BrowserRouter, HashRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Login from "./components/Login/Login";
 import Register from "./components/Register/Register";
 import Consultas from "./components/container/Users/Consultas";
 import ProtectedRoute from "./components/Login/ProtectedRoute";
 import ContactosMascota from "./components/container/Users/ContactosMascota";
 import MascotaProtegida from "./components/Usuario/MascotaProtegida";
+import Configuracion from "./pages/Configuracion";
 
 function App() {
 	return (
@@ -26,14 +28,8 @@ function App() {
 						</ProtectedRoute>
 					}
 				/>
-				<Route
-					path="/MascotaProtegida/:id"
-					element={
+				<Route path="/MascotaProtegida/:id" element={<MascotaProtegida />} />
 
-						<MascotaProtegida />
-
-					}
-				/>
 
 				<Route
 					path="/MisMascotas/:id"
@@ -43,12 +39,19 @@ function App() {
 						</ProtectedRoute>
 					}
 				/>
-
 				<Route
 					path="/ContactosMascota/:mascotaId"
 					element={
 						<ProtectedRoute>
 							<ContactosMascota />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/configuracion"
+					element={
+						<ProtectedRoute>
+							<Configuracion />
 						</ProtectedRoute>
 					}
 				/>
