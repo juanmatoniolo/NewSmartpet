@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import axios from "axios";
 import TarjetaMascota from "./TarjetaMascota";
 import CrearMascotaDesdeCodigo from "./CrearMascotaDesdeCodigo";
@@ -10,56 +10,117 @@ function ListaCodigos({ usuarioId }) {
     const [codigos, setCodigos] = useState([]);
     const [mascotasPorCodigo, setMascotasPorCodigo] = useState({});
     const [cargando, setCargando] = useState(true);
-    const [refresh, setRefresh] = useState(false);
+    const [error, setError] = useState("");
+    const [refrescando, setRefrescando] = useState(false);
 
-    const cargarDatos = async () => {
+    // Cargar datos (misma lógica original)
+    const cargarDatos = useCallback(async () => {
+        if (!usuarioId) return;
+        setCargando(true);
+        setError("");
         try {
             const resCodes = await axios.get(`${API_BASE}/user-codes?usuario_id=${usuarioId}`);
-            setCodigos(resCodes.data);
+            const codigosData = Array.isArray(resCodes.data) ? resCodes.data : [];
+            setCodigos(codigosData);
 
             const mascotasMap = {};
-            for (const code of resCodes.data) {
-                try {
-                    const resMascota = await axios.get(`${API_BASE}/mascotas?codigo_id=${code.codigo_id}&usuario_id=${usuarioId}`);
-                    if (resMascota.data && resMascota.data.id) {
-                        mascotasMap[code.codigo_id] = resMascota.data;
+            // Cargar mascotas en paralelo para mejor rendimiento
+            await Promise.all(
+                codigosData.map(async (code) => {
+                    try {
+                        const resMascota = await axios.get(
+                            `${API_BASE}/mascotas?codigo_id=${code.codigo_id}&usuario_id=${usuarioId}`
+                        );
+                        if (resMascota.data && resMascota.data.id) {
+                            mascotasMap[code.codigo_id] = resMascota.data;
+                        }
+                    } catch (err) {
+                        // No hay mascota asociada, se ignora
+                        console.log(`Sin mascota para código ${code.codigo_unico}`);
                     }
-                } catch (err) {
-                    console.log(`No hay mascota para código ${code.codigo_unico}`);
-                }
-            }
+                })
+            );
             setMascotasPorCodigo(mascotasMap);
         } catch (err) {
-            console.error(err);
+            console.error("Error al cargar códigos", err);
+            setError("No se pudieron cargar los códigos. Intenta nuevamente.");
         } finally {
             setCargando(false);
         }
-    };
+    }, [usuarioId]);
 
+    // Refrescar manualmente
+    const handleRefresh = useCallback(async () => {
+        setRefrescando(true);
+        await cargarDatos();
+        setRefrescando(false);
+    }, [cargarDatos]);
+
+    // Efecto inicial y cuando usuarioId cambia
     useEffect(() => {
         cargarDatos();
-    }, [usuarioId, refresh]);
+    }, [cargarDatos]);
 
-    const handleMascotaCreada = () => setRefresh(prev => !prev);
-    const handleMascotaActualizada = () => setRefresh(prev => !prev);
+    // Callbacks para eventos hijos
+    const handleMascotaCreada = useCallback(() => {
+        cargarDatos();
+    }, [cargarDatos]);
 
-    if (cargando) return <div className="lista-cargando">Cargando códigos...</div>;
+    const handleMascotaActualizada = useCallback(() => {
+        cargarDatos();
+    }, [cargarDatos]);
 
-    return (
-        <div className="lista-codigos-container">
-            <h3>Mis códigos y mascotas</h3>
+    // Evitar renders innecesarios con useMemo
+    const contenido = useMemo(() => {
+        if (cargando) {
+            return (
+                <div className="skeleton-grid">
+                    {[...Array(3)].map((_, i) => (
+                        <div key={i} className="skeleton-card">
+                            <div className="skeleton-img"></div>
+                            <div className="skeleton-body">
+                                <div className="skeleton-title"></div>
+                                <div className="skeleton-text"></div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+
+        if (error) {
+            return (
+                <div className="error-message">
+                    <p>{error}</p>
+                    <button onClick={handleRefresh} className="btn-retry">
+                        Reintentar
+                    </button>
+                </div>
+            );
+        }
+
+        if (codigos.length === 0) {
+            return (
+                <div className="empty-message">
+                    <p>No tienes códigos vinculados aún.</p>
+                </div>
+            );
+        }
+
+        return (
             <div className="codigos-grid">
                 {codigos.map((code) => {
                     const mascota = mascotasPorCodigo[code.codigo_id];
                     return mascota ? (
                         <TarjetaMascota
-                            key={code.codigo_id}
+                            key={`mascota-${code.codigo_id}`}
                             mascota={mascota}
+                            codigoUnico={code.codigo_unico}
                             onActualizar={handleMascotaActualizada}
                         />
                     ) : (
                         <CrearMascotaDesdeCodigo
-                            key={code.codigo_id}
+                            key={`codigo-${code.codigo_id}`}
                             usuarioId={usuarioId}
                             codigoId={code.codigo_id}
                             codigoUnico={code.codigo_unico}
@@ -68,6 +129,18 @@ function ListaCodigos({ usuarioId }) {
                     );
                 })}
             </div>
+        );
+    }, [cargando, error, codigos, mascotasPorCodigo, usuarioId, handleMascotaCreada, handleMascotaActualizada, handleRefresh]);
+
+    return (
+        <div className="lista-codigos-container">
+            <div className="lista-header">
+                <h3>Mis códigos y mascotas</h3>
+                <button onClick={handleRefresh} className="btn-refresh" disabled={refrescando}>
+                    {refrescando ? "Actualizando..." : "↻ Actualizar"}
+                </button>
+            </div>
+            {contenido}
         </div>
     );
 }

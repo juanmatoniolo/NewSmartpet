@@ -1,43 +1,96 @@
+/* VincularCodigo.css - Paleta Violeta/Rosado/Blanco (Mobile First) */
+
+:root {
+    /* Colores principales */
+    --pet-primary: #6C5C94;
+    /* Violeta principal */
+    --pet-primary-dark: #5A4A7A;
+    --pet-secondary: #CD7FA7;
+    /* Rosa principal */
+    --pet-secondary-light: #DDB3C9;
+    --pet-success: #9B8EC2;
+    --pet-danger: #D97A8C;
+
+    /* Fondos y textos */
+    --pet-bg-card: #FFFFFF;
+    --pet-bg-light: #F8F5FC;
+    --pet-text-dark: #3C2A4D;
+    --pet-text-muted: #8A7A9C;
+    --pet-border: #E5D9F2;
+    --pet-shadow: 0 2px 8px rgba(108, 92, 148, 0.08);
+    --pet-hover-shadow: 0 8px 20px rgba(108, 92, 148, 0.12);
+}
+
+/* Contenedor principal */
 .vincular-codigo-container {
-    background: #f8f9fa;
-    border-radius: 12px;
+    background: var(--pet-bg-light) !important;
+    border-radius: 1.2rem;
     padding: 1.5rem;
     margin-bottom: 2rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--pet-shadow);
+    border: 1px solid var(--pet-border);
+    transition: all 0.2s ease;
 }
 
 .vincular-codigo-container h3 {
     margin-bottom: 1rem;
-    color: #4a3b7a;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--pet-text-dark);
+    border-left: 4px solid var(--pet-primary);
+    padding-left: 0.75rem;
 }
 
+/* Formulario */
 .vincular-form {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
 }
 
+/* Input */
 .vincular-input {
     flex: 1;
     padding: 0.75rem 1rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
+    border: 1px solid var(--pet-border);
+    border-radius: 2rem;
     font-family: monospace;
     font-size: 1rem;
+    background: white;
+    transition: all 0.2s;
 }
 
+.vincular-input:focus {
+    outline: none;
+    border-color: var(--pet-secondary);
+    box-shadow: 0 0 0 0.2rem rgba(205, 127, 167, 0.2);
+}
+
+.vincular-input:disabled {
+    background-color: var(--pet-bg-light);
+    opacity: 0.7;
+}
+
+/* Botón */
 .vincular-btn {
-    background: #6C5C94;
+    background: var(--pet-primary);
     color: white;
     border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
+    padding: 0.75rem 1.8rem;
+    border-radius: 2rem;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s ease;
+    font-weight: 500;
 }
 
 .vincular-btn:hover:not(:disabled) {
-    background: #574a83;
+    background: var(--pet-primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(108, 92, 148, 0.3);
+}
+
+.vincular-btn:active:not(:disabled) {
+    transform: translateY(0);
 }
 
 .vincular-btn:disabled {
@@ -45,9 +98,79 @@
     cursor: not-allowed;
 }
 
+/* Mensaje de resultado */
 .vincular-mensaje {
     margin-top: 1rem;
-    padding: 0.5rem;
-    border-radius: 6px;
-    background: #e9ecef;
+    padding: 0.6rem 1rem;
+    border-radius: 2rem;
+    background: white;
+    border-left: 4px solid var(--pet-secondary);
+    color: var(--pet-text-dark);
+    font-size: 0.9rem;
+    animation: fadeInUp 0.3s ease;
+}
+
+/* Éxito y error dentro del mensaje (el texto ya incluye emojis ✅❌) */
+.vincular-mensaje:contains("✅") {
+    border-left-color: var(--pet-success);
+}
+
+.vincular-mensaje:contains("❌") {
+    border-left-color: var(--pet-danger);
+}
+
+/* Animación */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   Responsive (Mobile First)
+   ============================================ */
+@media (max-width: 576px) {
+    .vincular-codigo-container {
+        padding: 1rem;
+    }
+
+    .vincular-codigo-container h3 {
+        font-size: 1.2rem;
+    }
+
+    .vincular-form {
+        flex-direction: column;
+    }
+
+    .vincular-input {
+        width: 100%;
+        font-size: 0.9rem;
+        padding: 0.6rem 0.9rem;
+    }
+
+    .vincular-btn {
+        width: 100%;
+        padding: 0.6rem;
+        font-size: 0.9rem;
+    }
+
+    .vincular-mensaje {
+        font-size: 0.85rem;
+    }
+}
+
+@media (min-width: 576px) and (max-width: 768px) {
+    .vincular-codigo-container {
+        padding: 1.2rem;
+    }
+
+    .vincular-input {
+        font-size: 0.95rem;
+    }
 }

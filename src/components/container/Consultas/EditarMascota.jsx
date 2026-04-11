@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Spinner } from "react-bootstrap";
 import axios from "axios";
+import "./EditarMascota.css"
 
 const API_BASE = "http://localhost/api-smartpet/index.php";
 

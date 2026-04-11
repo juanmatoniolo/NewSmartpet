@@ -1,7 +1,7 @@
-/* CrearMascotaDesdeCodigo.css - Paleta Violeta/Rosado/Blanco */
+/* EditarMascota.css - Paleta Violeta/Rosado/Blanco */
 
 :root {
-    /* Colores principales */
+    /* Colores principales (coherentes con el resto) */
     --pet-primary: #6C5C94;
     /* Violeta principal */
     --pet-primary-dark: #5A4A7A;
@@ -12,6 +12,7 @@
     /* Azul lavanda */
     --pet-success: #9B8EC2;
     --pet-danger: #D97A8C;
+    /* Rosa coral */
     --pet-warning: #E6B8C9;
 
     /* Fondos y textos */
@@ -24,60 +25,7 @@
     --pet-hover-shadow: 0 8px 20px rgba(108, 92, 148, 0.12);
 }
 
-/* ============================================
-   Tarjeta principal (sin mascota)
-   ============================================ */
-.crear-mascota-card {
-    background: var(--pet-bg-light);
-    border: 2px dashed var(--pet-primary);
-    border-radius: 1rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-align: center;
-    padding: 1rem;
-    width: 100%;
-    box-shadow: var(--pet-shadow);
-}
-
-.crear-mascota-card:hover {
-    background: var(--pet-bg-card);
-    transform: translateY(-4px);
-    box-shadow: var(--pet-hover-shadow);
-    border-color: var(--pet-secondary);
-}
-
-.crear-mascota-card .card-title {
-    color: var(--pet-text-dark);
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-}
-
-.crear-mascota-card .card-text {
-    color: var(--pet-text-muted);
-    font-size: 0.85rem;
-    margin-bottom: 1rem;
-}
-
-.crear-mascota-card .btn-success {
-    background-color: var(--pet-secondary) !important;
-    border-color: var(--pet-secondary) !important;
-    color: white !important;
-    border-radius: 2rem;
-    padding: 0.3rem 1rem;
-    font-size: 0.85rem;
-    transition: all 0.2s;
-}
-
-.crear-mascota-card .btn-success:hover {
-    background-color: #B86A92 !important;
-    border-color: #B86A92 !important;
-    transform: translateY(-2px);
-}
-
-/* ============================================
-   Modal (similar a EditarMascota)
-   ============================================ */
+/* Modal principal */
 .modal-content {
     border-radius: 1.2rem;
     border: none;
@@ -168,13 +116,42 @@ input[type="file"] {
     font-size: 0.85rem;
 }
 
-/* Botones del modal */
+/* Botones */
+.btn-secondary {
+    background-color: var(--pet-primary) !important;
+    border-color: var(--pet-primary) !important;
+    color: white !important;
+    border-radius: 2rem !important;
+    padding: 0.4rem 1rem !important;
+}
+
+.btn-secondary:hover {
+    background-color: var(--pet-primary-dark) !important;
+    border-color: var(--pet-primary-dark) !important;
+}
+
+.btn-primary {
+    background-color: var(--pet-secondary) !important;
+    border-color: var(--pet-secondary) !important;
+    color: white !important;
+    border-radius: 2rem !important;
+    padding: 0.4rem 1rem !important;
+}
+
+.btn-primary:hover {
+    background-color: #B86A92 !important;
+    border-color: #B86A92 !important;
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+}
+
+/* Botón Cancelar en el footer (ya es secondary, pero lo ajustamos) */
 .modal-footer .btn-secondary {
     background-color: transparent !important;
     border-color: var(--pet-border) !important;
     color: var(--pet-text-muted) !important;
-    border-radius: 2rem;
-    padding: 0.4rem 1rem;
 }
 
 .modal-footer .btn-secondary:hover {
@@ -183,39 +160,8 @@ input[type="file"] {
     color: var(--pet-secondary) !important;
 }
 
-.modal-footer .btn-primary {
-    background-color: var(--pet-secondary) !important;
-    border-color: var(--pet-secondary) !important;
-    color: white !important;
-    border-radius: 2rem;
-    padding: 0.4rem 1rem;
-}
-
-.modal-footer .btn-primary:hover {
-    background-color: #B86A92 !important;
-    border-color: #B86A92 !important;
-}
-
-.modal-footer .btn-primary:disabled {
-    opacity: 0.6;
-}
-
-/* ============================================
-   Responsive (Mobile First)
-   ============================================ */
+/* Responsive (mobile-first) */
 @media (max-width: 576px) {
-    .crear-mascota-card {
-        padding: 0.75rem;
-    }
-
-    .crear-mascota-card .card-title {
-        font-size: 1rem;
-    }
-
-    .crear-mascota-card .card-text {
-        font-size: 0.75rem;
-    }
-
     .modal-body {
         padding: 1rem;
     }

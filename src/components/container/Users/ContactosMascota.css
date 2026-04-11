@@ -1,0 +1,543 @@
+/* ContactosMascota.css - Paleta Violeta/Rosado/Blanco (Mobile First) */
+
+:root {
+    /* Colores principales pet-friendly */
+    --primary-color: #6C5C94;
+    /* Violeta principal */
+    --primary-dark: #5A4A7A;
+    --secondary-color: #CD7FA7;
+    /* Rosa principal */
+    --secondary-light: #DDB3C9;
+    --success-color: #9B8EC2;
+    /* Violeta suave */
+    --warning-color: #E6B8C9;
+    /* Rosa claro */
+    --danger-color: #D97A8C;
+    /* Rosa coral */
+    --info-color: #7F9BC2;
+    /* Azul lavanda */
+    --dark-color: #3C2A4D;
+    /* Violeta oscuro para textos */
+
+    /* Fondos y textos */
+    --light-bg: #F8F5FC;
+    /* Gris muy suave violeta */
+    --card-bg: #FFFFFF;
+    --text-dark: #3C2A4D;
+    --text-muted: #8A7A9C;
+    --border-light: #E5D9F2;
+
+    /* Sombras y bordes */
+    --border-radius-card: 1rem;
+    --transition-default: all 0.2s ease-in-out;
+    --shadow-sm: 0 0.125rem 0.25rem rgba(108, 92, 148, 0.08);
+    --shadow-md: 0 0.5rem 1rem rgba(108, 92, 148, 0.1);
+    --shadow-lg: 0 1rem 1.5rem rgba(108, 92, 148, 0.12);
+}
+
+/* Contenedor principal */
+.container-fluid {
+    background-color: var(--light-bg);
+    min-height: 100vh;
+}
+
+/* Header */
+h2 {
+    font-weight: 600;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+}
+
+.text-muted {
+    font-size: 0.85rem;
+    color: var(--text-muted) !important;
+}
+
+/* Tarjetas (Cards) */
+.card {
+    border: none;
+    border-radius: var(--border-radius-card);
+    transition: var(--transition-default);
+    background: var(--card-bg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+
+.card.border-primary,
+.card.border-success,
+.card.border-info,
+.card.border-secondary {
+    border-left: 4px solid !important;
+    border-top: none !important;
+    border-right: none !important;
+    border-bottom: none !important;
+}
+
+.card.border-primary {
+    border-left-color: var(--primary-color) !important;
+}
+
+.card.border-success {
+    border-left-color: var(--success-color) !important;
+}
+
+.card.border-info {
+    border-left-color: var(--info-color) !important;
+}
+
+.card.border-secondary {
+    border-left-color: var(--dark-color) !important;
+}
+
+.card.border-warning {
+    border-left: 4px solid var(--warning-color) !important;
+}
+
+/* Card body */
+.card-body {
+    padding: 1.25rem;
+}
+
+.card-title {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+    color: var(--text-dark);
+}
+
+/* Badges personalizados */
+.badge {
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+    border-radius: 2rem;
+    letter-spacing: 0.3px;
+}
+
+.badge.bg-primary {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+.badge.bg-success {
+    background-color: var(--success-color) !important;
+    color: white !important;
+}
+
+.badge.bg-warning {
+    background-color: var(--warning-color) !important;
+    color: var(--text-dark) !important;
+}
+
+.badge.bg-info {
+    background-color: var(--info-color) !important;
+    color: white !important;
+}
+
+.badge.bg-secondary {
+    background-color: var(--dark-color) !important;
+    color: white !important;
+}
+
+.badge.bg-light {
+    background-color: var(--light-bg) !important;
+    color: var(--text-dark) !important;
+}
+
+/* Progress bar */
+.progress {
+    height: 0.6rem;
+    border-radius: 1rem;
+    background-color: #e9ecef;
+}
+
+.progress-bar {
+    border-radius: 1rem;
+    transition: width 0.5s ease;
+}
+
+.progress-bar.bg-success {
+    background-color: var(--success-color) !important;
+}
+
+/* Botones */
+.btn {
+    border-radius: 2rem;
+    padding: 0.4rem 1rem;
+    font-weight: 500;
+    transition: var(--transition-default);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.7rem;
+    font-size: 0.75rem;
+}
+
+/* Botón primario (azul original → rosa) */
+.btn-primary {
+    background-color: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
+    color: white !important;
+}
+
+.btn-primary:hover {
+    background-color: #B86A92 !important;
+    border-color: #B86A92 !important;
+    transform: translateY(-1px);
+}
+
+.btn-primary:active {
+    background-color: #A85A82 !important;
+}
+
+/* Botón éxito (verde original → violeta suave) */
+.btn-success {
+    background-color: var(--success-color) !important;
+    border-color: var(--success-color) !important;
+    color: white !important;
+}
+
+.btn-success:hover {
+    background-color: #8A7CB2 !important;
+    border-color: #8A7CB2 !important;
+}
+
+/* Botón advertencia (amarillo → rosa claro) */
+.btn-warning {
+    background-color: var(--warning-color) !important;
+    border-color: var(--warning-color) !important;
+    color: var(--text-dark) !important;
+}
+
+.btn-warning:hover {
+    background-color: #D4A6B6 !important;
+    border-color: #D4A6B6 !important;
+}
+
+/* Botón oscuro (gris oscuro → violeta oscuro) */
+.btn-dark {
+    background-color: var(--dark-color) !important;
+    border-color: var(--dark-color) !important;
+    color: white !important;
+}
+
+.btn-dark:hover {
+    background-color: #2A1D3A !important;
+    border-color: #2A1D3A !important;
+}
+
+/* Botones outline */
+.btn-outline-primary {
+    color: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--secondary-color) !important;
+    color: white !important;
+}
+
+.btn-outline-success {
+    color: var(--success-color) !important;
+    border-color: var(--success-color) !important;
+}
+
+.btn-outline-success:hover {
+    background-color: var(--success-color) !important;
+    color: white !important;
+}
+
+.btn-outline-danger {
+    color: var(--danger-color) !important;
+    border-color: var(--danger-color) !important;
+}
+
+.btn-outline-danger:hover {
+    background-color: var(--danger-color) !important;
+    color: white !important;
+}
+
+.btn-outline-warning {
+    color: var(--warning-color) !important;
+    border-color: var(--warning-color) !important;
+}
+
+.btn-outline-warning:hover {
+    background-color: var(--warning-color) !important;
+    color: var(--text-dark) !important;
+}
+
+.btn-outline-secondary {
+    color: var(--text-muted) !important;
+    border-color: var(--border-light) !important;
+}
+
+.btn-outline-secondary:hover {
+    background-color: var(--light-bg) !important;
+    border-color: var(--secondary-color) !important;
+    color: var(--secondary-color) !important;
+}
+
+/* Tabs de Bootstrap */
+.nav-tabs {
+    border-bottom: 2px solid var(--border-light);
+    gap: 0.25rem;
+}
+
+.nav-tabs .nav-link {
+    border: none;
+    font-weight: 500;
+    color: var(--text-muted);
+    padding: 0.6rem 1.2rem;
+    border-radius: 2rem 2rem 0 0;
+    transition: var(--transition-default);
+    background: transparent;
+}
+
+.nav-tabs .nav-link:hover {
+    color: var(--secondary-color);
+    background-color: rgba(205, 127, 167, 0.05);
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--secondary-color);
+    background-color: transparent;
+    border-bottom: 3px solid var(--secondary-color);
+    font-weight: 600;
+}
+
+/* Input groups */
+.input-group-text {
+    background-color: white;
+    border-right: none;
+    color: var(--text-muted);
+    border-color: var(--border-light);
+}
+
+.input-group .form-control,
+.input-group .form-select {
+    border-left: none;
+    border-color: var(--border-light);
+}
+
+.input-group .form-control:focus,
+.input-group .form-select:focus {
+    border-color: var(--border-light);
+    box-shadow: none;
+    border-left: none;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 0.2rem rgba(205, 127, 167, 0.2);
+}
+
+/* Modal */
+.modal-content {
+    border-radius: 1.2rem;
+    border: none;
+    box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--border-light);
+    background-color: var(--light-bg);
+    border-radius: 1.2rem 1.2rem 0 0;
+    padding: 1.2rem 1.5rem;
+}
+
+.modal-title {
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: var(--text-dark);
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--border-light);
+    padding: 1rem 1.5rem;
+}
+
+/* Botones del modal */
+.modal-footer .btn-secondary {
+    background-color: transparent !important;
+    border-color: var(--border-light) !important;
+    color: var(--text-muted) !important;
+}
+
+.modal-footer .btn-secondary:hover {
+    background-color: var(--light-bg) !important;
+    border-color: var(--secondary-color) !important;
+    color: var(--secondary-color) !important;
+}
+
+/* Alertas */
+.alert {
+    border-radius: 1rem;
+    border: none;
+}
+
+.alert-warning {
+    background-color: #FFF0F3;
+    color: var(--warning-color);
+}
+
+.alert-danger {
+    background-color: #FDE8EB;
+    color: var(--danger-color);
+}
+
+.alert-light {
+    background-color: var(--light-bg);
+    border: 1px dashed var(--border-light);
+    color: var(--text-muted);
+}
+
+.alert-info {
+    background-color: #EBF0F8;
+    color: var(--info-color);
+}
+
+/* Tarjeta de contacto (estilo especial) */
+.card.position-relative {
+    transition: var(--transition-default);
+}
+
+.card.position-relative .position-absolute {
+    z-index: 2;
+}
+
+/* Estrella favorito */
+.card .star-icon:hover {
+    transform: scale(1.1);
+}
+
+/* Sección de acciones rápidas */
+.mt-4 h5 {
+    font-weight: 600;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    color: var(--text-dark);
+}
+
+.d-flex.gap-2 {
+    gap: 0.75rem !important;
+}
+
+/* Lista de próximas citas */
+.border-warning.border-2 {
+    border-left-width: 4px !important;
+}
+
+/* Botón WhatsApp personalizado */
+.btn-outline-success.ms-2 {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+}
+
+/* Hover en tarjetas de resumen */
+.h-100.border-primary:hover,
+.h-100.border-success:hover,
+.h-100.border-info:hover,
+.h-100.border-secondary:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Checkbox personalizado */
+.form-check-input:checked {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+/* Responsive (Mobile First) */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .nav-tabs .nav-link {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+    }
+
+    .btn {
+        font-size: 0.85rem;
+        padding: 0.3rem 0.8rem;
+    }
+
+    .modal-body {
+        padding: 1rem;
+    }
+
+    .d-flex.gap-2.flex-wrap {
+        justify-content: center;
+    }
+
+    .progress-bar {
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .card .d-flex.justify-content-between {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .card .d-flex.gap-2 {
+        margin-top: 0.5rem;
+        justify-content: flex-start;
+    }
+
+    .input-group {
+        margin-bottom: 0.5rem;
+    }
+
+    .tab-pane .row>[class*="col-"] {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Animación de carga */
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+    border-width: 0.25rem;
+}
+
+.spinner-border.text-primary {
+    color: var(--secondary-color) !important;
+}
+
+.tarjeta-contacto-clickeable {
+    transition: all 0.2s ease;
+}
+
+.tarjeta-contacto-clickeable:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.5rem 1rem rgba(108, 92, 148, 0.15);
+    cursor: pointer;
+}

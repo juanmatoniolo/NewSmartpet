@@ -1,16 +1,227 @@
+/* ListaCodigos.css - Paleta Pet-Friendly */
+:root {
+    /* Colores principales */
+    --pet-primary: #8B5A2B;
+    /* Mascota Terrosa - botones, bordes */
+    --pet-secondary: #F4A261;
+    /* Cola de Gato - hover, acentos */
+    --pet-success: #6A994E;
+    /* Patita Natural - éxito, salud */
+    --pet-info: #4A90E2;
+    /* Agua Fresca - información */
+    --pet-warning: #F9C74F;
+    /* Pelota Juguetona - advertencia */
+    --pet-danger: #E76F51;
+    /* Lengua Curiosa - errores */
+
+    /* Fondos */
+    --pet-bg-light: #FDF6E3;
+    /* Pelaje Suave - tarjetas, modales */
+    --pet-bg-neutral: #F4F1EA;
+    /* Huella Sutil - fondos generales */
+
+    /* Textos */
+    --pet-text-dark: #2C2C2C;
+    /* Ojos de Mascota - texto principal */
+    --pet-text-muted: #6C6C6C;
+    /* Bozal Gris - texto secundario */
+
+    /* Bordes y sombras */
+    --pet-border: #E2DCD0;
+    --pet-shadow: rgba(0, 0, 0, 0.05);
+}
+
 .lista-codigos-container {
     margin-top: 2rem;
+    padding: 0 1rem;
 }
 
-.codigos-grid {
+.lista-header {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
     flex-wrap: wrap;
-    gap: 1.5rem;
-    justify-content: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
-.lista-cargando {
+.lista-header h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--pet-text-dark);
+    border-left: 4px solid var(--pet-primary);
+    padding-left: 0.75rem;
+}
+
+.btn-refresh {
+    background: none;
+    border: 1px solid var(--pet-border);
+    border-radius: 2rem;
+    padding: 0.4rem 1rem;
+    font-size: 0.85rem;
+    color: var(--pet-text-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-refresh:hover {
+    background-color: var(--pet-bg-neutral);
+    border-color: var(--pet-primary);
+    color: var(--pet-primary);
+}
+
+.btn-refresh:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Grid de tarjetas (mobile: 1 columna) */
+.codigos-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+    animation: fadeInUp 0.3s ease;
+}
+
+/* Skeletons */
+.skeleton-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+}
+
+.skeleton-card {
+    background: white;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 2px 8px var(--pet-shadow);
+    animation: pulse 1.2s infinite;
+}
+
+.skeleton-img {
+    height: 180px;
+    background: #E9E3D5;
+    /* tono neutro de la paleta */
+}
+
+.skeleton-body {
+    padding: 1rem;
+}
+
+.skeleton-title {
+    height: 20px;
+    background: #D9D0C2;
+    width: 70%;
+    margin-bottom: 0.8rem;
+    border-radius: 4px;
+}
+
+.skeleton-text {
+    height: 14px;
+    background: #D9D0C2;
+    width: 40%;
+    border-radius: 4px;
+}
+
+/* Mensajes vacíos y error */
+.empty-message,
+.error-message {
     text-align: center;
-    padding: 2rem;
-    color: #6C5C94;
+    padding: 3rem 1rem;
+    background: var(--pet-bg-neutral);
+    border-radius: 1rem;
+    color: var(--pet-text-muted);
+    border: 1px dashed var(--pet-border);
+}
+
+.error-message {
+    border-color: var(--pet-danger);
+    color: var(--pet-danger);
+}
+
+.btn-retry {
+    margin-top: 1rem;
+    background: var(--pet-primary);
+    color: white;
+    border: none;
+    border-radius: 2rem;
+    padding: 0.5rem 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-retry:hover {
+    background: #A06B3A;
+    /* tono más oscuro del primario */
+    transform: translateY(-2px);
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.6;
+    }
+}
+
+/* Responsive (Mobile First) */
+@media (min-width: 576px) {
+
+    .codigos-grid,
+    .skeleton-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .lista-codigos-container {
+        padding: 0 2rem;
+    }
+
+    .codigos-grid,
+    .skeleton-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 992px) {
+
+    .codigos-grid,
+    .skeleton-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.8rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .lista-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-refresh {
+        width: 100%;
+        text-align: center;
+    }
 }
