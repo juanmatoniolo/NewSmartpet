@@ -45,7 +45,6 @@
 .codigo-badge-wrapper {
     position: relative;
     padding: 0.75rem 0.75rem 0 0.75rem;
-    background: var(--pet-bg-card);
 }
 
 .codigo-badge {

@@ -541,3 +541,628 @@ h2 {
     box-shadow: 0 0.5rem 1rem rgba(108, 92, 148, 0.15);
     cursor: pointer;
 }
+
+/* ===== MOBILE FIRST REAL ===== */
+
+html {
+    font-size: clamp(14px, 1.5vw, 16px);
+}
+
+.container-fluid {
+    padding: 0.75rem;
+}
+
+/* HEADER */
+h2 {
+    font-size: clamp(1.3rem, 4vw, 1.8rem);
+}
+
+/* CARDS */
+.card {
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.card:active {
+    transform: scale(0.98);
+}
+
+/* GRID MÁS COMPACTO MOBILE */
+.row {
+    margin-left: -0.25rem;
+    margin-right: -0.25rem;
+}
+
+.row>* {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+}
+
+/* BOTONES FULL WIDTH MOBILE */
+.btn {
+    width: 100%;
+    justify-content: center;
+}
+
+/* INPUTS MOBILE */
+.input-group {
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.input-group-text {
+    display: none;
+}
+
+/* TABS SCROLL */
+.nav-tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+}
+
+.nav-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.nav-tabs .nav-link {
+    white-space: nowrap;
+    font-size: 0.8rem;
+}
+
+/* TARJETAS MÁS COMPACTAS */
+.card-body {
+    padding: 1rem;
+}
+
+/* ===== TABLET ===== */
+@media (min-width: 768px) {
+
+    .container-fluid {
+        padding: 1.5rem;
+    }
+
+    .btn {
+        width: auto;
+    }
+
+    .input-group {
+        flex-direction: row;
+    }
+
+    .input-group-text {
+        display: flex;
+    }
+
+    .nav-tabs {
+        overflow: visible;
+    }
+}
+
+/* ===== DESKTOP ===== */
+@media (min-width: 1024px) {
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+}
+
+/* ContactosMascota.css - Diseño mejorado: tipografía más grande, ancho controlado, estética moderna */
+
+/* Contenedor principal con ancho máximo y centrado */
+.contactos-mascota-container {
+    background-color: #f8f5fc;
+    min-height: 100vh;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1.5rem !important;
+}
+
+/* Tipografía base más grande */
+.contactos-mascota-container {
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+/* Títulos principales */
+.contactos-mascota-container h2 {
+    font-weight: 700;
+    color: #3c2a4d;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.contactos-mascota-container h3 {
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+.contactos-mascota-container h5 {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.contactos-mascota-container h6 {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* Texto general */
+.contactos-mascota-container .text-muted {
+    font-size: 0.9rem;
+    color: #7a6a8c !important;
+}
+
+.contactos-mascota-container small {
+    font-size: 0.85rem;
+}
+
+/* Tabs más legibles */
+.responsive-tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+    margin-bottom: 1.5rem !important;
+    gap: 0.5rem;
+}
+
+.responsive-tabs .nav-link {
+    white-space: nowrap;
+    padding: 0.75rem 1.25rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #6c5c94;
+    border: none;
+    border-radius: 2rem;
+    transition: all 0.2s ease;
+}
+
+.responsive-tabs .nav-link:hover {
+    background-color: rgba(205, 127, 167, 0.1);
+    color: #cd7fa7;
+}
+
+.responsive-tabs .nav-link.active {
+    background-color: #cd7fa7;
+    color: white;
+    border-bottom: none;
+    box-shadow: 0 4px 8px rgba(205, 127, 167, 0.3);
+}
+
+/* Tarjetas mejoradas */
+.contactos-mascota-container .card {
+    border: none;
+    border-radius: 1.25rem;
+    background: white;
+    box-shadow: 0 4px 12px rgba(108, 92, 148, 0.08);
+    transition: all 0.25s ease;
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+}
+
+.contactos-mascota-container .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(108, 92, 148, 0.12);
+}
+
+/* Tarjetas de resumen clickeables */
+.tarjeta-resumen {
+    cursor: pointer;
+    transition: all 0.25s ease;
+    min-height: 160px;
+}
+
+.tarjeta-resumen:active {
+    transform: scale(0.98);
+}
+
+/* Bordes laterales más elegantes */
+.contactos-mascota-container .card.border-primary {
+    border-left: 5px solid #6c5c94 !important;
+}
+
+.contactos-mascota-container .card.border-success {
+    border-left: 5px solid #9b8ec2 !important;
+}
+
+.contactos-mascota-container .card.border-info {
+    border-left: 5px solid #7f9bc2 !important;
+}
+
+.contactos-mascota-container .card.border-secondary {
+    border-left: 5px solid #3c2a4d !important;
+}
+
+.contactos-mascota-container .card.border-warning {
+    border-left: 5px solid #e6b8c9 !important;
+}
+
+/* Iconos circulares más grandes */
+.icon-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bg-primary-light {
+    background-color: rgba(108, 92, 148, 0.12);
+}
+
+.bg-success-light {
+    background-color: rgba(155, 142, 194, 0.12);
+}
+
+.bg-info-light {
+    background-color: rgba(127, 155, 194, 0.12);
+}
+
+.bg-dark-light {
+    background-color: rgba(60, 42, 77, 0.12);
+}
+
+.text-primary {
+    color: #6c5c94;
+}
+
+.text-success {
+    color: #9b8ec2;
+}
+
+.text-info {
+    color: #7f9bc2;
+}
+
+.text-dark {
+    color: #3c2a4d;
+}
+
+/* Badges más grandes y legibles */
+.contactos-mascota-container .badge {
+    font-weight: 500;
+    padding: 0.4rem 0.8rem;
+    border-radius: 2rem;
+    font-size: 0.8rem;
+}
+
+.badge.bg-primary {
+    background-color: #6c5c94 !important;
+    color: white;
+}
+
+.badge.bg-success {
+    background-color: #9b8ec2 !important;
+    color: white;
+}
+
+.badge.bg-warning {
+    background-color: #e6b8c9 !important;
+    color: #3c2a4d;
+}
+
+.badge.bg-info {
+    background-color: #7f9bc2 !important;
+    color: white;
+}
+
+.badge.bg-dark {
+    background-color: #3c2a4d !important;
+    color: white !important;
+}
+
+.badge.bg-light {
+    background-color: #f8f5fc !important;
+    color: #3c2a4d;
+    border: 1px solid #e5d9f2;
+}
+
+/* Progress bar mejorado */
+.small-progress {
+    height: 0.75rem;
+    border-radius: 1rem;
+    background-color: #e9ecef;
+}
+
+.small-progress .progress-bar {
+    border-radius: 1rem;
+    background-color: #9b8ec2 !important;
+}
+
+/* Botones más grandes y cómodos */
+.contactos-mascota-container .btn {
+    border-radius: 2rem;
+    padding: 0.6rem 1.25rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-sm {
+    padding: 0.4rem 1rem;
+    font-size: 0.85rem;
+}
+
+/* Colores de botones personalizados */
+.btn-primary {
+    background-color: #cd7fa7 !important;
+    border-color: #cd7fa7 !important;
+    color: white !important;
+}
+
+.btn-primary:hover {
+    background-color: #b86a92 !important;
+    border-color: #b86a92 !important;
+    transform: translateY(-2px);
+}
+
+.btn-success {
+    background-color: #9b8ec2 !important;
+    border-color: #9b8ec2 !important;
+    color: white !important;
+}
+
+.btn-success:hover {
+    background-color: #8a7cb2 !important;
+    transform: translateY(-2px);
+}
+
+.btn-warning {
+    background-color: #e6b8c9 !important;
+    border-color: #e6b8c9 !important;
+    color: #3c2a4d !important;
+}
+
+.btn-dark {
+    background-color: #3c2a4d !important;
+    border-color: #3c2a4d !important;
+    color: white !important;
+}
+
+.btn-outline-primary {
+    color: #cd7fa7 !important;
+    border-color: #cd7fa7 !important;
+}
+
+.btn-outline-primary:hover {
+    background-color: #cd7fa7 !important;
+    color: white !important;
+}
+
+.btn-outline-success {
+    color: #9b8ec2 !important;
+    border-color: #9b8ec2 !important;
+}
+
+.btn-outline-success:hover {
+    background-color: #9b8ec2 !important;
+    color: white !important;
+}
+
+.btn-outline-danger {
+    color: #d97a8c !important;
+    border-color: #d97a8c !important;
+}
+
+.btn-outline-danger:hover {
+    background-color: #d97a8c !important;
+    color: white !important;
+}
+
+.btn-outline-secondary {
+    color: #8a7a9c !important;
+    border-color: #e5d9f2 !important;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #f8f5fc !important;
+    border-color: #cd7fa7 !important;
+    color: #cd7fa7 !important;
+}
+
+/* Grupos de búsqueda y filtro más grandes */
+.search-group,
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.search-group .search-icon,
+.filter-group .filter-icon {
+    color: #8a7a9c;
+    flex-shrink: 0;
+}
+
+.search-group .form-control,
+.filter-group .form-select {
+    flex: 1;
+    border: 1px solid #e5d9f2;
+    border-radius: 2rem;
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #cd7fa7;
+    box-shadow: 0 0 0 0.2rem rgba(205, 127, 167, 0.2);
+    outline: none;
+}
+
+/* Alertas más legibles */
+.alert {
+    border-radius: 1rem;
+    border: none;
+    padding: 1rem 1.25rem;
+    font-size: 0.95rem;
+}
+
+.alert-warning {
+    background-color: #fff0f3;
+    color: #b85a7a;
+}
+
+.alert-danger {
+    background-color: #fde8eb;
+    color: #c95a6c;
+}
+
+.alert-light {
+    background-color: #f8f5fc;
+    border: 1px dashed #e5d9f2;
+    color: #8a7a9c;
+}
+
+/* Modales con mejor tamaño */
+.modal-content {
+    border-radius: 1.5rem;
+    border: none;
+    overflow: hidden;
+}
+
+.modal-header {
+    border-bottom: 1px solid #e5d9f2;
+    background-color: #f8f5fc;
+    padding: 1.25rem 1.5rem;
+}
+
+.modal-title h5 {
+    font-size: 1.35rem;
+}
+
+.modal-body {
+    padding: 1.5rem;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.modal-footer .btn {
+    min-width: 120px;
+}
+
+/* Utilidades responsivas */
+.w-md-auto {
+    width: 100%;
+}
+
+/* Espaciado entre filas */
+.g-3 {
+    --bs-gutter-y: 1rem;
+    --bs-gutter-x: 1rem;
+}
+
+.g-2 {
+    --bs-gutter-y: 0.75rem;
+    --bs-gutter-x: 0.75rem;
+}
+
+/* Ajustes para tablets y desktop */
+@media (min-width: 768px) {
+    .contactos-mascota-container {
+        padding: 2rem !important;
+    }
+
+    .w-md-auto {
+        width: auto;
+    }
+
+    .search-group .search-icon,
+    .filter-group .filter-icon {
+        display: block !important;
+    }
+
+    .search-group,
+    .filter-group {
+        flex-direction: row;
+    }
+
+    .modal-footer {
+        flex-direction: row;
+        justify-content: flex-end;
+    }
+}
+
+/* Ajustes para pantallas muy grandes (mayor a 1400px) */
+@media (min-width: 1400px) {
+    .contactos-mascota-container {
+        padding: 2.5rem !important;
+    }
+
+    .contactos-mascota-container .card-body {
+        padding: 1.5rem;
+    }
+}
+
+/* Ajustes para móviles */
+@media (max-width: 576px) {
+    .contactos-mascota-container {
+        padding: 1rem !important;
+    }
+
+    .contactos-mascota-container h2 {
+        font-size: 1.5rem;
+    }
+
+    .contactos-mascota-container h3 {
+        font-size: 1.3rem;
+    }
+
+    .contactos-mascota-container .card-body {
+        padding: 1rem;
+    }
+
+    .btn {
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+    }
+
+    .responsive-tabs .nav-link {
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+    }
+
+    .icon-circle {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+/* Mejoras en tarjeta de contacto (para consistencia) */
+.tarjeta-contacto {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    touch-action: manipulation;
+}
+
+.tarjeta-contacto:active {
+    transform: scale(0.98);
+}
+
+.acciones-botones .btn {
+    transition: all 0.2s;
+}
+
+.btn-whatsapp {
+    background-color: #25d36610;
+    border-color: #25d366;
+    color: #25d366;
+}
+
+.btn-whatsapp:hover {
+    background-color: #25d366;
+    color: white;
+}
