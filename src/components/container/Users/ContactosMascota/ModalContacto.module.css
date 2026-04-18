@@ -1,0 +1,249 @@
+/* ModalContacto.module.css */
+
+.modal :global(.modal-content) {
+    border: none;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+@media (min-width: 576px) {
+    .modal :global(.modal-content) {
+        border-radius: 1.5rem;
+    }
+}
+
+.header {
+    border-bottom: 2px solid #e5d9f2;
+    background: linear-gradient(135deg, #f8f5fc 0%, white 100%);
+    padding: 1rem;
+}
+
+@media (min-width: 576px) {
+    .header {
+        padding: 1.5rem 1.5rem 1rem;
+    }
+}
+
+.headerTitle {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+@media (min-width: 576px) {
+    .headerTitle {
+        gap: 1rem;
+    }
+}
+
+.iconWrapper {
+    background: rgba(127, 155, 194, 0.12);
+    padding: 0.5rem;
+    border-radius: 12px;
+}
+
+@media (min-width: 576px) {
+    .iconWrapper {
+        padding: 0.75rem;
+        border-radius: 16px;
+    }
+}
+
+.title h4 {
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.1rem;
+    font-size: 1.2rem;
+}
+
+@media (min-width: 576px) {
+    .title h4 {
+        font-size: 1.4rem;
+    }
+}
+
+.title small {
+    color: #64748b;
+    font-size: 0.8rem;
+}
+
+.body {
+    padding: 1rem;
+    background: #fafafa;
+}
+
+@media (min-width: 576px) {
+    .body {
+        padding: 1.5rem;
+    }
+}
+
+.sectionTitle {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #8a7a9c;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.inputGroupText {
+    background-color: #f8f5fc;
+    border: 1px solid #e5d9f2;
+    border-right: none;
+    min-width: 40px;
+    justify-content: center;
+}
+
+.formControl {
+    border-radius: 0 0.75rem 0.75rem 0;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #cbd5e1;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    min-height: 48px;
+}
+
+.formControl:focus {
+    border-color: #7f9bc2;
+    box-shadow: 0 0 0 3px rgba(127, 155, 194, 0.2);
+    outline: none;
+}
+
+.fullRounded {
+    border-radius: 0.75rem !important;
+    min-height: 48px;
+    font-size: 1rem;
+}
+
+.footer {
+    border-top: 2px solid #e2e8f0;
+    padding: 0.75rem 1rem;
+    background: white;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+@media (min-width: 576px) {
+    .footer {
+        padding: 1.25rem 1.5rem;
+        gap: 0.75rem;
+    }
+}
+
+.cancelBtn,
+.saveBtn {
+    border-radius: 0.75rem;
+    padding: 0.6rem 1rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    min-height: 48px;
+    font-size: 1rem;
+    flex: 1 1 auto;
+}
+
+@media (min-width: 576px) {
+
+    .cancelBtn,
+    .saveBtn {
+        padding: 0.7rem 1.5rem;
+        flex: 0 1 auto;
+    }
+}
+
+.cancelBtn {
+    border: 1px solid #cbd5e1;
+    background: white;
+    color: #334155;
+}
+
+.cancelBtn:active {
+    background: #f1f5f9;
+}
+
+.saveBtn {
+    background: #7f9bc2;
+    border: none;
+    color: white;
+    min-width: 120px;
+}
+
+.saveBtn:active {
+    background: #6a8ab0;
+}
+
+.charCount {
+    font-size: 0.7rem;
+    color: #64748b;
+    text-align: right;
+    margin-top: 0.25rem;
+}
+
+/* Mejoras para selects y date inputs en móvil */
+.formControl[type="date"] {
+    min-height: 48px;
+    padding: 0.6rem 0.8rem;
+}
+
+/* Eliminar estilos por defecto molestos en móviles */
+.formControl,
+.fullRounded,
+.formSelect {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: white;
+}
+
+/* ModalContacto.module.css */
+
+.modal :global(.modal-content) {
+    border: none;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal :global(.modal-body) {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    flex: 1;
+    padding: 1.5rem;
+    background: #fafafa;
+}
+
+/* Ajuste para pantallas pequeñas (fullscreen) */
+@media (max-width: 575.98px) {
+    .modal :global(.modal-content) {
+        border-radius: 0;
+        max-height: 100vh;
+        height: 100vh;
+    }
+
+    .modal :global(.modal-body) {
+        padding: 1rem;
+    }
+}
+
+.header {
+    border-bottom: 2px solid #e5d9f2;
+    background: linear-gradient(135deg, #f8f5fc 0%, white 100%);
+    padding: 1.5rem 1.5rem 1rem;
+    flex-shrink: 0;
+}
+
+/* ... resto de estilos (headerTitle, iconWrapper, etc.) se mantienen igual ... */
+
+.footer {
+    border-top: 2px solid #e2e8f0;
+    padding: 1.25rem 1.5rem;
+    background: white;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}

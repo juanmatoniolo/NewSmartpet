@@ -1,0 +1,717 @@
+/* ContactosMascota.module.css */
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0.5rem;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.titleSection h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.25rem;
+    font-size: clamp(1.35rem, 2vw, 1.8rem);
+}
+
+.titleSection small {
+    color: #64748b;
+    font-size: 0.85rem;
+}
+
+.backButton {
+    border-radius: 2rem;
+    padding: 0.4rem 1rem;
+    font-weight: 500;
+    border: 1px solid #cbd5e1;
+    background: white;
+    transition: all 0.2s ease;
+    color: #334155;
+    font-size: 0.9rem;
+}
+
+.backButton:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+}
+
+.backButton:focus-visible,
+.actionButton:focus-visible,
+.newButton:focus-visible,
+.searchInput:focus-visible,
+.filterSelect:focus-visible,
+.tabs :global(.nav-link:focus-visible) {
+    outline: 3px solid rgba(127, 155, 194, 0.35);
+    outline-offset: 2px;
+    box-shadow: none;
+}
+
+/* Tabs personalizadas - Mobile first */
+.tabs :global(.nav-tabs) {
+    border-bottom: 2px solid #e2e8f0;
+    gap: 0.25rem;
+    padding: 0 0.25rem;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    white-space: nowrap;
+}
+
+.tabs :global(.nav-tabs::-webkit-scrollbar) {
+    display: none;
+}
+
+.tabs :global(.nav-item) {
+    flex-shrink: 0;
+}
+
+.tabs :global(.nav-link) {
+    border: none;
+    color: #64748b;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: transparent;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.tabs :global(.nav-link:hover) {
+    background: #f1f5f9;
+    color: #334155;
+}
+
+.tabs :global(.nav-link.active) {
+    background: #7f9bc2;
+    color: white;
+    font-weight: 600;
+}
+
+/* Tarjetas de resumen */
+.summaryCard {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    height: 100%;
+    background: white;
+    overflow: hidden;
+}
+
+.summaryCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+}
+
+.iconCircle {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bgPrimaryLight {
+    background-color: #eef2f7;
+}
+
+.bgSuccessLight {
+    background-color: #e6f4ea;
+}
+
+.bgInfoLight {
+    background-color: #e2f0f8;
+}
+
+.bgDarkLight {
+    background-color: #edf2f7;
+}
+
+.textPrimary {
+    color: #7f9bc2;
+}
+
+.textSuccess {
+    color: #6fbf8c;
+}
+
+.textInfo {
+    color: #5fa3c7;
+}
+
+.textDark {
+    color: #2d3748;
+}
+
+.cardValue {
+    font-size: clamp(1.6rem, 2.5vw, 2rem);
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.cardLabel {
+    color: #64748b;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.cardPreview {
+    margin-top: 0.75rem;
+    padding: 0.6rem;
+    background: #f8fafc;
+    border-radius: 10px;
+    font-size: 0.8rem;
+}
+
+/* Acciones rápidas */
+.quickActions {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 1rem;
+}
+
+.quickActions h5 {
+    font-weight: 600;
+    color: #334155;
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.actionButton {
+    border-radius: 2rem;
+    padding: 0.5rem 0.5rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    transition: all 0.2s ease;
+    background: white;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    width: 100%;
+}
+
+.actionButton:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+}
+
+/* Barra de búsqueda y filtro */
+.searchWrapper {
+    position: relative;
+    width: 100%;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.searchInput {
+    padding-left: 2.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid #cbd5e1;
+    background: white;
+    height: 42px;
+    font-size: 0.9rem;
+    width: 100%;
+}
+
+.filterSelect {
+    border-radius: 0.75rem;
+    border: 1px solid #cbd5e1;
+    height: 42px;
+    background: white;
+    font-size: 0.9rem;
+    width: 100%;
+}
+
+.newButton {
+    border-radius: 2rem;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: #7f9bc2;
+    border: none;
+    color: white;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    width: 100%;
+    white-space: nowrap;
+}
+
+.newButton:hover {
+    background: #6a8ab0;
+}
+
+/* Ajustes para tarjetas en lista */
+.citaCard {
+    margin-bottom: 0.75rem;
+}
+
+/* Ajustes para texto en tarjetas */
+.cardPreview strong {
+    font-size: 0.85rem;
+    display: block;
+    margin-bottom: 0.15rem;
+}
+
+.cardPreview .text-muted {
+    font-size: 0.75rem;
+}
+
+/* Ajuste para ProgressBar */
+.progressBar {
+    height: 6px;
+    border-radius: 3px;
+}
+
+@media (min-width: 576px) {
+    .container {
+        padding: 0.75rem;
+    }
+
+    .tabs :global(.nav-link) {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+    }
+
+    .iconCircle {
+        width: 48px;
+        height: 48px;
+        border-radius: 16px;
+    }
+
+    .cardLabel {
+        font-size: 0.85rem;
+    }
+
+    .quickActions {
+        padding: 1.25rem;
+    }
+
+    .quickActions h5 {
+        font-size: 1.1rem;
+    }
+
+    .actionButton {
+        padding: 0.6rem 0.75rem;
+        font-size: 0.85rem;
+    }
+
+    .searchInput,
+    .filterSelect,
+    .newButton {
+        height: 45px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .header {
+        margin-bottom: 1.5rem;
+    }
+
+    .tabs :global(.nav-tabs) {
+        overflow-x: visible;
+        flex-wrap: wrap;
+    }
+
+    .actionButton {
+        padding: 0.65rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .searchInput,
+    .filterSelect,
+    .newButton {
+        height: 48px;
+    }
+
+    .progressBar {
+        height: 8px;
+        border-radius: 4px;
+    }
+}
+
+@media (min-width: 992px) {
+    .summaryCard:hover {
+        transform: translateY(-4px);
+    }
+}
+
+/* =========================
+   Citas estilizadas
+========================= */
+
+.citasHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.citasTitle {
+    margin: 0;
+    font-size: clamp(1.05rem, 2vw, 1.35rem);
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.citasSubtitle {
+    margin: 0.25rem 0 0;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.destacadasSection {
+    margin-bottom: 1rem;
+}
+
+.sectionBlockHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.85rem;
+}
+
+.sectionBadgePrimary,
+.sectionBadgeWarning {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 0.85rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.sectionBadgePrimary {
+    background: #eef2f7;
+    color: #6f89ad;
+    border: 1px solid #dbe5f0;
+}
+
+.sectionBadgeWarning {
+    background: #fff7e6;
+    color: #b7791f;
+    border: 1px solid #f6d28b;
+}
+
+.sectionHint {
+    color: #64748b;
+    font-size: 0.82rem;
+    font-weight: 500;
+}
+
+.citaDestacadaCard {
+    border: 1px solid #f1d9a6;
+    border-radius: 1rem;
+    background: linear-gradient(180deg, #fffdf8 0%, #fff8ea 100%);
+    box-shadow: 0 8px 20px rgba(180, 131, 37, 0.08);
+}
+
+.citaTopRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.9rem;
+    flex-wrap: wrap;
+}
+
+.citaTopLeft {
+    display: flex;
+    gap: 0.85rem;
+    align-items: flex-start;
+    flex: 1;
+    min-width: 0;
+}
+
+.citaIconWrap {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff3d6;
+    color: #b7791f;
+    flex-shrink: 0;
+}
+
+.citaTitulo {
+    margin: 0 0 0.35rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.citaMeta {
+    display: flex;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+}
+
+.citaMetaItem {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: #64748b;
+    font-size: 0.8rem;
+}
+
+.citaActions {
+    display: flex;
+    gap: 0.45rem;
+}
+
+.iconActionBtn,
+.iconDeleteBtn {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    border: 1px solid #dbe3ee;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    color: #334155;
+}
+
+.iconActionBtn:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+}
+
+.iconDeleteBtn:hover {
+    background: #fff1f2;
+    border-color: #fecdd3;
+    color: #be123c;
+}
+
+.citaDetalleBox {
+    margin-top: 0.9rem;
+    padding: 0.85rem 0.95rem;
+    border-radius: 0.85rem;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid #f3e4bf;
+}
+
+.citaDetalleBox strong {
+    display: block;
+    margin-bottom: 0.3rem;
+    color: #334155;
+    font-size: 0.82rem;
+}
+
+.citaDetalleBox p {
+    margin: 0;
+    color: #475569;
+    font-size: 0.86rem;
+    line-height: 1.5;
+}
+
+.citaCardCustom {
+    height: 100%;
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+    transition: all 0.2s ease;
+}
+
+.citaCardCustom:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
+    border-color: #cbd5e1;
+}
+
+.citaCardHeader {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    align-items: flex-start;
+    margin-bottom: 0.65rem;
+}
+
+.citaCardTitleWrap {
+    min-width: 0;
+}
+
+.citaCardTitle {
+    margin: 0 0 0.35rem;
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.citaCardBadges {
+    display: flex;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+}
+
+.citaBadge {
+    background: #eef2f7 !important;
+    color: #6f89ad !important;
+    border: 1px solid #dbe5f0;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.35rem 0.55rem;
+    border-radius: 999px;
+}
+
+.citaMiniDate {
+    flex-shrink: 0;
+    color: #64748b;
+    font-size: 0.76rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.citaCardText {
+    margin: 0 0 1rem;
+    color: #475569;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.citaCardFooter {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 0.9rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.citaFooterBtn {
+    flex: 1;
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    color: #334155;
+    border-radius: 999px;
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.citaFooterBtn:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+}
+
+.citaFooterBtnDanger:hover {
+    background: #fff1f2;
+    border-color: #fecdd3;
+    color: #be123c;
+}
+
+.emptyState {
+    padding: 2rem 1rem;
+    border-radius: 1rem;
+    border: 1px dashed #cbd5e1;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    text-align: center;
+}
+
+.emptyIcon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 0.85rem;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef2f7;
+    color: #6f89ad;
+}
+
+.emptyState h6 {
+    margin-bottom: 0.35rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.emptyState p {
+    margin-bottom: 1rem;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.emptyButton {
+    border-radius: 999px;
+    background: #7f9bc2;
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    padding: 0.6rem 1rem;
+}
+
+.emptyButton:hover {
+    background: #6a8ab0;
+}
+
+@media (max-width: 576px) {
+    .citasHeader {
+        margin-bottom: 0.85rem;
+    }
+
+    .citaActions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .citaCardFooter {
+        flex-direction: column;
+    }
+
+    .citaFooterBtn {
+        width: 100%;
+    }
+}

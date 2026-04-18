@@ -1,0 +1,216 @@
+.modal {
+    max-width: 760px;
+    margin: 1rem auto;
+}
+
+.modal :global(.modal-content) {
+    border: none;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+    max-height: calc(100vh - 2rem);
+    display: flex;
+    flex-direction: column;
+    background: white;
+}
+
+.modal :global(.modal-body) {
+    flex: 1 1 auto;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    max-height: calc(100vh - 220px);
+    padding: 1.25rem;
+    background: #fafafa;
+}
+
+.header {
+    border-bottom: 2px solid #d9f0e1;
+    background: linear-gradient(135deg, #f0faf4 0%, white 100%);
+    padding: 1.15rem 1.25rem 1rem;
+}
+
+.headerTitle {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    width: 100%;
+    margin: 0;
+}
+
+.iconWrapper {
+    background: rgba(111, 191, 140, 0.12);
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.title h4 {
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 0.15rem;
+    font-size: 1.05rem;
+}
+
+.title small {
+    color: #64748b;
+    font-size: 0.84rem;
+}
+
+.body {
+    padding: 1.25rem;
+    background: #fafafa;
+}
+
+.sectionTitle {
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #5f9c7a;
+    font-weight: 700;
+    margin-bottom: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.sectionTitle span {
+    font-size: 1rem;
+}
+
+.inputGroupText {
+    background-color: #f0faf4;
+    border: 1px solid #d9f0e1;
+    border-right: none;
+    min-width: 44px;
+    justify-content: center;
+    color: #6fbf8c;
+    border-radius: 0.75rem 0 0 0.75rem;
+}
+
+.formControl {
+    border-radius: 0 0.75rem 0.75rem 0;
+    padding: 0.7rem 1rem;
+    border: 1px solid #cbd5e1;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    min-height: 46px;
+    background: white;
+}
+
+.formControl:focus {
+    border-color: #6fbf8c;
+    box-shadow: 0 0 0 3px rgba(111, 191, 140, 0.2);
+    outline: none;
+}
+
+.fullRounded {
+    border-radius: 0.75rem !important;
+    min-height: 46px;
+    border: 1px solid #cbd5e1;
+}
+
+.completedBox {
+    padding: 1rem;
+    border-radius: 12px;
+    background: #f8f5fc;
+    border: 2px dashed #e5d9f2;
+    transition: all 0.2s ease;
+}
+
+.completedBoxActive {
+    background: rgba(111, 191, 140, 0.08);
+    border-color: #6fbf8c;
+}
+
+.footer {
+    border-top: 2px solid #e2e8f0;
+    padding: 1rem 1.25rem 1.1rem;
+    background: white;
+    gap: 0.75rem;
+}
+
+.cancelBtn {
+    border-radius: 0.75rem;
+    padding: 0.7rem 1.25rem;
+    font-weight: 600;
+    border: 1px solid #cbd5e1;
+    background: white;
+    color: #334155;
+    transition: all 0.2s ease;
+    min-height: 46px;
+}
+
+.cancelBtn:hover {
+    background: #f1f5f9;
+}
+
+.saveBtn {
+    border-radius: 0.75rem;
+    padding: 0.7rem 1.25rem;
+    font-weight: 600;
+    background: #e6b85c;
+    border: none;
+    color: #1e293b;
+    min-width: 140px;
+    min-height: 46px;
+    transition: all 0.2s ease;
+}
+
+.saveBtn:hover {
+    background: #d9a94a;
+    color: #1e293b;
+}
+
+.saveBtn:disabled,
+.cancelBtn:disabled {
+    opacity: 0.65;
+    pointer-events: none;
+}
+
+@media (max-width: 575.98px) {
+    .modal {
+        margin: 0.5rem;
+        max-width: calc(100% - 1rem);
+    }
+
+    .modal :global(.modal-content) {
+        border-radius: 1rem;
+        max-height: calc(100vh - 1rem);
+    }
+
+    .modal :global(.modal-body) {
+        max-height: calc(100vh - 185px);
+        padding: 1rem;
+    }
+
+    .header {
+        padding: 1rem 1rem 0.85rem;
+    }
+
+    .body {
+        padding: 1rem;
+    }
+
+    .footer {
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 0.6rem;
+        padding: 0.9rem 1rem 1rem;
+    }
+
+    .saveBtn,
+    .cancelBtn,
+    .formControl,
+    .fullRounded {
+        font-size: 16px;
+    }
+
+    .saveBtn,
+    .cancelBtn {
+        width: 100%;
+    }
+}

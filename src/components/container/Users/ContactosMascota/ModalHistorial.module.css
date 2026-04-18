@@ -1,0 +1,115 @@
+/* ModalHistorial.module.css */
+
+.modal :global(.modal-content) {
+    border: none;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+}
+
+.header {
+    border-bottom: 2px solid #d1dce5;
+    background: linear-gradient(135deg, #f1f5f9 0%, white 100%);
+    padding: 1.5rem 1.5rem 1rem;
+}
+
+.headerTitle {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.iconWrapper {
+    background: rgba(100, 116, 139, 0.12);
+    padding: 0.75rem;
+    border-radius: 16px;
+}
+
+.title h4 {
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.25rem;
+}
+
+.title small {
+    color: #64748b;
+    font-size: 0.85rem;
+}
+
+.body {
+    padding: 1.5rem;
+    background: #fafafa;
+}
+
+.sectionTitle {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #64748b;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.inputGroupText {
+    background-color: #f1f5f9;
+    border: 1px solid #d1dce5;
+    border-right: none;
+    min-width: 42px;
+    justify-content: center;
+}
+
+.formControl {
+    border-radius: 0 0.75rem 0.75rem 0;
+    padding: 0.7rem 1rem;
+    border: 1px solid #cbd5e1;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.formControl:focus {
+    border-color: #64748b;
+    box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.2);
+}
+
+.fullRounded {
+    border-radius: 0.75rem !important;
+}
+
+.footer {
+    border-top: 2px solid #e2e8f0;
+    padding: 1.25rem 1.5rem;
+    background: white;
+    gap: 0.75rem;
+}
+
+.cancelBtn {
+    border-radius: 0.75rem;
+    padding: 0.7rem 1.5rem;
+    font-weight: 600;
+    border: 1px solid #cbd5e1;
+    background: white;
+    color: #334155;
+    transition: all 0.2s ease;
+}
+
+.cancelBtn:hover {
+    background: #f1f5f9;
+}
+
+.saveBtn {
+    border-radius: 0.75rem;
+    padding: 0.7rem 1.5rem;
+    font-weight: 600;
+    background: #64748b;
+    border: none;
+    color: white;
+    min-width: 140px;
+    transition: all 0.2s ease;
+}
+
+.saveBtn:hover {
+    background: #475569;
+}

@@ -1,221 +1,233 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Form, Row, Col, InputGroup, Badge } from "react-bootstrap";
-import { Syringe, Calendar, FileText, Package, Hash, User, CheckCircle } from "lucide-react";
+import { Modal, Button, Form, Row, Col, InputGroup, Spinner } from "react-bootstrap";
+import { FileText, Calendar, User } from "lucide-react";
+import styles from "./ModalBase.module.css";
 
-export default function ModalVacuna({ show, onHide, vacunaEdit, mascotaId, onSave }) {
-    const [form, setForm] = useState({ nombre: "", fecha_aplicacion: "", proxima_dosis: "", laboratorio: "", lote: "", veterinario: "", notas: "", completada: false });
+export default function ModalHistorial({ show, onHide, historialEdit, contactos = [], onSave }) {
+    const [form, setForm] = useState({
+        id_contacto: "",
+        fecha_evento: "",
+        titulo: "",
+        nota: ""
+    });
     const [guardando, setGuardando] = useState(false);
+    const [errores, setErrores] = useState({});
 
     useEffect(() => {
-        if (vacunaEdit) {
+        if (!show) return;
+
+        if (historialEdit) {
             setForm({
-                nombre: vacunaEdit.titulo || "",
-                fecha_aplicacion: vacunaEdit.fecha_evento || "",
-                proxima_dosis: vacunaEdit.proxima_fecha || "",
-                laboratorio: vacunaEdit.laboratorio || "",
-                lote: vacunaEdit.lote || "",
-                veterinario: vacunaEdit.nota || "",
-                notas: vacunaEdit.notas || "",
-                completada: vacunaEdit.completada || false
+                id_contacto: historialEdit.id_contacto?.toString() || "",
+                fecha_evento: historialEdit.fecha_evento || "",
+                titulo: historialEdit.titulo || "",
+                nota: historialEdit.nota || ""
             });
         } else {
-            setForm({ nombre: "", fecha_aplicacion: "", proxima_dosis: "", laboratorio: "", lote: "", veterinario: "", notas: "", completada: false });
+            setForm({
+                id_contacto: "",
+                fecha_evento: "",
+                titulo: "",
+                nota: ""
+            });
         }
-    }, [vacunaEdit, show]);
+
+        setErrores({});
+    }, [historialEdit, show]);
+
+    const validateForm = () => {
+        const errors = {};
+        if (!form.titulo.trim()) errors.titulo = "El título es obligatorio";
+        if (!form.nota.trim()) errors.nota = "El detalle es obligatorio";
+        return errors;
+    };
+
+    const handleClose = () => {
+        if (guardando) return;
+        onHide();
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!form.nombre.trim()) return;
+
+        const errors = validateForm();
+        if (Object.keys(errors).length > 0) {
+            setErrores(errors);
+            return;
+        }
+
         setGuardando(true);
-        const payload = {
-            titulo: form.nombre,
-            fecha_evento: form.fecha_aplicacion,
-            proxima_fecha: form.proxima_dosis,
-            nota: form.veterinario,
-            laboratorio: form.laboratorio,
-            lote: form.lote,
-            notas: form.notas,
-            completada: form.completada
-        };
-        const ok = await onSave(payload);
+        const ok = await onSave(form);
         setGuardando(false);
-        if (ok) onHide();
+
+        if (ok) handleClose();
+    };
+
+    const getIconoTipo = (tipo) => {
+        const mapa = { veterinario: "🏥", peluqueria: "✂️", paseador: "🦮", petshop: "🏪", guarderia: "🏠" };
+        return mapa[tipo] || "📋";
+    };
+
+    const renderTipo = (c) => {
+        if (c.tipo === "otro") return c.categoria_personalizada || "Otro";
+        const tipos = {
+            veterinario: "Veterinario",
+            peluqueria: "Peluquería",
+            paseador: "Paseador",
+            petshop: "Pet Shop",
+            guarderia: "Guardería"
+        };
+        return tipos[c.tipo] || "Sin tipo";
     };
 
     return (
-        <Modal show={show} onHide={onHide} size="lg" centered>
+        <Modal
+            show={show}
+            onHide={handleClose}
+            size="lg"
+            fullscreen="md-down"
+            backdrop={guardando ? "static" : true}
+            keyboard={!guardando}
+            scrollable
+            autoFocus={false}
+            dialogClassName={styles.dialog}
+            contentClassName={styles.content}
+        >
             <Form onSubmit={handleSubmit}>
-                <Modal.Header closeButton style={{ borderBottom: '2px solid var(--border-light)', background: 'linear-gradient(135deg, var(--light-bg) 0%, white 100%)' }}>
-                    <Modal.Title className="d-flex align-items-center gap-2">
-                        <div className="p-2 rounded-circle" style={{ backgroundColor: 'rgba(155, 142, 194, 0.15)' }}>
-                            <Syringe size={24} style={{ color: 'var(--success-color)' }} />
+                <Modal.Header closeButton={!guardando} className={styles.header}>
+                    <Modal.Title className={styles.headerTitle}>
+                        <div className={styles.iconWrapper}>
+                            <FileText size={26} style={{ color: "#64748b" }} strokeWidth={2.5} />
                         </div>
-                        <div>
-                            <h5 className="mb-0">{vacunaEdit ? "Editar" : "Nueva"} Vacuna</h5>
-                            <small className="text-muted">Registra el plan de vacunación</small>
+                        <div className={styles.title}>
+                            <h4>{historialEdit ? "Editar" : "Nuevo"} Registro</h4>
+                            <small>Agrega una entrada a la bitácora de salud</small>
                         </div>
                     </Modal.Title>
                 </Modal.Header>
-                <Modal.Body className="px-4 py-4">
-                    <Row className="g-3">
-                        <Col xs={12}>
-                            <h6 className="text-muted mb-3" style={{ fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                                💉 Vacuna
-                            </h6>
-                            <Form.Label className="fw-semibold">Nombre de la vacuna *</Form.Label>
-                            <InputGroup>
-                                <InputGroup.Text style={{ backgroundColor: 'var(--light-bg)', border: '1px solid var(--border-light)' }}>
-                                    <Syringe size={16} />
-                                </InputGroup.Text>
-                                <Form.Control
-                                    value={form.nombre}
-                                    onChange={e => setForm({ ...form, nombre: e.target.value })}
-                                    placeholder="Ej: Antirrábica, Óctuple, Sextuple"
-                                    style={{ borderRadius: '0 0.5rem 0.5rem 0' }}
-                                />
-                            </InputGroup>
-                        </Col>
 
+                <Modal.Body className={styles.body}>
+                    <Row className="g-4">
                         <Col xs={12}>
-                            <h6 className="text-muted mb-3 mt-2" style={{ fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                                📅 Fechas
-                            </h6>
-                        </Col>
-                        <Col xs={12} md={6}>
-                            <Form.Label className="fw-semibold">Fecha de aplicación</Form.Label>
-                            <InputGroup>
-                                <InputGroup.Text style={{ backgroundColor: 'var(--light-bg)', border: '1px solid var(--border-light)' }}>
-                                    <Calendar size={16} />
-                                </InputGroup.Text>
-                                <Form.Control
-                                    type="date"
-                                    value={form.fecha_aplicacion}
-                                    onChange={e => setForm({ ...form, fecha_aplicacion: e.target.value })}
-                                    style={{ borderRadius: '0 0.5rem 0.5rem 0' }}
-                                />
-                            </InputGroup>
-                        </Col>
-                        <Col xs={12} md={6}>
-                            <Form.Label className="fw-semibold">Próxima dosis</Form.Label>
-                            <InputGroup>
-                                <InputGroup.Text style={{ backgroundColor: 'var(--light-bg)', border: '1px solid var(--border-light)' }}>
-                                    <Calendar size={16} />
-                                </InputGroup.Text>
-                                <Form.Control
-                                    type="date"
-                                    value={form.proxima_dosis}
-                                    onChange={e => setForm({ ...form, proxima_dosis: e.target.value })}
-                                    style={{ borderRadius: '0 0.5rem 0.5rem 0' }}
-                                />
-                            </InputGroup>
-                            <small className="text-muted">Fecha estimada para refuerzo</small>
-                        </Col>
-
-                        <Col xs={12}>
-                            <h6 className="text-muted mb-3 mt-2" style={{ fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                                📦 Producto
-                            </h6>
-                        </Col>
-                        <Col xs={12} md={6}>
-                            <Form.Label className="fw-semibold">Laboratorio</Form.Label>
-                            <InputGroup>
-                                <InputGroup.Text style={{ backgroundColor: 'var(--light-bg)', border: '1px solid var(--border-light)' }}>
-                                    <Package size={16} />
-                                </InputGroup.Text>
-                                <Form.Control
-                                    value={form.laboratorio}
-                                    onChange={e => setForm({ ...form, laboratorio: e.target.value })}
-                                    placeholder="Ej: Laboratorio Richmond"
-                                    style={{ borderRadius: '0 0.5rem 0.5rem 0' }}
-                                />
-                            </InputGroup>
-                        </Col>
-                        <Col xs={12} md={6}>
-                            <Form.Label className="fw-semibold">Lote</Form.Label>
-                            <InputGroup>
-                                <InputGroup.Text style={{ backgroundColor: 'var(--light-bg)', border: '1px solid var(--border-light)' }}>
-                                    <Hash size={16} />
-                                </InputGroup.Text>
-                                <Form.Control
-                                    value={form.lote}
-                                    onChange={e => setForm({ ...form, lote: e.target.value })}
-                                    placeholder="Número de lote"
-                                    style={{ borderRadius: '0 0.5rem 0.5rem 0' }}
-                                />
-                            </InputGroup>
-                        </Col>
-
-                        <Col xs={12}>
-                            <h6 className="text-muted mb-3 mt-2" style={{ fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                                📝 Información Adicional
-                            </h6>
-                        </Col>
-                        <Col xs={12}>
-                            <Form.Label className="fw-semibold">Veterinario que la aplicó</Form.Label>
-                            <InputGroup>
-                                <InputGroup.Text style={{ backgroundColor: 'var(--light-bg)', border: '1px solid var(--border-light)' }}>
-                                    <User size={16} />
-                                </InputGroup.Text>
-                                <Form.Control
-                                    value={form.veterinario}
-                                    onChange={e => setForm({ ...form, veterinario: e.target.value })}
-                                    placeholder="Nombre del profesional"
-                                    style={{ borderRadius: '0 0.5rem 0.5rem 0' }}
-                                />
-                            </InputGroup>
-                        </Col>
-                        <Col xs={12}>
-                            <Form.Label className="fw-semibold">Notas</Form.Label>
-                            <InputGroup>
-                                <InputGroup.Text style={{ backgroundColor: 'var(--light-bg)', border: '1px solid var(--border-light)', alignItems: 'flex-start', paddingTop: '0.6rem' }}>
-                                    <FileText size={16} />
-                                </InputGroup.Text>
-                                <Form.Control
-                                    as="textarea"
-                                    rows={3}
-                                    value={form.notas}
-                                    onChange={e => setForm({ ...form, notas: e.target.value })}
-                                    placeholder="Reacciones, observaciones..."
-                                    style={{ borderRadius: '0 0.5rem 0.5rem 0' }}
-                                />
-                            </InputGroup>
-                        </Col>
-                        <Col xs={12}>
-                            <div className="p-3 rounded" style={{ backgroundColor: form.completada ? 'rgba(155, 142, 194, 0.1)' : 'var(--light-bg)', border: `2px dashed ${form.completada ? 'var(--success-color)' : 'var(--border-light)'}` }}>
-                                <Form.Check
-                                    type="checkbox"
-                                    id="completada-check"
-                                    label={
-                                        <span className="d-flex align-items-center gap-2">
-                                            <CheckCircle size={18} color={form.completada ? "var(--success-color)" : "var(--text-muted)"} />
-                                            <span className="fw-semibold">Marcar como aplicada</span>
-                                        </span>
-                                    }
-                                    checked={form.completada}
-                                    onChange={e => setForm({ ...form, completada: e.target.checked })}
-                                />
-                                <small className="text-muted ms-4">
-                                    {form.completada ? "Esta vacuna se marcará como completada" : "Marca esta opción cuando la vacuna haya sido aplicada"}
-                                </small>
+                            <div className={styles.sectionTitle}>
+                                <span>👤</span> Contacto (opcional)
                             </div>
+                            <Form.Group>
+                                <InputGroup>
+                                    <InputGroup.Text className={styles.inputGroupText}>
+                                        <User size={16} />
+                                    </InputGroup.Text>
+                                    <Form.Select
+                                        value={form.id_contacto}
+                                        onChange={(e) => setForm({ ...form, id_contacto: e.target.value })}
+                                        className={styles.formControl}
+                                        disabled={guardando}
+                                    >
+                                        <option value="">Sin contacto asociado</option>
+                                        {contactos.map((c) => (
+                                            <option key={c.id} value={c.id}>
+                                                {getIconoTipo(c.tipo)} {c.nombre} {c.apellido} - {renderTipo(c)}
+                                            </option>
+                                        ))}
+                                    </Form.Select>
+                                </InputGroup>
+                            </Form.Group>
+                        </Col>
+
+                        <Col xs={12}>
+                            <div className={styles.sectionTitle}>
+                                <span>📅</span> Fecha
+                            </div>
+                        </Col>
+
+                        <Col xs={12}>
+                            <Form.Group>
+                                <Form.Label className="fw-semibold mb-2">Fecha del evento</Form.Label>
+                                <InputGroup>
+                                    <InputGroup.Text className={styles.inputGroupText}>
+                                        <Calendar size={16} />
+                                    </InputGroup.Text>
+                                    <Form.Control
+                                        type="date"
+                                        value={form.fecha_evento}
+                                        onChange={(e) => setForm({ ...form, fecha_evento: e.target.value })}
+                                        className={styles.formControl}
+                                        disabled={guardando}
+                                    />
+                                </InputGroup>
+                            </Form.Group>
+                        </Col>
+
+                        <Col xs={12}>
+                            <div className={styles.sectionTitle}>
+                                <span>📝</span> Detalles
+                            </div>
+                        </Col>
+
+                        <Col xs={12}>
+                            <Form.Group>
+                                <Form.Label className="fw-semibold mb-2">
+                                    Título <span className="text-danger">*</span>
+                                </Form.Label>
+                                <Form.Control
+                                    value={form.titulo}
+                                    onChange={(e) => setForm({ ...form, titulo: e.target.value })}
+                                    placeholder="Ej: Control de peso, Cambio de alimento..."
+                                    className={styles.fullRounded}
+                                    isInvalid={!!errores.titulo}
+                                    disabled={guardando}
+                                />
+                                <Form.Control.Feedback type="invalid">{errores.titulo}</Form.Control.Feedback>
+                            </Form.Group>
+                        </Col>
+
+                        <Col xs={12}>
+                            <Form.Group>
+                                <Form.Label className="fw-semibold mb-2">
+                                    Nota <span className="text-danger">*</span>
+                                </Form.Label>
+                                <InputGroup hasValidation>
+                                    <InputGroup.Text
+                                        className={styles.inputGroupText}
+                                        style={{ alignItems: "flex-start", paddingTop: "0.65rem" }}
+                                    >
+                                        <FileText size={16} />
+                                    </InputGroup.Text>
+                                    <Form.Control
+                                        as="textarea"
+                                        rows={5}
+                                        value={form.nota}
+                                        onChange={(e) => setForm({ ...form, nota: e.target.value })}
+                                        placeholder="Describe el evento, observaciones, resultados..."
+                                        className={styles.formControl}
+                                        style={{ resize: "none" }}
+                                        isInvalid={!!errores.nota}
+                                        disabled={guardando}
+                                    />
+                                    <Form.Control.Feedback type="invalid">{errores.nota}</Form.Control.Feedback>
+                                </InputGroup>
+                            </Form.Group>
                         </Col>
                     </Row>
                 </Modal.Body>
-                <Modal.Footer style={{ borderTop: '2px solid var(--border-light)', padding: '1.25rem' }}>
+
+                <Modal.Footer className={styles.footer}>
                     <Button
                         variant="outline-secondary"
-                        onClick={onHide}
-                        style={{ borderRadius: '2rem', padding: '0.5rem 1.5rem' }}
+                        className={styles.cancelBtn}
+                        onClick={handleClose}
+                        disabled={guardando}
                     >
                         Cancelar
                     </Button>
-                    <Button
-                        type="submit"
-                        variant="warning"
-                        disabled={guardando}
-                        style={{ borderRadius: '2rem', padding: '0.5rem 1.5rem', minWidth: '120px' }}
-                    >
-                        {guardando ? "Guardando..." : vacunaEdit ? "Actualizar" : "Crear Vacuna"}
+
+                    <Button type="submit" className={styles.saveBtn} disabled={guardando}>
+                        {guardando ? (
+                            <span className="d-inline-flex align-items-center gap-2">
+                                <Spinner animation="border" size="sm" />
+                                Guardando...
+                            </span>
+                        ) : historialEdit ? "Actualizar" : "Crear Registro"}
                     </Button>
                 </Modal.Footer>
             </Form>
