@@ -27,7 +27,9 @@ function SmartHeader() {
 				<nav className="sp-nav" aria-label="Navegación principal">
 					<button className="sp-navlink" onClick={() => handleNavClick("About")}>Nosotros</button>
 					<button className="sp-navlink" onClick={() => handleNavClick("Contact")}>Contacto</button>
-					<button className="sp-navlink" onClick={() => handleNavClick("Buy")}>Comprar</button>
+					<Link to="/Comprar">
+						<button className="sp-navlink">Comprar</button>
+					</Link>
 				</nav>
 
 				{/* Auth */}

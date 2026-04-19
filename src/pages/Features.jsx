@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from "react";
+// Features.jsx
+import React, { useEffect, useRef, memo } from "react";
 import "./features.css";
 
 const featuresData = [
@@ -51,7 +52,7 @@ const featuresData = [
     },
 ];
 
-function FeatureRow({ data, index }) {
+const FeatureRow = memo(({ data, index }) => {
     const ref = useRef(null);
 
     useEffect(() => {
@@ -93,21 +94,24 @@ function FeatureRow({ data, index }) {
             </div>
         </div>
     );
-}
+});
 
-export default function Features() {
-    return (
-        <section className="sp-features" aria-labelledby="features-title">
-            <div className="sp-features-header">
-                <span className="sp-label">¿Por qué SmartPet?</span>
-                <h2 id="features-title" className="sp-section-title">
-                    Todo lo que tu mascota necesita
-                </h2>
-                <p className="sp-section-sub">Más que una chapita — tecnología con corazón</p>
-            </div>
-            {featuresData.map((f, i) => (
-                <FeatureRow key={i} data={f} index={i} />
-            ))}
-        </section>
-    );
-}
+FeatureRow.displayName = "FeatureRow";
+
+const Features = memo(() => (
+    <section className="sp-features" aria-labelledby="features-title">
+        <div className="sp-features-header">
+            <h2 id="features-title" className="sp-section-title">
+                Todo lo que tu mascota necesita
+            </h2>
+            <p className="sp-section-sub">Más que una chapita — tecnología con corazón</p>
+        </div>
+        {featuresData.map((f, i) => (
+            <FeatureRow key={i} data={f} index={i} />
+        ))}
+    </section>
+));
+
+Features.displayName = "Features";
+
+export default Features;

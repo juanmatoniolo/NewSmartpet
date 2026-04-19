@@ -1,92 +1,130 @@
-/* Botón de WhatsApp */
-.whatsapp-button {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: #25d366;
-  color: #fff;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.3s ease;
+/* about.css */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
+
+.about-page {
+  font-family: 'Nunito', sans-serif;
+  background-color: #f9f9fc;
+  padding: 2rem 1rem;
+  min-height: calc(100vh - 200px);
 }
 
-.whatsapp-button:hover {
-  background-color: #22c35e;
-}
-
-.about-us-container {
-  max-width: 1200px;
+.about-container {
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 20px;
 }
 
-.row-container-us {
+.about-heading {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #2d2a4a;
+  margin-bottom: 2rem;
+  text-align: center;
+  letter-spacing: -0.5px;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+.about-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+  border: 1px solid #f0eef7;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.about-card:hover {
+  box-shadow: 0 20px 30px -10px rgba(108, 92, 148, 0.1);
+}
+
+.about-card h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #4a3b7a;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #f0eef7;
+  padding-bottom: 0.75rem;
+}
+
+.about-card p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #3f3d56;
+  margin-bottom: 1rem;
+}
+
+.about-card p:last-child {
+  margin-bottom: 0;
+}
+
+.about-card--full {
+  grid-column: 1 / -1;
+}
+
+.team-content {
   display: flex;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
+  gap: 2rem;
+  align-items: flex-start;
 }
 
-.column {
+.team-text {
   flex: 1;
-  padding: 15px;
 }
 
-.about-us-card {
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin-bottom: 20px;
+.team-image {
+  flex-shrink: 0;
+  width: 180px;
 }
 
-.card-body {
-  padding: 20px;
-}
-
-.card-title {
-  font-size: 24px;
-  margin-bottom: 15px;
-}
-
-.card-text {
-  font-size: 16px;
-  line-height: 1.5;
-  margin-bottom: 15px;
-}
-
-.image-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.about-us-image {
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-}
-
-
-/* Estilos para pantallas extra pequeñas */
-@media (max-width: 628.98px) {
-  .row-peq{
-    display: flex;
-    flex-flow:  column nowrap;
-  }
-
-  .contenedror-container{
-    width: 100% !important;
-  }
-.about-us-container{
+.team-image img {
   width: 100%;
-  padding: 0;
-  margin: auto;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  object-fit: cover;
+  aspect-ratio: 1 / 1;
 }
 
+@media (max-width: 768px) {
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .about-heading {
+    font-size: 1.8rem;
+  }
+
+  .team-content {
+    flex-direction: column;
+  }
+
+  .team-image {
+    width: 100%;
+    max-width: 250px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-page {
+    padding: 1rem 0.75rem;
+  }
+
+  .about-card {
+    padding: 1.5rem;
+  }
+
+  .about-card h2 {
+    font-size: 1.3rem;
+  }
+
+  .about-heading {
+    font-size: 1.6rem;
+    margin-bottom: 1.5rem;
+  }
 }

@@ -10,12 +10,14 @@ import ProtectedRoute from "./components/Login/ProtectedRoute";
 import ContactosMascota from "./components/container/Users/ContactosMascota";
 import MascotaProtegida from "./components/Usuario/MascotaProtegida";
 import Configuracion from "./pages/Configuracion";
+import Buy from "./components/Buy/Buy";
 
 function App() {
 	return (
 		<BrowserRouter>
 			<Routes>
 				<Route path="/" element={<Homepage />} />
+				<Route path="/Comprar" element={<Buy />} />
 				<Route path="/NewSmartpet" element={<Homepage />} />
 				<Route path="/Login" element={<Login />} />
 				<Route path="/Register" element={<Register />} />

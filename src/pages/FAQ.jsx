@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+// FAQComponent.jsx
+import React, { useState, useCallback, memo } from "react";
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
 import "./faq.css";
 
@@ -21,29 +22,28 @@ const faqs = [
     },
 ];
 
-const FAQComponent = () => {
+const FAQComponent = memo(() => {
     const [active, setActive] = useState(null);
 
-    const toggle = (i) => setActive(active === i ? null : i);
+    const toggle = useCallback((i) => {
+        setActive(prev => prev === i ? null : i);
+    }, []);
 
     return (
         <div className="faq-wrap">
-            <span className="sp-label">FAQ</span>
+
             <h2 className="faq-title">Preguntas frecuentes</h2>
             <p className="faq-desc">
                 Todo lo que necesitás saber sobre SmartPet antes de dar el paso.
             </p>
-
             <div className="faq-list">
                 {faqs.map((faq, i) => (
-                    <div
-                        key={i}
-                        className={`faq-item ${active === i ? "open" : ""}`}
-                    >
+                    <div key={i} className={`faq-item ${active === i ? "open" : ""}`}>
                         <button
                             className="faq-question"
                             onClick={() => toggle(i)}
                             aria-expanded={active === i}
+                            type="button"
                         >
                             <span>{faq.question}</span>
                             <span className="faq-icon">
@@ -58,6 +58,8 @@ const FAQComponent = () => {
             </div>
         </div>
     );
-};
+});
+
+FAQComponent.displayName = "FAQComponent";
 
 export default FAQComponent;

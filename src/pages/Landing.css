@@ -1,3 +1,4 @@
+/* Landing.css */
 .contacto-wrap {
   font-family: 'Nunito', sans-serif;
   text-align: center;
@@ -38,14 +39,12 @@
   text-decoration: none;
   color: #2a1f3d;
   transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-  cursor: pointer;
 }
 
 .contacto-btn:hover {
   transform: translateY(-3px);
   box-shadow: 0 8px 24px rgba(108, 92, 148, 0.18);
   border-color: var(--accent);
-  color: #2a1f3d;
 }
 
 .contacto-btn-icon {
