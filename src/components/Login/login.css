@@ -1,59 +1,62 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+/* login.css */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
 
 .login-main {
-    min-height: calc(50vh - 64px);
+    font-family: 'Nunito', sans-serif;
     background: #f4f1f9;
+    min-height: calc(100vh - 180px);
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 2rem 1rem;
-    font-family: 'Nunito', sans-serif;
 }
 
-/* Card */
 .login-card {
-    background: #fff;
-    border-radius: 24px;
-    box-shadow: 0 8px 40px rgba(108, 92, 148, 0.15);
+    background: #ffffff;
+    border-radius: 32px;
+    box-shadow: 0 20px 40px -8px rgba(74, 59, 122, 0.15);
+    padding: 2.5rem 2.2rem;
     width: 100%;
     max-width: 420px;
-    overflow: hidden;
+    border: 1px solid #ede4ff;
+    animation: fadeInUp 0.5s ease;
 }
 
-/* Header de la card */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .login-card-header {
-    background: #4a3b7a;
-    padding: 2.5rem 2rem 2rem;
     text-align: center;
-    color: #fff;
-}
-
-.login-paw {
-    font-size: 2.5rem;
-    display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 2rem;
 }
 
 .login-title {
-    font-size: 1.4rem;
+    font-size: 1.9rem;
     font-weight: 900;
-    color: #fff;
-    margin-bottom: 0.3rem;
+    color: #2a1f3d;
+    margin-bottom: 0.4rem;
+    letter-spacing: -0.02em;
 }
 
 .login-sub {
-    font-size: 0.88rem;
-    color: rgba(255, 255, 255, 0.75);
-    font-weight: 600;
-    margin: 0;
+    color: #6b5b7e;
+    font-weight: 500;
+    font-size: 0.95rem;
 }
 
-/* Form */
 .login-form {
-    padding: 2rem;
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1.5rem;
 }
 
 .login-field {
@@ -63,163 +66,174 @@
 }
 
 .login-field label {
+    font-weight: 700;
     font-size: 0.85rem;
-    font-weight: 800;
-    color: #6C5C94;
+    color: #4a3b7a;
     text-transform: uppercase;
-    letter-spacing: 0.4px;
+    letter-spacing: 0.3px;
 }
 
 .login-field input {
     font-family: 'Nunito', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 600;
-    padding: 0.75rem 1rem;
-    border: 1.5px solid #e4dcf5;
-    border-radius: 12px;
-    color: #2a1f3d;
-    background: #faf8ff;
-    outline: none;
+    padding: 0.9rem 1rem;
+    border: 2px solid #e4dcf5;
+    border-radius: 16px;
+    font-size: 1rem;
     transition: border-color 0.2s, box-shadow 0.2s;
-    width: 100%;
+    background: #fcfaff;
+    font-weight: 500;
 }
 
 .login-field input:focus {
+    outline: none;
     border-color: #6C5C94;
-    box-shadow: 0 0 0 3px rgba(108, 92, 148, 0.12);
-    background: #fff;
+    box-shadow: 0 0 0 4px rgba(108, 92, 148, 0.1);
+    background: #ffffff;
 }
 
-.login-field input.input-error {
-    border-color: #e24b4a;
-    background: #fff8f8;
+.login-field input:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
-/* Password */
 .login-password-wrap {
     position: relative;
+    display: flex;
 }
 
 .login-password-wrap input {
-    padding-right: 2.8rem;
+    width: 100%;
+    padding-right: 3rem;
 }
 
 .login-eye {
     position: absolute;
+    right: 12px;
     top: 50%;
-    right: 0.75rem;
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: #6C5C94;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
+    color: #8f87a3;
     cursor: pointer;
     display: flex;
     align-items: center;
-    padding: 0;
-    opacity: 0.7;
-    transition: opacity 0.2s;
+    justify-content: center;
+    padding: 4px;
+    transition: color 0.2s;
 }
 
 .login-eye:hover {
-    opacity: 1;
+    color: #6C5C94;
 }
 
-/* Error */
 .login-error {
-    background: #fff0f0;
-    border: 1px solid #f9c0c0;
-    color: #c0392b;
-    font-size: 0.85rem;
-    font-weight: 700;
-    padding: 0.65rem 1rem;
-    border-radius: 10px;
-    text-align: center;
+    background: #fee8e8;
+    color: #c53030;
+    padding: 0.8rem 1rem;
+    border-radius: 14px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-left: 4px solid #e53e3e;
 }
 
-/* Botón */
 .login-btn {
+    background: #6C5C94;
+    color: white;
+    border: none;
     font-family: 'Nunito', sans-serif;
     font-weight: 800;
-    font-size: 1rem;
-    background: #a06080;
-
-    color: #fff;
-    border: none;
-    padding: 0.85rem;
-    border-radius: 12px;
+    font-size: 1.1rem;
+    padding: 1rem;
+    border-radius: 40px;
     cursor: pointer;
-    transition: opacity 0.2s, transform 0.2s;
-    margin-top: 0.25rem;
+    transition: all 0.2s;
+    box-shadow: 0 8px 18px rgba(108, 92, 148, 0.25);
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .login-btn:hover:not(:disabled) {
-    opacity: 0.92;
-    transform: translateY(-1px);
+    background: #5b4c7e;
+    transform: translateY(-2px);
+    box-shadow: 0 14px 24px rgba(108, 92, 148, 0.3);
 }
 
 .login-btn:disabled {
-    opacity: 0.6;
+    opacity: 0.7;
     cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
-/* Registro */
+.spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 .login-register {
     text-align: center;
-    font-size: 0.88rem;
-    font-weight: 600;
-    color: #888;
-    padding: 0 2rem 1.75rem;
-    margin: 0;
+    margin-top: 1.8rem;
+    color: #5f5570;
+    font-weight: 500;
 }
 
 .login-register a {
     color: #6C5C94;
-    font-weight: 800;
+    font-weight: 700;
     text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.2s;
 }
 
 .login-register a:hover {
-    text-decoration: underline;
+    border-bottom-color: #6C5C94;
 }
 
-/* Responsive */
+.login-forgot {
+    text-align: center;
+    margin-top: 0.8rem;
+}
+
+.login-forgot a {
+    color: #8f87a3;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.login-forgot a:hover {
+    color: #6C5C94;
+}
+
 @media (max-width: 480px) {
     .login-card {
-        border-radius: 16px;
+        padding: 2rem 1.5rem;
     }
 
-    .login-card-header {
-        padding: 2rem 1.5rem 1.5rem;
+    .login-title {
+        font-size: 1.6rem;
     }
 
-    .login-form {
-        padding: 1.5rem;
+    .login-btn {
+        font-size: 1rem;
+        padding: 0.9rem;
     }
-
-    .login-register {
-        padding: 0 1.5rem 1.5rem;
-    }
-}
-
-.login-eye {
-    position: absolute;
-    top: 50%;
-    right: 0.75rem;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: #6C5C94;
-    font-size: 1.2rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: end;
-    padding: 0.25rem;
-    opacity: 0.7;
-    transition: opacity 0.2s;
-    line-height: 1;
-    height: 100%;
-    top: 0;
-    transform: none;
 }
