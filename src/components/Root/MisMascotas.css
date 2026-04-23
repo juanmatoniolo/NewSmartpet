@@ -1,0 +1,318 @@
+/* MisMascotas.css */
+.mis-mascotas-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
+
+.header-busqueda {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.header-busqueda h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #4E3F7F;
+    font-weight: 700;
+    margin: 0;
+}
+
+.busqueda-usuario {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    position: relative;
+}
+
+.search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    color: #aaa;
+}
+
+.search-wrapper input {
+    padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+    border: 1px solid #ddd;
+    border-radius: 30px;
+    width: 280px;
+    font-size: 0.9rem;
+    transition: 0.2s;
+}
+
+.search-wrapper input:focus {
+    outline: none;
+    border-color: #4E3F7F;
+    box-shadow: 0 0 0 2px rgba(78, 63, 127, 0.2);
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+    margin-left: 8px;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.dropdown-resultados {
+    position: absolute;
+    top: 45px;
+    left: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 280px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.resultado-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.resultado-item:hover {
+    background-color: #f8f9fa;
+}
+
+.btn-mis-mascotas,
+.btn-cambiar {
+    background: #4E3F7F;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 0.5rem 1.2rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-mis-mascotas:hover,
+.btn-cambiar:hover {
+    background: #3a2e60;
+}
+
+.usuario-actual {
+    background: #f8f9fa;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.mascotas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.tarjeta-mascota {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tarjeta-mascota:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+.tarjeta-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #4E3F7F;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 30px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    z-index: 2;
+}
+
+.tarjeta-imagen {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+    background: #f5f5f5;
+}
+
+.tarjeta-imagen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.tarjeta-mascota:hover .tarjeta-imagen img {
+    transform: scale(1.05);
+}
+
+.tarjeta-body {
+    padding: 1.2rem;
+}
+
+.tarjeta-body h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.3rem;
+    color: #2d2d2d;
+}
+
+.fecha-nac {
+    color: #6c757d;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.btn-detalle {
+    display: inline-block;
+    background: #4E3F7F;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 30px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.btn-detalle:hover {
+    background: #3a2e60;
+    color: white;
+    text-decoration: none;
+}
+
+.sin-mascotas {
+    text-align: center;
+    padding: 3rem;
+    background: #f8f9fa;
+    border-radius: 24px;
+    color: #6c757d;
+}
+
+/* Skeleton loading */
+.tarjeta-mascota.skeleton .skeleton-badge,
+.tarjeta-mascota.skeleton .skeleton-img,
+.tarjeta-mascota.skeleton .skeleton-title,
+.tarjeta-mascota.skeleton .skeleton-text,
+.tarjeta-mascota.skeleton .skeleton-button {
+    background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.tarjeta-mascota.skeleton {
+    position: relative;
+    height: 360px;
+}
+
+.skeleton-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 80px;
+    height: 24px;
+    border-radius: 30px;
+    z-index: 2;
+}
+
+.skeleton-img {
+    height: 200px;
+    width: 100%;
+}
+
+.skeleton-body {
+    padding: 1.2rem;
+}
+
+.skeleton-title {
+    height: 24px;
+    width: 70%;
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+}
+
+.skeleton-text {
+    height: 16px;
+    width: 50%;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+}
+
+.skeleton-button {
+    height: 36px;
+    width: 100px;
+    border-radius: 30px;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .mis-mascotas-container {
+        padding: 1rem;
+    }
+
+    .header-busqueda {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .busqueda-usuario {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-wrapper input {
+        width: 100%;
+    }
+
+    .dropdown-resultados {
+        width: 100%;
+    }
+}

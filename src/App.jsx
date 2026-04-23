@@ -13,6 +13,9 @@ import Configuracion from "./pages/Configuracion";
 import Buy from "./components/Buy/Buy";
 import Dashboard from "./components/Root/Dashboard";
 import HeaderLogout from "./components/Logout/Logout";
+import MascotasAdm from "./components/Root/MascotasAdm";
+import MisMascotas from "./components/Root/MisMascotas";
+import MascotaAdminDetail from "./components/Root/MascotaAdminDetail";
 
 function App() {
 	const [authenticated, setAuthenticated] = React.useState(
@@ -76,6 +79,26 @@ function App() {
 						</ProtectedRoute>
 					}
 				/>
+
+				<Route
+					path="/admin/mis-mascotas/id"
+					element={
+						<ProtectedRoute adminOnly={true}>
+							<MascotasAdm />
+						</ProtectedRoute>
+					}
+				/>
+
+				<Route path="/admin/mis-mascotas" element={<ProtectedRoute adminOnly={true}>
+					<MisMascotas />
+				</ProtectedRoute>}
+				/>
+
+
+				<Route path="/admin/mis-mascotas/:id" element={<ProtectedRoute adminOnly={true}>
+					<MascotaAdminDetail />
+				</ProtectedRoute>} />
+
 
 				{/* Ruta dashboard protegida manualmente */}
 				<Route
