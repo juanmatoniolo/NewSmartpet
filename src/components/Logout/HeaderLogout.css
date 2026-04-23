@@ -250,3 +250,28 @@
         transform: translateY(0);
     }
 }
+
+.profile-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.user-name {
+    font-weight: 500;
+    color: #333;
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (max-width: 768px) {
+    .user-name {
+        display: none;
+        /* ocultar en móvil si es necesario */
+    }
+}

@@ -1,132 +1,115 @@
 /* Configuracion.css */
 
+/* Contenedor principal */
 .config-container {
-    min-height: calc(100vh - 64px);
-    padding: 40px 16px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background:
-        radial-gradient(circle at top left, rgba(99, 102, 241, 0.18), transparent 30%),
-        radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.12), transparent 28%),
-        linear-gradient(180deg, #eef4ff 0%, #f7f9fc 100%);
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
 }
 
+/* Tarjeta de configuración */
 .config-card {
-    width: 100%;
-    max-width: 620px;
-    padding: 32px;
-    border-radius: 24px;
-    background: rgba(255, 255, 255, 0.92);
-    border: 1px solid rgba(255, 255, 255, 0.65);
-    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.12);
-    backdrop-filter: blur(12px);
+    background: #fff;
+    border-radius: 32px;
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.02);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* HEADER */
+/* Cabecera */
 .config-header {
+    background: linear-gradient(135deg, #6c5c94 0%, #4a3b7a 100%);
+    padding: 2rem 2rem 1.8rem;
     text-align: center;
-    margin-bottom: 28px;
+    color: white;
 }
 
 .config-header h1 {
-    margin: 0 0 8px;
-    font-size: 2rem;
-    font-weight: 800;
-    color: #1f2937;
+    margin: 0 0 0.5rem;
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
 }
 
 .config-header p {
     margin: 0;
-    color: #6b7280;
+    opacity: 0.85;
     font-size: 0.95rem;
 }
 
-/* FORM */
+/* Formulario */
 .config-form {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
+    padding: 2rem;
 }
 
+/* Secciones de formulario */
 .config-section {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+    margin-bottom: 1.8rem;
+    position: relative;
 }
 
 .config-section label {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.5rem;
     font-weight: 600;
-    color: #1f2937;
-    font-size: 0.95rem;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
 }
 
 .config-section label svg {
-    color: #4f46e5;
+    color: #6c5c94;
 }
 
-/* INPUTS */
-.config-section input[type="text"],
-.config-section input[type="email"],
-.config-section input[type="date"] {
+.config-section input:not([type="checkbox"]),
+.config-section select,
+.config-section textarea {
     width: 100%;
-    height: 50px;
-    padding: 0 14px;
-    border: 1px solid #dbe3ef;
-    border-radius: 14px;
+    padding: 0.8rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
     background: #fff;
-    color: #1f2937;
-    font-size: 0.98rem;
-    transition: 0.2s ease;
 }
 
-.config-section input::placeholder {
-    color: #9ca3af;
-}
-
-.config-section input:hover {
-    border-color: #c8d3e1;
-}
-
-.config-section input:focus {
+.config-section input:focus,
+.config-section select:focus,
+.config-section textarea:focus {
     outline: none;
-    border-color: #4f46e5;
-    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.08);
+    border-color: #6c5c94;
+    box-shadow: 0 0 0 3px rgba(108, 92, 148, 0.2);
 }
 
-/* ERROR */
-.input-error {
-    border-color: #ef4444 !important;
-    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.08);
-}
-
-.error-message {
-    font-size: 0.84rem;
-    color: #b42318;
-}
-
-/* FOTO */
+/* Sección de foto */
 .photo-section {
-    align-items: center;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
 }
 
 .photo-label {
     cursor: pointer;
-}
-
-.photo-wrapper {
-    width: 130px;
-    height: 130px;
+    display: block;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
     overflow: hidden;
     position: relative;
-    border: 4px solid #fff;
-    box-shadow:
-        0 10px 25px rgba(15, 23, 42, 0.1),
-        0 0 0 1px #e5e7eb;
+    background: #f1f5f9;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.photo-label:hover {
+    transform: scale(1.02);
+}
+
+.photo-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
 }
 
 .photo-wrapper img {
@@ -138,127 +121,181 @@
 .photo-placeholder {
     width: 100%;
     height: 100%;
-    background: #f1f5f9;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2.2rem;
-    color: #94a3b8;
+    background: #eef2ff;
+    color: #6c5c94;
+    font-size: 2.5rem;
 }
 
 .photo-overlay {
     position: absolute;
-    inset: 0;
-    background: rgba(15, 23, 42, 0.6);
-    color: white;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
+    gap: 0.3rem;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 500;
     opacity: 0;
-    transition: 0.2s;
+    transition: opacity 0.2s ease;
+    backdrop-filter: blur(2px);
 }
 
-.photo-overlay span {
-    font-size: 0.8rem;
-}
-
-.photo-wrapper:hover .photo-overlay {
+.photo-label:hover .photo-overlay {
     opacity: 1;
 }
 
-/* TOGGLE */
-.config-section.toggle {
-    flex-direction: row;
+/* Toggle (notificaciones) */
+.toggle {
+    display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 14px;
+    flex-wrap: wrap;
     background: #f8fafc;
-    border-radius: 16px;
-    border: 1px solid #e5e7eb;
+    padding: 1rem 1.2rem;
+    border-radius: 20px;
+    margin: 1.5rem 0;
 }
 
 .toggle-label {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-weight: 600;
-    color: #1f2937;
-    font-size: 0.95rem;
+    gap: 0.6rem;
+    font-weight: 500;
+    color: #1e293b;
 }
 
+/* Switch personalizado */
 .switch {
     position: relative;
-    width: 54px;
-    height: 30px;
+    display: inline-block;
+    width: 52px;
+    height: 28px;
 }
 
 .switch input {
     opacity: 0;
+    width: 0;
+    height: 0;
 }
 
 .slider {
     position: absolute;
-    inset: 0;
-    background: #cbd5e1;
-    border-radius: 999px;
     cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cbd5e1;
     transition: 0.3s;
+    border-radius: 28px;
 }
 
 .slider:before {
-    content: "";
     position: absolute;
-    width: 24px;
-    height: 24px;
+    content: "";
+    height: 22px;
+    width: 22px;
     left: 3px;
-    top: 3px;
-    background: white;
-    border-radius: 50%;
+    bottom: 3px;
+    background-color: white;
     transition: 0.3s;
+    border-radius: 50%;
 }
 
-.switch input:checked+.slider {
-    background: #4f46e5;
+input:checked+.slider {
+    background-color: #6c5c94;
 }
 
-.switch input:checked+.slider:before {
+input:checked+.slider:before {
     transform: translateX(24px);
 }
 
-/* MENSAJES */
-.mensaje {
-    padding: 12px;
-    border-radius: 12px;
-    background: #ecfdf3;
-    color: #027a48;
+/* Sección de cambio de contraseña */
+.password-section {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eef2f6;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #2c3e50;
+    margin-bottom: 1.2rem;
+}
+
+.section-title svg {
+    color: #6c5c94;
+}
+
+.password-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.password-fields input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    font-size: 0.95rem;
+}
+
+.btn-change-password {
+    background: transparent;
+    border: 1px solid #6c5c94;
+    color: #6c5c94;
+    padding: 0.7rem 1rem;
+    border-radius: 40px;
     font-weight: 600;
-    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: fit-content;
 }
 
-.mensaje-error {
-    background: #fef3f2;
-    color: #b42318;
+.btn-change-password:hover {
+    background: #6c5c94;
+    color: white;
+    transform: translateY(-1px);
 }
 
-/* BOTÓN */
+.btn-change-password:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Botón guardar */
 .btn-save {
     width: 100%;
-    height: 52px;
-    margin-top: 8px;
-    border: none;
-    border-radius: 16px;
-    background: linear-gradient(135deg, #4f46e5, #6366f1);
+    background: linear-gradient(135deg, #6c5c94, #4a3b7a);
     color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 40px;
     font-weight: 700;
+    font-size: 1rem;
     cursor: pointer;
-    transition: 0.2s;
-    box-shadow: 0 12px 24px rgba(79, 70, 229, 0.25);
+    transition: all 0.2s ease;
+    margin-top: 1.5rem;
 }
 
 .btn-save:hover:not(:disabled) {
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(108, 92, 148, 0.3);
 }
 
 .btn-save:disabled {
@@ -266,18 +303,92 @@
     cursor: not-allowed;
 }
 
-/* RESPONSIVE */
+/* Mensajes de error y éxito */
+.error-message {
+    display: block;
+    margin-top: 0.4rem;
+    font-size: 0.75rem;
+    color: #e53e3e;
+}
+
+.input-error {
+    border-color: #e53e3e !important;
+}
+
+.mensaje {
+    padding: 0.8rem 1rem;
+    border-radius: 16px;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    text-align: center;
+    background: #e6fffa;
+    color: #234e52;
+    border-left: 4px solid #38b2ac;
+}
+
+.mensaje-error {
+    background: #fff5f5;
+    color: #9b2c2c;
+    border-left-color: #e53e3e;
+}
+
+/* Responsive */
 @media (max-width: 640px) {
-    .config-card {
-        padding: 24px;
+    .config-container {
+        margin: 1rem auto;
+    }
+
+    .config-header {
+        padding: 1.5rem;
     }
 
     .config-header h1 {
-        font-size: 1.6rem;
+        font-size: 1.4rem;
     }
 
-    .photo-wrapper {
-        width: 110px;
-        height: 110px;
+    .config-form {
+        padding: 1.5rem;
     }
+
+    .toggle {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .btn-change-password {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Estilos para los campos de contraseña con botón de mostrar/ocultar */
+.password-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-input-wrapper input {
+    width: 100%;
+    padding-right: 3rem;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6c5c94;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.toggle-password:hover {
+    color: #4a3b7a;
 }
