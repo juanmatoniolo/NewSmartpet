@@ -63,13 +63,10 @@ const HeaderLogout = () => {
 			setMenuOpen(false);
 			return;
 		}
-
 		try {
 			const res = await fetch(`http://localhost/api-smartpet/index.php/mascotas?usuario_id=${userId}`);
 			const mascotas = await res.json();
-
 			if (Array.isArray(mascotas) && mascotas.length > 0) {
-				// Redirige a la agenda de la primera mascota
 				navigate(`/agenda/${mascotas[0].id}`);
 			} else {
 				alert("No tienes mascotas registradas. Agrega una desde tu panel.");
@@ -78,7 +75,12 @@ const HeaderLogout = () => {
 			console.error("Error al obtener mascotas:", error);
 			alert("No se pudo cargar la información de tus mascotas.");
 		}
+		setMenuOpen(false);
+	};
 
+	const handleGoToInicio = () => {
+		if (userId) navigate(`/Consultas/${userId}`);
+		else navigate("/");
 		setMenuOpen(false);
 	};
 
@@ -113,6 +115,9 @@ const HeaderLogout = () => {
 					</button>
 
 					<div className={`profile-menu ${menuOpen ? "open" : ""}`}>
+						<button className="menu-item" onClick={handleGoToInicio} type="button">
+							<FaHome /> <span>Inicio</span>
+						</button>
 						<button className="menu-item" onClick={handleGoToConfiguracion} type="button">
 							<FaCog /> <span>Configuración</span>
 						</button>

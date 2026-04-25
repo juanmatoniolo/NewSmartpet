@@ -1,21 +1,14 @@
 /* EditarMascota.css - Paleta Violeta/Rosado/Blanco */
 
 :root {
-    /* Colores principales (coherentes con el resto) */
     --pet-primary: #6C5C94;
-    /* Violeta principal */
     --pet-primary-dark: #5A4A7A;
     --pet-secondary: #CD7FA7;
-    /* Rosa principal */
     --pet-secondary-light: #DDB3C9;
     --pet-info: #7F9BC2;
-    /* Azul lavanda */
     --pet-success: #9B8EC2;
     --pet-danger: #D97A8C;
-    /* Rosa coral */
     --pet-warning: #E6B8C9;
-
-    /* Fondos y textos */
     --pet-bg-card: #FFFFFF;
     --pet-bg-light: #F8F5FC;
     --pet-text-dark: #3C2A4D;
@@ -25,35 +18,70 @@
     --pet-hover-shadow: 0 8px 20px rgba(108, 92, 148, 0.12);
 }
 
-/* Modal principal */
+/* Modal global */
 .modal-content {
     border-radius: 1.2rem;
     border: none;
     box-shadow: 0 20px 35px rgba(108, 92, 148, 0.15);
-    background: var(--pet-bg-card);
+    overflow: hidden;
 }
 
 .modal-header {
     background-color: var(--pet-bg-light);
     border-bottom: 1px solid var(--pet-border);
-    border-radius: 1.2rem 1.2rem 0 0;
-    padding: 1rem 1.2rem;
+    padding: 1.2rem 1.5rem;
 }
 
 .modal-title {
     color: var(--pet-text-dark);
     font-weight: 600;
+    font-size: 1.3rem;
 }
 
 .modal-body {
-    padding: 1.2rem;
+    padding: 1.5rem;
     background: var(--pet-bg-card);
 }
 
 .modal-footer {
     border-top: 1px solid var(--pet-border);
-    padding: 0.75rem 1.2rem;
+    padding: 1rem 1.5rem;
     background: var(--pet-bg-card);
+}
+
+/* Títulos de sección */
+.seccion-titulo {
+    color: var(--pet-text-dark);
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin: 0 0 1rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--pet-border);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Tarjetas de contacto */
+.contacto-card {
+    background: var(--pet-bg-light);
+    padding: 1rem;
+    border-radius: 1rem;
+    border: 1px solid var(--pet-border);
+    transition: all 0.2s;
+}
+
+.contacto-card:hover {
+    border-color: var(--pet-secondary-light);
+    box-shadow: var(--pet-shadow);
+}
+
+.contacto-titulo {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--pet-primary);
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.2px;
 }
 
 /* Campos de formulario */
@@ -61,8 +89,8 @@
 .form-select {
     border-radius: 0.75rem;
     border: 1px solid var(--pet-border);
+    padding: 0.6rem 0.75rem;
     transition: all 0.2s;
-    background-color: white;
 }
 
 .form-control:focus,
@@ -74,7 +102,8 @@
 .form-label {
     font-weight: 500;
     color: var(--pet-text-dark);
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.4rem;
+    font-size: 0.9rem;
 }
 
 /* Radio buttons */
@@ -87,33 +116,46 @@
     color: var(--pet-text-dark);
 }
 
-/* Input file */
+/* Sección de imagen */
+.imagen-seccion {
+    background: var(--pet-bg-light);
+    border-radius: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--pet-border);
+}
+
+.preview-actual {
+    text-align: center;
+    min-width: 100px;
+}
+
+.preview-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: var(--pet-text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.img-preview {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 1rem;
+    border: 2px solid var(--pet-secondary-light);
+    background: white;
+    box-shadow: var(--pet-shadow);
+}
+
+.upload-area {
+    display: flex;
+    flex-direction: column;
+}
+
 input[type="file"] {
-    padding: 0.3rem;
+    padding: 0.5rem;
     border-radius: 0.75rem;
     border: 1px solid var(--pet-border);
-}
-
-/* Preview de imagen */
-.modal-body img {
-    border-radius: 0.5rem;
-    border: 1px solid var(--pet-border);
-    margin-top: 0.5rem;
-}
-
-/* Títulos de sección (Contacto 1, Contacto 2) */
-.modal-body h5 {
-    color: var(--pet-text-dark);
-    font-weight: 600;
-    margin: 1rem 0 0.5rem 0;
-    border-left: 4px solid var(--pet-primary);
-    padding-left: 0.75rem;
-}
-
-/* Mensaje de error */
-.text-danger {
-    color: var(--pet-danger) !important;
-    font-size: 0.85rem;
+    background: white;
 }
 
 /* Botones */
@@ -122,12 +164,14 @@ input[type="file"] {
     border-color: var(--pet-primary) !important;
     color: white !important;
     border-radius: 2rem !important;
-    padding: 0.4rem 1rem !important;
+    padding: 0.5rem 1.2rem !important;
+    font-weight: 500 !important;
 }
 
 .btn-secondary:hover {
     background-color: var(--pet-primary-dark) !important;
     border-color: var(--pet-primary-dark) !important;
+    transform: translateY(-1px);
 }
 
 .btn-primary {
@@ -135,19 +179,22 @@ input[type="file"] {
     border-color: var(--pet-secondary) !important;
     color: white !important;
     border-radius: 2rem !important;
-    padding: 0.4rem 1rem !important;
+    padding: 0.5rem 1.2rem !important;
+    font-weight: 500 !important;
 }
 
 .btn-primary:hover {
     background-color: #B86A92 !important;
     border-color: #B86A92 !important;
+    transform: translateY(-1px);
 }
 
 .btn-primary:disabled {
     opacity: 0.6;
+    transform: none;
 }
 
-/* Botón Cancelar en el footer (ya es secondary, pero lo ajustamos) */
+/* Botón Cancelar en footer */
 .modal-footer .btn-secondary {
     background-color: transparent !important;
     border-color: var(--pet-border) !important;
@@ -160,17 +207,36 @@ input[type="file"] {
     color: var(--pet-secondary) !important;
 }
 
-/* Responsive (mobile-first) */
-@media (max-width: 576px) {
+/* Mensaje de error */
+.alert-danger {
+    background-color: #F8D7DA;
+    border-color: #F5C6CB;
+    color: var(--pet-danger);
+    border-radius: 0.75rem;
+    font-size: 0.85rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
     .modal-body {
         padding: 1rem;
     }
 
-    .form-control,
-    .form-select {
-        font-size: 0.9rem;
+    .contacto-card {
+        margin-bottom: 1rem;
     }
 
+    .img-preview {
+        width: 80px;
+        height: 80px;
+    }
+
+    .seccion-titulo {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
     .modal-footer {
         flex-direction: column;
     }
@@ -183,5 +249,15 @@ input[type="file"] {
 
     .modal-footer .btn:first-child {
         margin-top: 0;
+    }
+
+    .preview-actual {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .imagen-seccion .d-flex {
+        flex-direction: column;
+        align-items: stretch;
     }
 }

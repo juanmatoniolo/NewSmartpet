@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Form, Spinner } from "react-bootstrap";
+import { Modal, Button, Form, Spinner, Row, Col } from "react-bootstrap";
 import axios from "axios";
-import "./EditarMascota.css"
+import "./EditarMascota.css";
 
 const API_BASE = "http://localhost/api-smartpet/index.php";
 
@@ -9,7 +9,7 @@ function EditarMascota({ show, handleClose, mascota, idMascota, onSave }) {
     const [formData, setFormData] = useState({
         nombre: "",
         fecha_nacimiento: "",
-        sexo: "",
+        sexo: "Macho",
         direccion: "",
         descripcion: "",
         urlImg: "",
@@ -66,7 +66,7 @@ function EditarMascota({ show, handleClose, mascota, idMascota, onSave }) {
         const file = e.target.files[0];
         if (!file) return;
         if (file.size > 5 * 1024 * 1024) {
-            setError("Máximo 5MB");
+            setError("La imagen no puede superar los 5MB");
             setArchivo(null);
             setArchivoURL(null);
         } else {
@@ -77,6 +77,10 @@ function EditarMascota({ show, handleClose, mascota, idMascota, onSave }) {
     };
 
     const handleSave = async () => {
+        if (!formData.nombre.trim()) {
+            setError("El nombre de la mascota es obligatorio");
+            return;
+        }
         setCargando(true);
         try {
             let imgUrl = formData.urlImg;
@@ -90,39 +94,212 @@ function EditarMascota({ show, handleClose, mascota, idMascota, onSave }) {
             if (onSave) onSave();
             handleClose();
         } catch (err) {
-            setError("Error al guardar");
+            setError(err.response?.data?.error || "Error al guardar los cambios");
         } finally {
             setCargando(false);
         }
     };
 
     return (
-        <Modal show={show} onHide={handleClose} size="lg" centered>
-            <Modal.Header closeButton><Modal.Title>Editar mascota</Modal.Title></Modal.Header>
+        <Modal show={show} onHide={handleClose} size="lg" centered className="editar-mascota-modal">
+            <Modal.Header closeButton>
+                <Modal.Title>✏️ Editar mascota</Modal.Title>
+            </Modal.Header>
             <Modal.Body>
                 <Form>
-                    <Form.Group><Form.Label>Imagen</Form.Label><input type="file" onChange={archivoHandler} className="form-control" /></Form.Group>
-                    {archivoURL && <img src={archivoURL} alt="Preview" style={{ width: "100px", marginTop: "10px" }} />}
-                    <Form.Group><Form.Label>Nombre</Form.Label><Form.Control name="nombre" value={formData.nombre} onChange={handleChange} /></Form.Group>
-                    <Form.Group><Form.Label>Fecha nacimiento</Form.Label><Form.Control type="date" name="fecha_nacimiento" value={formData.fecha_nacimiento} onChange={handleChange} /></Form.Group>
-                    <Form.Group><Form.Label>Sexo</Form.Label><div><Form.Check inline label="Macho" name="sexo" type="radio" value="Macho" checked={formData.sexo === "Macho"} onChange={handleChange} /><Form.Check inline label="Hembra" name="sexo" type="radio" value="Hembra" checked={formData.sexo === "Hembra"} onChange={handleChange} /></div></Form.Group>
-                    <Form.Group><Form.Label>Dirección</Form.Label><Form.Control name="direccion" value={formData.direccion} onChange={handleChange} /></Form.Group>
-                    <Form.Group><Form.Label>Descripción</Form.Label><Form.Control as="textarea" name="descripcion" value={formData.descripcion} onChange={handleChange} /></Form.Group>
-                    <Form.Group><Form.Label>Mensaje WhatsApp</Form.Label><Form.Control name="mensajeRescate" value={formData.mensajeRescate} onChange={handleChange} /></Form.Group>
-                    <h5>Contacto 1</h5>
-                    <Form.Group><Form.Control placeholder="Nombre" name="persona1" value={formData.persona1} onChange={handleChange} /></Form.Group>
-                    <Form.Group><Form.Control placeholder="Teléfono" name="persona1tel" value={formData.persona1tel} onChange={handleChange} /></Form.Group>
-                    <Form.Group><Form.Control placeholder="@Instagram" name="persona1ig" value={formData.persona1ig} onChange={handleChange} /></Form.Group>
-                    <h5>Contacto 2</h5>
-                    <Form.Group><Form.Control placeholder="Nombre" name="persona2" value={formData.persona2} onChange={handleChange} /></Form.Group>
-                    <Form.Group><Form.Control placeholder="Teléfono" name="persona2tel" value={formData.persona2tel} onChange={handleChange} /></Form.Group>
-                    <Form.Group><Form.Control placeholder="@Instagram" name="persona2ig" value={formData.persona2ig} onChange={handleChange} /></Form.Group>
-                    {error && <div className="text-danger mt-2">{error}</div>}
+                    {/* Sección Imagen */}
+                    <div className="imagen-seccion mb-4">
+                        <Form.Label className="fw-semibold">📸 Imagen de perfil</Form.Label>
+                        <div className="d-flex flex-wrap align-items-start gap-3">
+                            {(archivoURL || formData.urlImg) && (
+                                <div className="preview-actual">
+                                    <div className="preview-label">Vista previa</div>
+                                    <img
+                                        src={archivoURL || formData.urlImg}
+                                        alt="Preview"
+                                        className="img-preview"
+                                    />
+                                </div>
+                            )}
+                            <div className="upload-area flex-grow-1">
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={archivoHandler}
+                                    className="form-control"
+                                />
+                                <div className="text-muted small mt-1">
+                                    Formatos: JPG, PNG, GIF. Máx. 5MB
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Datos básicos */}
+                    <h5 className="seccion-titulo">🐾 Datos básicos</h5>
+                    <Row className="g-3 mb-4">
+                        <Col md={6}>
+                            <Form.Group>
+                                <Form.Label>Nombre *</Form.Label>
+                                <Form.Control
+                                    name="nombre"
+                                    value={formData.nombre}
+                                    onChange={handleChange}
+                                    placeholder="Ej: Luna"
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col md={6}>
+                            <Form.Group>
+                                <Form.Label>Fecha de nacimiento</Form.Label>
+                                <Form.Control
+                                    type="date"
+                                    name="fecha_nacimiento"
+                                    value={formData.fecha_nacimiento}
+                                    onChange={handleChange}
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col md={6}>
+                            <Form.Group>
+                                <Form.Label>Sexo</Form.Label>
+                                <div className="d-flex gap-4">
+                                    <Form.Check
+                                        inline
+                                        label="Macho"
+                                        name="sexo"
+                                        type="radio"
+                                        value="Macho"
+                                        checked={formData.sexo === "Macho"}
+                                        onChange={handleChange}
+                                    />
+                                    <Form.Check
+                                        inline
+                                        label="Hembra"
+                                        name="sexo"
+                                        type="radio"
+                                        value="Hembra"
+                                        checked={formData.sexo === "Hembra"}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                            </Form.Group>
+                        </Col>
+                        <Col md={6}>
+                            <Form.Group>
+                                <Form.Label>Dirección</Form.Label>
+                                <Form.Control
+                                    name="direccion"
+                                    value={formData.direccion}
+                                    onChange={handleChange}
+                                    placeholder="barrio, ciudad (evite datos sensibles)"
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col xs={12}>
+                            <Form.Group>
+                                <Form.Label>Descripción / características</Form.Label>
+                                <Form.Control
+                                    as="textarea"
+                                    rows={3}
+                                    name="descripcion"
+                                    value={formData.descripcion}
+                                    onChange={handleChange}
+                                    placeholder="Color, tamaño, personalidad, alergias, etc."
+                                />
+                            </Form.Group>
+                        </Col>
+                    </Row>
+
+                    {/* Contactos de emergencia */}
+                    <h5 className="seccion-titulo">📞 Contactos de emergencia</h5>
+                    <Row className="g-3 mb-4">
+                        <Col xs={12}>
+                            <Form.Group>
+                                <Form.Label>Mensaje para WhatsApp (alerta)</Form.Label>
+                                <Form.Control
+                                    as="textarea"
+                                    rows={2}
+                                    name="mensajeRescate"
+                                    value={formData.mensajeRescate}
+                                    onChange={handleChange}
+                                    placeholder="Ej: ¡Mi perro se ha perdido! Por favor ayúdame..."
+                                />
+                            </Form.Group>
+                        </Col>
+                    </Row>
+
+                    <Row className="g-3">
+                        <Col md={6}>
+                            <div className="contacto-card">
+                                <h6 className="contacto-titulo">👤 Contacto principal</h6>
+                                <Form.Group className="mb-2">
+                                    <Form.Control
+                                        placeholder="Nombre completo"
+                                        name="persona1"
+                                        value={formData.persona1}
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+                                <Form.Group className="mb-2">
+                                    <Form.Control
+                                        placeholder="Teléfono (con código de área)"
+                                        name="persona1tel"
+                                        value={formData.persona1tel}
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+                                <Form.Group>
+                                    <Form.Control
+                                        placeholder="@Instagram (opcional)"
+                                        name="persona1ig"
+                                        value={formData.persona1ig}
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+                            </div>
+                        </Col>
+                        <Col md={6}>
+                            <div className="contacto-card">
+                                <h6 className="contacto-titulo">👤 Contacto secundario</h6>
+                                <Form.Group className="mb-2">
+                                    <Form.Control
+                                        placeholder="Nombre completo"
+                                        name="persona2"
+                                        value={formData.persona2}
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+                                <Form.Group className="mb-2">
+                                    <Form.Control
+                                        placeholder="Teléfono (con código de área)"
+                                        name="persona2tel"
+                                        value={formData.persona2tel}
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+                                <Form.Group>
+                                    <Form.Control
+                                        placeholder="@Instagram (opcional)"
+                                        name="persona2ig"
+                                        value={formData.persona2ig}
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+                            </div>
+                        </Col>
+                    </Row>
+
+                    {error && <div className="alert alert-danger mt-3 py-2">{error}</div>}
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>Cancelar</Button>
-                <Button variant="primary" onClick={handleSave} disabled={cargando}>{cargando ? <Spinner size="sm" /> : "Guardar"}</Button>
+                <Button variant="secondary" onClick={handleClose}>
+                    Cancelar
+                </Button>
+                <Button variant="primary" onClick={handleSave} disabled={cargando}>
+                    {cargando ? <Spinner as="span" size="sm" animation="border" /> : "Guardar cambios"}
+                </Button>
             </Modal.Footer>
         </Modal>
     );

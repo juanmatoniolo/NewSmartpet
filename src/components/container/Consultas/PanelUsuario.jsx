@@ -4,6 +4,8 @@ import { Modal, Button, Form, Spinner, Alert } from "react-bootstrap";
 import { RefreshCw, Search, Code, Plus } from "lucide-react";
 import TarjetaMascota from "./TarjetaMascota";
 import TarjetaCodigoVacio from "./TarjetaCodigoVacio";
+import { Link } from "react-router-dom"; // ✅ navegación
+
 import "./PanelUsuario.css";
 
 const API_BASE = "http://localhost/api-smartpet/index.php";
@@ -162,16 +164,23 @@ function PanelUsuario({ usuarioId }) {
                     <h2>¡Bienvenido, {nombreUsuario}!</h2>
                     <p className="bienvenida-subtext">Gestiona los códigos de tus mascotas</p>
                 </div>
-                <Button
-                    variant="primary"
-                    onClick={() => {
-                        setShowModalVincular(true);
-                        setMensaje("");
-                    }}
-                    className="btn-vincular"
-                >
-                    <Plus size={18} /> Vincular nuevo código
-                </Button>
+                <div className="bienvenida-buttons">
+                    <Button
+                        variant="primary"
+                        onClick={() => {
+                            setShowModalVincular(true);
+                            setMensaje("");
+                        }}
+                        className="btn-vincular"
+                    >
+                        <Plus size={18} /> Vincular nuevo código
+                    </Button>
+
+                    <Link to={`/agenda/${usuarioId}`} className="btn btn-agenda">
+                        📅 Ver agenda general
+                    </Link>
+
+                </div>
             </div>
 
             <div className="mascotas-section">

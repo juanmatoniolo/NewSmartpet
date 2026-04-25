@@ -275,3 +275,21 @@
         /* ocultar en móvil si es necesario */
     }
 }
+
+/* Nombre de usuario en blanco */
+.user-name {
+    font-weight: 600;
+    color: white;
+    /* ← cambiado de #333 a blanco */
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    /* pequeña sombra para mejorar contraste */
+}
+
+/* Ajuste del menú para que el texto de los items sea legible (ya lo es) */
+.menu-item {
+    /* ... mantén tus estilos existentes ... */
+}

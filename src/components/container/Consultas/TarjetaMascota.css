@@ -238,3 +238,20 @@
         transition: transform 0.2s, box-shadow 0.2s;
     }
 }
+
+/* Hacer que .card-body ocupe todo el espacio disponible y empuje los botones hacia abajo */
+.tarjeta-mascota-card .card-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+/* Contenedor de botones: se empuja hacia el fondo con margin-top: auto */
+.botones-acciones {
+    margin-top: auto;
+    justify-content: center;
+    display: flex;
+    flex-flow: row nowrap;
+    gap: 2em !important;
+    /* o center, según diseño */
+}

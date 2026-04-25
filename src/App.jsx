@@ -56,7 +56,7 @@ function App() {
 					}
 				/>
 				<Route
-					path="/agenda/:mascotaId"
+					path="/agenda/:userId"
 					element={
 						<ProtectedRoute>
 							<ContactosMascota />

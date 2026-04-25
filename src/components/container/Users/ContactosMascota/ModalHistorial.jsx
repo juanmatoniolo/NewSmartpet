@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Form, Row, Col, InputGroup, Spinner } from "react-bootstrap";
-import { FileText, Calendar, User } from "lucide-react";
-import styles from "./ModalBase.module.css";
+import { Modal, Button, Form, Row, Col, InputGroup, Spinner, Badge } from "react-bootstrap";
+import { FileText, Calendar, User, TrendingUp, Award, Heart } from "lucide-react";
+import styles from "./ModalHistorial.module.css";
 
 export default function ModalHistorial({ show, onHide, historialEdit, contactos = [], onSave }) {
     const [form, setForm] = useState({
@@ -97,11 +97,15 @@ export default function ModalHistorial({ show, onHide, historialEdit, contactos 
                 <Modal.Header closeButton={!guardando} className={styles.header}>
                     <Modal.Title className={styles.headerTitle}>
                         <div className={styles.iconWrapper}>
-                            <FileText size={26} style={{ color: "#64748b" }} strokeWidth={2.5} />
+                            <FileText size={30} strokeWidth={1.8} />
                         </div>
                         <div className={styles.title}>
-                            <h4>{historialEdit ? "Editar" : "Nuevo"} Registro</h4>
-                            <small>Agrega una entrada a la bitácora de salud</small>
+                            <h4>{historialEdit ? "Editar registro" : "Nuevo registro en bitácora"}</h4>
+                            <div className={styles.badgeContainer}>
+                                <Badge bg="light" className={styles.serviceBadge}>
+                                    <Award size={12} /> Servicios profesionales
+                                </Badge>
+                            </div>
                         </div>
                     </Modal.Title>
                 </Modal.Header>
@@ -110,7 +114,8 @@ export default function ModalHistorial({ show, onHide, historialEdit, contactos 
                     <Row className="g-4">
                         <Col xs={12}>
                             <div className={styles.sectionTitle}>
-                                <span>👤</span> Contacto (opcional)
+                                <User size={18} /> Contacto (opcional)
+                                <span className={styles.tooltip}>Asocia este registro a un proveedor</span>
                             </div>
                             <Form.Group>
                                 <InputGroup>
@@ -136,43 +141,34 @@ export default function ModalHistorial({ show, onHide, historialEdit, contactos 
 
                         <Col xs={12}>
                             <div className={styles.sectionTitle}>
-                                <span>📅</span> Fecha
+                                <Calendar size={18} /> Fecha del evento
                             </div>
-                        </Col>
-
-                        <Col xs={12}>
-                            <Form.Group>
-                                <Form.Label className="fw-semibold mb-2">Fecha del evento</Form.Label>
-                                <InputGroup>
-                                    <InputGroup.Text className={styles.inputGroupText}>
-                                        <Calendar size={16} />
-                                    </InputGroup.Text>
-                                    <Form.Control
-                                        type="date"
-                                        value={form.fecha_evento}
-                                        onChange={(e) => setForm({ ...form, fecha_evento: e.target.value })}
-                                        className={styles.formControl}
-                                        disabled={guardando}
-                                    />
-                                </InputGroup>
-                            </Form.Group>
+                            <InputGroup>
+                                <InputGroup.Text className={styles.inputGroupText}>
+                                    <Calendar size={16} />
+                                </InputGroup.Text>
+                                <Form.Control
+                                    type="date"
+                                    value={form.fecha_evento}
+                                    onChange={(e) => setForm({ ...form, fecha_evento: e.target.value })}
+                                    className={styles.formControl}
+                                    disabled={guardando}
+                                />
+                            </InputGroup>
                         </Col>
 
                         <Col xs={12}>
                             <div className={styles.sectionTitle}>
-                                <span>📝</span> Detalles
+                                <FileText size={18} /> Detalles del servicio
                             </div>
-                        </Col>
-
-                        <Col xs={12}>
                             <Form.Group>
-                                <Form.Label className="fw-semibold mb-2">
-                                    Título <span className="text-danger">*</span>
+                                <Form.Label className={styles.labelRequired}>
+                                    Título
                                 </Form.Label>
                                 <Form.Control
                                     value={form.titulo}
                                     onChange={(e) => setForm({ ...form, titulo: e.target.value })}
-                                    placeholder="Ej: Control de peso, Cambio de alimento..."
+                                    placeholder="Ej: Control de peso, Vacunación, Peluquería..."
                                     className={styles.fullRounded}
                                     isInvalid={!!errores.titulo}
                                     disabled={guardando}
@@ -183,8 +179,8 @@ export default function ModalHistorial({ show, onHide, historialEdit, contactos 
 
                         <Col xs={12}>
                             <Form.Group>
-                                <Form.Label className="fw-semibold mb-2">
-                                    Nota <span className="text-danger">*</span>
+                                <Form.Label className={styles.labelRequired}>
+                                    Nota / Observaciones
                                 </Form.Label>
                                 <InputGroup hasValidation>
                                     <InputGroup.Text
@@ -198,9 +194,9 @@ export default function ModalHistorial({ show, onHide, historialEdit, contactos 
                                         rows={5}
                                         value={form.nota}
                                         onChange={(e) => setForm({ ...form, nota: e.target.value })}
-                                        placeholder="Describe el evento, observaciones, resultados..."
+                                        placeholder="Describe el servicio realizado, resultados, recomendaciones..."
                                         className={styles.formControl}
-                                        style={{ resize: "none" }}
+                                        style={{ resize: "vertical" }}
                                         isInvalid={!!errores.nota}
                                         disabled={guardando}
                                     />
@@ -220,14 +216,18 @@ export default function ModalHistorial({ show, onHide, historialEdit, contactos 
                     >
                         Cancelar
                     </Button>
-
                     <Button type="submit" className={styles.saveBtn} disabled={guardando}>
                         {guardando ? (
                             <span className="d-inline-flex align-items-center gap-2">
                                 <Spinner animation="border" size="sm" />
                                 Guardando...
                             </span>
-                        ) : historialEdit ? "Actualizar" : "Crear Registro"}
+                        ) : (
+                            <>
+                                <Heart size={16} className="me-2" />
+                                {historialEdit ? "Actualizar servicio" : "Registrar servicio"}
+                            </>
+                        )}
                     </Button>
                 </Modal.Footer>
             </Form>

@@ -1,315 +1,364 @@
-/* TarjetaContacto.module.css */
-
 .card {
     position: relative;
-    display: flex;
-    flex-direction: column;
     height: 100%;
-    border: 1px solid rgba(226, 232, 240, 0.9);
-    border-radius: 1.25rem;
-    background:
-        radial-gradient(circle at top right, rgba(127, 155, 194, 0.12), transparent 30%),
-        linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-    box-shadow:
-        0 8px 24px rgba(15, 23, 42, 0.06),
-        0 2px 6px rgba(15, 23, 42, 0.04);
+    border: 1px solid #e8e0f0 !important;
+    border-radius: 24px !important;
+    background: #ffffff;
+    overflow: hidden;
+    box-shadow: 0 10px 28px rgba(46, 31, 74, 0.08);
     transition:
         transform 0.22s ease,
         box-shadow 0.22s ease,
         border-color 0.22s ease;
     cursor: pointer;
-    overflow: hidden;
-    padding: 1rem;
-}
-
-.card::before {
-    content: "";
-    position: absolute;
-    inset: 0 0 auto 0;
-    height: 4px;
-    background: linear-gradient(90deg, #7f9bc2 0%, #9bb2d1 100%);
-    opacity: 0.95;
 }
 
 .card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(127, 155, 194, 0.28);
-    box-shadow:
-        0 16px 36px rgba(15, 23, 42, 0.1),
-        0 4px 12px rgba(15, 23, 42, 0.06);
+    transform: translateY(-5px);
+    border-color: #d4c4e4 !important;
+    box-shadow: 0 20px 46px rgba(46, 31, 74, 0.14);
 }
 
-.card:focus-within {
-    outline: 3px solid rgba(127, 155, 194, 0.22);
-    outline-offset: 2px;
+.card:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(205, 127, 167, 0.18);
 }
 
+/* Imagen / logo del local */
+.media {
+    position: relative;
+    height: 155px;
+    background: linear-gradient(135deg, #f3eff9, #fff7fb);
+    overflow: hidden;
+}
+
+.mediaImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transform: scale(1.01);
+    transition: transform 0.35s ease;
+}
+
+.card:hover .mediaImage {
+    transform: scale(1.05);
+}
+
+.mediaPlaceholder {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    background:
+        radial-gradient(circle at top left, rgba(205, 127, 167, 0.22), transparent 35%),
+        linear-gradient(135deg, #f3eff9 0%, #ffffff 100%);
+}
+
+.mediaPlaceholder span {
+    width: 68px;
+    height: 68px;
+    border-radius: 22px;
+    display: grid;
+    place-items: center;
+    background: #ffffff;
+    font-size: 2rem;
+    box-shadow: 0 12px 28px rgba(108, 92, 148, 0.16);
+}
+
+.mediaOverlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,
+            rgba(46, 31, 74, 0.02) 0%,
+            rgba(46, 31, 74, 0.12) 60%,
+            rgba(46, 31, 74, 0.38) 100%);
+    pointer-events: none;
+}
+
+/* Favorito */
 .favoriteStar {
     position: absolute;
     top: 0.85rem;
     right: 0.85rem;
-    color: #fbbf24;
-    filter: drop-shadow(0 4px 8px rgba(251, 191, 36, 0.28));
+    width: 38px;
+    height: 38px;
+    border: 0;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    background: rgba(255, 255, 255, 0.92);
+    color: #6c5c94;
+    box-shadow: 0 8px 22px rgba(46, 31, 74, 0.18);
+    z-index: 3;
+    transition:
+        transform 0.18s ease,
+        background 0.18s ease,
+        color 0.18s ease;
+}
+
+.favoriteStar:hover {
+    transform: scale(1.06);
+    background: #fff7df;
+    color: #e3a51a;
+}
+
+.favoriteStarActive {
+    background: #fff7df;
+    color: #e3a51a;
+}
+
+/* Badge sobre la foto */
+.typeBadge {
+    position: absolute;
+    left: 1rem;
+    bottom: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    max-width: calc(100% - 2rem);
+    padding: 0.38rem 0.78rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.94);
+    color: #4a3a6a;
+    font-size: 0.76rem;
+    font-weight: 850;
+    letter-spacing: 0.01em;
+    box-shadow: 0 8px 20px rgba(46, 31, 74, 0.14);
     z-index: 2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Cuerpo */
+.body {
+    padding: 1rem 1rem 1.05rem;
 }
 
 .header {
     display: flex;
     align-items: flex-start;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
-    padding-right: 1.8rem;
-}
-
-.icon {
-    width: 48px;
-    height: 48px;
-    flex-shrink: 0;
-    display: grid;
-    place-items: center;
-    font-size: 1.35rem;
-    line-height: 1;
-    border-radius: 1rem;
-    background: linear-gradient(180deg, #eef2f7 0%, #e2e8f0 100%);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    gap: 0.9rem;
+    margin-bottom: 0.85rem;
 }
 
 .title {
-    flex: 1;
     min-width: 0;
+    width: 100%;
 }
 
 .name {
-    margin: 0 0 0.3rem;
-    font-size: 1rem;
-    font-weight: 800;
-    line-height: 1.2;
-    color: #0f172a;
-    word-break: break-word;
+    margin: 0;
+    color: #24183c;
+    font-size: 1.05rem;
+    font-weight: 850;
+    line-height: 1.22;
+    letter-spacing: -0.015em;
 }
 
-.typeBadge {
-    display: inline-flex;
-    align-items: center;
+.locationPreview {
+    margin: 0.38rem 0 0;
+    display: flex;
+    align-items: flex-start;
     gap: 0.35rem;
-    padding: 0.32rem 0.7rem;
-    border-radius: 999px;
-    background: #eef2f7;
-    border: 1px solid #dbe5f0;
-    color: #6887b1;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.01em;
+    color: #8a7a9c;
+    font-size: 0.82rem;
+    line-height: 1.35;
+}
+
+.locationPreview svg {
+    margin-top: 0.05rem;
+    color: #6c5c94;
+    flex-shrink: 0;
+}
+
+.locationPreview span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+/* Bloque de datos */
+.infoBlock {
+    margin-top: 0.75rem;
+    border: 1px solid #efe7f5;
+    border-radius: 18px;
+    background: #fcf9ff;
+    overflow: hidden;
+}
+
+.infoBlock:empty {
+    display: none;
 }
 
 .infoRow {
     display: flex;
     align-items: center;
-    gap: 0.55rem;
-    margin-bottom: 0.55rem;
-    color: #334155;
-    font-size: 0.82rem;
-    line-height: 1.45;
-    flex-wrap: wrap;
+    gap: 0.65rem;
+    padding: 0.72rem 0.8rem;
+    color: #5f5276;
+    font-size: 0.88rem;
+    border-bottom: 1px solid #efe7f5;
+}
+
+.infoRow:last-child {
+    border-bottom: 0;
 }
 
 .infoRow svg {
-    color: #7c8ea6;
+    width: 17px;
+    height: 17px;
+    color: #6c5c94;
     flex-shrink: 0;
 }
 
-.infoRow span,
-.infoRow strong,
-.infoRow small {
-    word-break: break-word;
+.infoRow span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    line-height: 1.35;
 }
 
+/* WhatsApp */
 .whatsappBtn {
     margin-left: auto;
-    border: none;
+    border: 0;
     border-radius: 999px;
-    padding: 0.42rem 0.9rem;
-    background: linear-gradient(135deg, #25d366 0%, #1da851 100%);
-    color: #fff;
-    font-size: 0.76rem;
-    font-weight: 700;
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        filter 0.2s ease;
-    box-shadow: 0 8px 18px rgba(37, 211, 102, 0.22);
+    background: #25d366;
+    color: #ffffff;
+    font-size: 0.74rem;
+    font-weight: 850;
+    padding: 0.42rem 0.75rem;
     white-space: nowrap;
+    box-shadow: 0 8px 18px rgba(37, 211, 102, 0.22);
+    transition:
+        transform 0.18s ease,
+        background 0.18s ease,
+        box-shadow 0.18s ease;
 }
 
-.whatsappBtn:hover {
-    color: #fff;
+.whatsappBtn:hover,
+.whatsappBtn:focus {
+    background: #20bf5a;
+    color: #ffffff;
     transform: translateY(-1px);
-    box-shadow: 0 12px 22px rgba(37, 211, 102, 0.26);
-    filter: brightness(1.02);
+    box-shadow: 0 10px 22px rgba(37, 211, 102, 0.28);
 }
 
-.whatsappBtn:focus-visible {
-    outline: 3px solid rgba(37, 211, 102, 0.22);
-    outline-offset: 2px;
-}
-
+/* Citas / info extra */
 .citasInfo {
-    margin: 0.9rem 0 0;
-    padding: 0.8rem 0.9rem;
-    border-radius: 0.9rem;
-    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
-    border: 1px solid #e2e8f0;
-    font-size: 0.78rem;
-    color: #334155;
+    margin-top: 0.85rem;
+    padding: 0.8rem;
+    border-radius: 18px;
+    background: #ffffff;
+    border: 1px solid #efe7f5;
+    color: #6d5f7d;
+    font-size: 0.82rem;
 }
 
-.citasInfo strong {
-    display: block;
+.citaLineMuted {
+    color: #8a7a9c;
     margin-bottom: 0.25rem;
-    color: #0f172a;
-    font-size: 0.8rem;
 }
 
+.citaLineSuccess {
+    color: #3f8f5a;
+    font-weight: 700;
+}
+
+/* Notas */
 .notas {
-    margin: 0.85rem 0 0;
-    padding: 0.8rem 0.9rem;
-    border-radius: 0.9rem;
-    background: linear-gradient(180deg, #fff9e8 0%, #fef3c7 100%);
-    border: 1px solid #f6d98b;
-    border-left: 4px solid #e6b85c;
-    font-size: 0.8rem;
-    color: #334155;
-    line-height: 1.5;
+    margin-top: 0.85rem;
+    padding: 0.8rem;
+    border-radius: 18px;
+    background: #fff8fc;
+    border: 1px solid #f1dbe8;
+    color: #6d5f7d;
+    font-size: 0.84rem;
+    line-height: 1.45;
 }
 
+.notas strong {
+    display: block;
+    color: #4a3a6a;
+    margin-bottom: 0.25rem;
+}
+
+.notas p {
+    margin: 0;
+}
+
+/* Acciones */
 .actions {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+    margin-top: 1rem;
     padding-top: 1rem;
-    border-top: 1px solid #e2e8f0;
+    border-top: 1px solid #f1ecf7;
 }
 
 .actionBtn {
-    flex: 1;
-    min-height: 40px;
+    min-height: 42px;
     border-radius: 999px;
-    padding: 0.55rem 0.8rem;
+    border: 1px solid #e5d9f2;
+    background: #ffffff;
+    color: #6c5c94;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.35rem;
-    background: #fff;
-    border: 1px solid #cbd5e1;
-    color: #334155;
-    font-size: 0.76rem;
-    font-weight: 700;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    font-weight: 850;
     transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
+        transform 0.18s ease,
+        background 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease;
 }
 
 .actionBtn:hover {
-    background: #f8fafc;
-    border-color: #94a3b8;
+    background: #f8f5fc;
+    border-color: #d1c4e0;
+    color: #4a3a6a;
     transform: translateY(-1px);
-    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.06);
 }
 
-.actionBtn:focus-visible {
-    outline: 3px solid rgba(127, 155, 194, 0.22);
-    outline-offset: 2px;
+.deleteBtn:hover {
+    background: #fff1f2;
+    border-color: #fecdd3;
+    color: #be123c;
 }
 
-.favoriteActive {
-    background: linear-gradient(180deg, #fff8db 0%, #fef3c7 100%);
-    border-color: #fbbf24;
-    color: #b45309;
-}
+/* Mobile */
+@media (max-width: 576px) {
+    .media {
+        height: 135px;
+    }
 
-.favoriteActive:hover {
-    background: #fde68a;
-    border-color: #f59e0b;
-}
-
-/* Estado visual opcional para destacar contacto favorito */
-.cardFavorito {
-    border-color: rgba(251, 191, 36, 0.45);
-    box-shadow:
-        0 10px 28px rgba(15, 23, 42, 0.08),
-        0 0 0 1px rgba(251, 191, 36, 0.12);
-}
-
-@media (min-width: 576px) {
-    .card {
-        padding: 1.1rem;
+    .body {
+        padding: 0.9rem;
     }
 
     .name {
-        font-size: 1.08rem;
-    }
-
-    .typeBadge {
-        font-size: 0.74rem;
+        font-size: 1rem;
     }
 
     .infoRow {
-        font-size: 0.86rem;
+        flex-wrap: wrap;
+        padding: 0.68rem 0.75rem;
     }
 
     .whatsappBtn {
-        font-size: 0.8rem;
+        width: 100%;
+        margin-left: 0;
+        margin-top: 0.35rem;
     }
 
-    .citasInfo {
-        font-size: 0.8rem;
-    }
-
-    .actionBtn {
-        font-size: 0.8rem;
-        min-height: 42px;
-    }
-}
-
-@media (min-width: 768px) {
-    .card {
-        padding: 1.15rem;
-    }
-
-    .icon {
-        width: 54px;
-        height: 54px;
-        font-size: 1.5rem;
-    }
-
-    .name {
-        font-size: 1.12rem;
-    }
-}
-
-@media (max-width: 360px) {
-    .header {
-        gap: 0.6rem;
-    }
-
-    .icon {
-        width: 44px;
-        height: 44px;
-        font-size: 1.2rem;
-    }
-
-    .actionBtn span {
-        display: none;
+    .actions {
+        grid-template-columns: 1fr;
     }
 
     .actionBtn {
-        gap: 0;
-        padding-inline: 0.5rem;
-    }
-
-    .whatsappBtn {
-        padding-inline: 0.75rem;
+        width: 100%;
     }
 }

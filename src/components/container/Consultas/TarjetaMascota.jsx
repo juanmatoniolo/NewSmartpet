@@ -6,7 +6,6 @@ import Badge from "react-bootstrap/Badge";
 import axios from "axios";
 import EditarMascota from "./EditarMascota";
 import "./TarjetaMascota.css";
-import { Link } from "react-router-dom";
 
 const API_BASE = "http://localhost/api-smartpet/index.php";
 
@@ -46,7 +45,7 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
     const [cargandoUbic, setCargandoUbic] = useState(false);
     const [copiado, setCopiado] = useState(false);
 
-    // Calcular edad con useMemo para evitar recalcular en cada render
+    // Calcular edad con useMemo
     const edad = useMemo(() => {
         if (!mascota.fecha_nacimiento) return "Desconocida";
         const hoy = new Date();
@@ -57,19 +56,15 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
         return `${edadCalc} año${edadCalc !== 1 ? 's' : ''}`;
     }, [mascota.fecha_nacimiento]);
 
-    // Imagen con fallback
     const imagen = useMemo(() => {
         return mascota.urlImg || "https://via.placeholder.com/300?text=Sin+imagen";
     }, [mascota.urlImg]);
 
-    // Cargar scaners (misma consulta original)
     const cargarScaners = useCallback(async () => {
         setCargandoUbic(true);
         try {
             const res = await axios.get(`${API_BASE}/ubicaciones-todas?mascota_id=${mascota.id}`);
             const ubicacionesRaw = Array.isArray(res.data) ? res.data : [];
-
-            // Convertir coordenadas a direcciones (sin cambios)
             const ubicacionesConDireccion = await Promise.all(
                 ubicacionesRaw.map(async (ubic) => {
                     const direccionLegible = await obtenerDireccionDesdeCoordenadas(ubic.ubicacion);
@@ -85,7 +80,6 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
         }
     }, [mascota.id]);
 
-    // Manejadores de modales
     const handleVerScaners = useCallback(() => {
         cargarScaners();
         setShowModalScaners(true);
@@ -93,7 +87,6 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
 
     const handleCerrarScaners = useCallback(() => {
         setShowModalScaners(false);
-        // Limpiar ubicaciones al cerrar para liberar memoria (opcional)
         setUbicaciones([]);
     }, []);
 
@@ -106,7 +99,6 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
         setTimeout(() => setCopiado(false), 2000);
     }, [codigoUnico]);
 
-    // Efecto para limpiar timeout si el componente se desmonta
     useEffect(() => {
         let timeoutId;
         if (copiado) {
@@ -128,26 +120,18 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
                         {copiado ? '✓ Copiado' : `🔑 ${codigoUnico}`}
                     </Badge>
                 </div>
-                <Card.Img variant="top" src={imagen} style={{ height: "200px", objectFit: "cover" }} />
+                <Card.Img variant="top" src={imagen} style={{ height: "275px", objectFit: "cover" }} />
                 <Card.Body>
                     <Card.Title>{mascota.nombre || "Sin nombre"}</Card.Title>
                     <Card.Text>
                         <strong>Edad:</strong> {edad}
                     </Card.Text>
-                    <div className="d-flex gap-2 flex-wrap">
+                    <div className="d-flex gap-2 flex-wrap botones-acciones">
                         <Button variant="primary" size="sm" onClick={handleAbrirEditar}>
                             Editar
                         </Button>
                         <Button variant="secondary" size="sm" onClick={handleVerScaners}>
                             Ver Scaners
-                        </Button>
-                        <Button
-                            as={Link}
-                            to={`/ContactosMascota/${mascota.id}`}
-                            variant="info"
-                            size="sm"
-                        >
-                            Contactos
                         </Button>
                     </div>
                 </Card.Body>
@@ -176,7 +160,7 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
                                 <div key={idx} className="list-group-item">
                                     <div className="d-flex justify-content-between">
                                         <div>
-                                            <strong>📍 {ubic.direccionLegible || ubic.ubicacion} (Dirección aproximada)</strong>
+                                            <strong>📍 {ubic.direccionLegible || ubic.ubicacion}</strong>
                                             <div className="text-muted small">
                                                 🕒 {new Date(ubic.fecha_hora).toLocaleString('es-AR')}
                                             </div>

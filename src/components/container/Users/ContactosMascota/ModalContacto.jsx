@@ -1,118 +1,61 @@
-import React, { useEffect, useState, useRef } from "react";
-import { Modal, Button, Form, Row, Col, InputGroup, Spinner } from "react-bootstrap";
-import { User, Phone, MapPin, Clock, Calendar as CalendarIcon, FileText } from "lucide-react";
-import styles from "./ModalBase.module.css";
+import React, { useState, useEffect } from "react";
+import { Modal, Button, Form, Row, Col, InputGroup, Badge, Spinner } from "react-bootstrap";
+import { Users, Phone, AtSign, MapPin, Star, Briefcase, Tag } from "lucide-react";
+import styles from "./ModalContacto.module.css";
 
-const createInitialForm = () => ({
-    tipo: "veterinario",
-    categoria_personalizada: "",
-    nombre: "",
-    apellido: "",
-    celular: "",
-    telefono_fijo: "",
-    direccion: "",
-    horarios: "",
-    dias_atencion: "",
-    notas: "",
-});
-
-function sanitizeText(value = "") {
-    return value.replace(/\s+/g, " ").trim();
-}
-
-function sanitizePhone(value = "") {
-    return value.replace(/[^\d+\-\s()]/g, "").trim();
-}
-
-function normalizeTipo(tipo = "") {
-    const allowed = ["veterinario", "peluqueria", "paseador", "petshop", "guarderia", "otro"];
-    return allowed.includes(tipo) ? tipo : "veterinario";
-}
-
-function buildForm(contactoEdit) {
-    if (!contactoEdit) return createInitialForm();
-
-    const tipo = normalizeTipo(contactoEdit.tipo);
-
-    return {
-        tipo,
-        categoria_personalizada: contactoEdit.categoria_personalizada || "",
-        nombre: contactoEdit.nombre || "",
-        apellido: contactoEdit.apellido || "",
-        celular: contactoEdit.celular || "",
-        telefono_fijo: contactoEdit.telefono_fijo || "",
-        direccion: contactoEdit.direccion || "",
-        horarios: contactoEdit.horarios || "",
-        dias_atencion: contactoEdit.dias_atencion || "",
-        notas: contactoEdit.notas || "",
-    };
-}
-
-function sanitizePayload(form) {
-    return {
-        tipo: normalizeTipo(form.tipo),
-        categoria_personalizada: form.tipo === "otro" ? sanitizeText(form.categoria_personalizada) : "",
-        nombre: sanitizeText(form.nombre),
-        apellido: sanitizeText(form.apellido),
-        celular: sanitizePhone(form.celular),
-        telefono_fijo: sanitizePhone(form.telefono_fijo),
-        direccion: sanitizeText(form.direccion),
-        horarios: sanitizeText(form.horarios),
-        dias_atencion: sanitizeText(form.dias_atencion),
-        notas: form.notas.trim(),
-    };
-}
-
-function validateForm(form) {
-    const errores = {};
-    const normalized = sanitizePayload(form);
-
-    if (!normalized.nombre) errores.nombre = "El nombre es obligatorio.";
-    if (normalized.tipo === "otro" && !normalized.categoria_personalizada) {
-        errores.categoria_personalizada = "La categoría personalizada es obligatoria.";
-    }
-
-    return errores;
-}
-
-export default function ModalContacto({ show, onHide, contactoEdit, onSave }) {
-    const [form, setForm] = useState(createInitialForm());
+export default function ModalContacto({ show, onHide, contactoEdit, mascotaId, mascotas = [], onSave }) {
+    const [form, setForm] = useState({
+        tipo: "veterinario",
+        nombre: "",
+        apellido: "",
+        celular: "",
+        email: "",
+        direccion: "",
+        favorito: false,
+        categoria_personalizada: "",
+        mascota_id: mascotaId || ""
+    });
     const [guardando, setGuardando] = useState(false);
     const [errores, setErrores] = useState({});
-    const [validated, setValidated] = useState(false);
-    const firstInputRef = useRef(null);
-
-    const isEdit = Boolean(contactoEdit);
 
     useEffect(() => {
         if (!show) return;
-        setForm(buildForm(contactoEdit));
-        setErrores({});
-        setValidated(false);
-    }, [contactoEdit, show]);
 
-    useEffect(() => {
-        if (!show) return;
-        const id = setTimeout(() => {
-            firstInputRef.current?.focus({ preventScroll: true });
-        }, 100);
-        return () => clearTimeout(id);
-    }, [show]);
-
-    const updateForm = (nextForm) => {
-        setForm(nextForm);
-        if (validated) setErrores(validateForm(nextForm));
-    };
-
-    const handleChange = (field) => (e) => {
-        const value = e.target.value;
-        const nextForm = { ...form, [field]: value };
-
-        if (field === "tipo" && value !== "otro") {
-            nextForm.categoria_personalizada = "";
+        if (contactoEdit) {
+            setForm({
+                tipo: contactoEdit.tipo || "veterinario",
+                nombre: contactoEdit.nombre || "",
+                apellido: contactoEdit.apellido || "",
+                celular: contactoEdit.celular || "",
+                email: contactoEdit.email || "",
+                direccion: contactoEdit.direccion || "",
+                favorito: contactoEdit.favorito || false,
+                categoria_personalizada: contactoEdit.categoria_personalizada || "",
+                mascota_id: contactoEdit.mascotaId || mascotaId || ""
+            });
+        } else {
+            setForm({
+                tipo: "veterinario",
+                nombre: "",
+                apellido: "",
+                celular: "",
+                email: "",
+                direccion: "",
+                favorito: false,
+                categoria_personalizada: "",
+                mascota_id: mascotaId || (mascotas.length === 1 ? mascotas[0].id : "")
+            });
         }
+        setErrores({});
+    }, [contactoEdit, show, mascotaId, mascotas]);
 
-        updateForm(nextForm);
+    const validateForm = () => {
+        const errors = {};
+        if (!form.nombre.trim()) errors.nombre = "El nombre es obligatorio";
+        if (form.tipo === "otro" && !form.categoria_personalizada.trim())
+            errors.categoria_personalizada = "Ingresá una categoría personalizada";
+        if (!form.mascota_id) errors.mascota_id = "Seleccioná una mascota";
+        return errors;
     };
 
     const handleClose = () => {
@@ -122,266 +65,116 @@ export default function ModalContacto({ show, onHide, contactoEdit, onSave }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        const validationErrors = validateForm(form);
-        setValidated(true);
-        setErrores(validationErrors);
-
-        if (Object.keys(validationErrors).length > 0) return;
-
+        const errors = validateForm();
+        if (Object.keys(errors).length > 0) {
+            setErrores(errors);
+            return;
+        }
+        setGuardando(true);
         try {
-            setGuardando(true);
-            const ok = await onSave(sanitizePayload(form));
+            const ok = await onSave(form);
             if (ok) handleClose();
         } finally {
             setGuardando(false);
         }
     };
 
+    const tipos = [
+        { value: "veterinario", label: "🏥 Veterinario" },
+        { value: "peluqueria", label: "✂️ Peluquería" },
+        { value: "paseador", label: "🦮 Paseador" },
+        { value: "petshop", label: "🏪 Pet Shop" },
+        { value: "guarderia", label: "🏠 Guardería" },
+        { value: "otro", label: "📌 Otro" }
+    ];
+
     return (
-        <Modal
-            show={show}
-            onHide={handleClose}
-            size="lg"
-            centered
-            scrollable
-            backdrop={guardando ? "static" : true}
-            keyboard={!guardando}
-            autoFocus={false}
-            dialogClassName={styles.modal}
-            contentClassName={styles.content}
-        >
-            <Form onSubmit={handleSubmit} noValidate>
+        <Modal show={show} onHide={handleClose} size="lg" scrollable centered={false} backdrop={guardando ? "static" : true} keyboard={!guardando} dialogClassName={styles.modal}>
+            <Form onSubmit={handleSubmit}>
                 <Modal.Header closeButton={!guardando} className={styles.header}>
                     <Modal.Title className={styles.headerTitle}>
-                        <div className={styles.iconWrapper}>
-                            <User size={22} style={{ color: "#7f9bc2" }} />
-                        </div>
+                        <div className={styles.iconWrapper}><Users size={24} style={{ color: "#cd7fa7" }} /></div>
                         <div className={styles.title}>
-                            <h4>{isEdit ? "Editar" : "Nuevo"} contacto</h4>
-                            <small>Gestiona la información del contacto</small>
+                            <h4>{contactoEdit ? "Editar contacto" : "Nuevo contacto"}</h4>
+                            <small>Veterinarios, peluquerías, paseadores y más</small>
                         </div>
                     </Modal.Title>
                 </Modal.Header>
-
                 <Modal.Body className={styles.body}>
-                    <Row className="g-3">
+                    <Row className="g-3 g-md-4">
+                        {/* Tipo de contacto */}
                         <Col xs={12}>
-                            <div className={styles.sectionTitle}>📋 Categoría</div>
-                            <Form.Select
-                                value={form.tipo}
-                                onChange={handleChange("tipo")}
-                                className={styles.fullRounded}
-                                disabled={guardando}
-                            >
-                                <option value="veterinario">🏥 Veterinario</option>
-                                <option value="peluqueria">✂️ Peluquería</option>
-                                <option value="paseador">🦮 Paseador</option>
-                                <option value="petshop">🏪 Pet Shop</option>
-                                <option value="guarderia">🏠 Guardería</option>
-                                <option value="otro">📋 Otro</option>
-                            </Form.Select>
+                            <div className={styles.sectionTitle}><Briefcase size={16} /> Tipo de contacto</div>
+                            <Form.Group>
+                                <Form.Select value={form.tipo} onChange={e => setForm({ ...form, tipo: e.target.value })} className={styles.formControl} disabled={guardando}>
+                                    {tipos.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                                </Form.Select>
+                            </Form.Group>
+                            {form.tipo === "otro" && (
+                                <Form.Control type="text" className={`mt-2 ${styles.fullRounded}`} placeholder="Ej: Criador, Rescate, etc." value={form.categoria_personalizada} onChange={e => setForm({ ...form, categoria_personalizada: e.target.value })} isInvalid={!!errores.categoria_personalizada} disabled={guardando} />
+                            )}
                         </Col>
 
-                        {form.tipo === "otro" && (
+                        {/* Datos básicos */}
+                        <Col xs={12}>
+                            <div className={styles.sectionTitle}><Tag size={16} /> Datos del contacto</div>
+                        </Col>
+                        <Col xs={12} md={6}>
+                            <InputGroup>
+                                <InputGroup.Text className={styles.inputGroupText}><Users size={16} /></InputGroup.Text>
+                                <Form.Control type="text" placeholder="Nombre *" value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })} className={styles.formControl} isInvalid={!!errores.nombre} disabled={guardando} />
+                            </InputGroup>
+                        </Col>
+                        <Col xs={12} md={6}>
+                            <InputGroup>
+                                <InputGroup.Text className={styles.inputGroupText}><Users size={16} /></InputGroup.Text>
+                                <Form.Control type="text" placeholder="Apellido" value={form.apellido} onChange={e => setForm({ ...form, apellido: e.target.value })} className={styles.formControl} disabled={guardando} />
+                            </InputGroup>
+                        </Col>
+
+                        <Col xs={12} md={6}>
+                            <InputGroup>
+                                <InputGroup.Text className={styles.inputGroupText}><Phone size={16} /></InputGroup.Text>
+                                <Form.Control type="tel" placeholder="Teléfono / WhatsApp" value={form.celular} onChange={e => setForm({ ...form, celular: e.target.value })} className={styles.formControl} disabled={guardando} />
+                            </InputGroup>
+                        </Col>
+                        <Col xs={12} md={6}>
+                            <InputGroup>
+                                <InputGroup.Text className={styles.inputGroupText}><AtSign size={16} /></InputGroup.Text>
+                                <Form.Control type="email" placeholder="Email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className={styles.formControl} disabled={guardando} />
+                            </InputGroup>
+                        </Col>
+                        <Col xs={12}>
+                            <InputGroup>
+                                <InputGroup.Text className={styles.inputGroupText}><MapPin size={16} /></InputGroup.Text>
+                                <Form.Control type="text" placeholder="Dirección" value={form.direccion} onChange={e => setForm({ ...form, direccion: e.target.value })} className={styles.formControl} disabled={guardando} />
+                            </InputGroup>
+                        </Col>
+
+                        {/* Mascota asociada */}
+                        {!mascotaId && mascotas.length > 0 && (
                             <Col xs={12}>
-                                <Form.Control
-                                    value={form.categoria_personalizada}
-                                    onChange={handleChange("categoria_personalizada")}
-                                    placeholder="Ej: Adiestrador, Nutricionista"
-                                    className={styles.fullRounded}
-                                    isInvalid={!!errores.categoria_personalizada}
-                                    maxLength={60}
-                                    disabled={guardando}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {errores.categoria_personalizada}
-                                </Form.Control.Feedback>
+                                <div className={styles.sectionTitle}><Tag size={16} /> Asociar a mascota</div>
+                                <Form.Select value={form.mascota_id} onChange={e => setForm({ ...form, mascota_id: e.target.value })} className={styles.formControl} isInvalid={!!errores.mascota_id} disabled={guardando}>
+                                    <option value="">Seleccionar mascota</option>
+                                    {mascotas.map(m => <option key={m.id} value={m.id}>{m.nombre}</option>)}
+                                </Form.Select>
                             </Col>
                         )}
 
+                        {/* Favorito */}
                         <Col xs={12}>
-                            <div className={styles.sectionTitle}>👤 Información personal</div>
-                        </Col>
-
-                        <Col xs={12} md={6}>
-                            <Form.Group>
-                                <Form.Label>Nombre <span className="text-danger">*</span></Form.Label>
-                                <InputGroup hasValidation>
-                                    <InputGroup.Text className={styles.inputGroupText}>
-                                        <User size={16} />
-                                    </InputGroup.Text>
-                                    <Form.Control
-                                        ref={firstInputRef}
-                                        value={form.nombre}
-                                        onChange={handleChange("nombre")}
-                                        placeholder="Nombre"
-                                        className={styles.formControl}
-                                        isInvalid={!!errores.nombre}
-                                        disabled={guardando}
-                                    />
-                                    <Form.Control.Feedback type="invalid">
-                                        {errores.nombre}
-                                    </Form.Control.Feedback>
-                                </InputGroup>
-                            </Form.Group>
-                        </Col>
-
-                        <Col xs={12} md={6}>
-                            <Form.Group>
-                                <Form.Label>Apellido</Form.Label>
-                                <Form.Control
-                                    value={form.apellido}
-                                    onChange={handleChange("apellido")}
-                                    placeholder="Apellido"
-                                    className={styles.fullRounded}
-                                    disabled={guardando}
-                                />
-                            </Form.Group>
-                        </Col>
-
-                        <Col xs={12}>
-                            <div className={styles.sectionTitle}>📞 Contacto</div>
-                        </Col>
-
-                        <Col xs={12} md={6}>
-                            <Form.Group>
-                                <Form.Label>Celular</Form.Label>
-                                <InputGroup>
-                                    <InputGroup.Text className={styles.inputGroupText}>
-                                        <Phone size={16} />
-                                    </InputGroup.Text>
-                                    <Form.Control
-                                        value={form.celular}
-                                        onChange={handleChange("celular")}
-                                        placeholder="3456-123456"
-                                        className={styles.formControl}
-                                        disabled={guardando}
-                                    />
-                                </InputGroup>
-                            </Form.Group>
-                        </Col>
-
-                        <Col xs={12} md={6}>
-                            <Form.Group>
-                                <Form.Label>Teléfono fijo</Form.Label>
-                                <InputGroup>
-                                    <InputGroup.Text className={styles.inputGroupText}>
-                                        <Phone size={16} />
-                                    </InputGroup.Text>
-                                    <Form.Control
-                                        value={form.telefono_fijo}
-                                        onChange={handleChange("telefono_fijo")}
-                                        placeholder="03456-421234"
-                                        className={styles.formControl}
-                                        disabled={guardando}
-                                    />
-                                </InputGroup>
-                            </Form.Group>
-                        </Col>
-
-                        <Col xs={12}>
-                            <div className={styles.sectionTitle}>📍 Ubicación y horarios</div>
-                        </Col>
-
-                        <Col xs={12}>
-                            <Form.Group>
-                                <Form.Label>Dirección</Form.Label>
-                                <InputGroup>
-                                    <InputGroup.Text className={styles.inputGroupText}>
-                                        <MapPin size={16} />
-                                    </InputGroup.Text>
-                                    <Form.Control
-                                        value={form.direccion}
-                                        onChange={handleChange("direccion")}
-                                        placeholder="Calle, número, ciudad"
-                                        className={styles.formControl}
-                                        disabled={guardando}
-                                    />
-                                </InputGroup>
-                            </Form.Group>
-                        </Col>
-
-                        <Col xs={12} md={6}>
-                            <Form.Group>
-                                <Form.Label>Días de atención</Form.Label>
-                                <InputGroup>
-                                    <InputGroup.Text className={styles.inputGroupText}>
-                                        <CalendarIcon size={16} />
-                                    </InputGroup.Text>
-                                    <Form.Control
-                                        value={form.dias_atencion}
-                                        onChange={handleChange("dias_atencion")}
-                                        placeholder="Lunes a Viernes"
-                                        className={styles.formControl}
-                                        disabled={guardando}
-                                    />
-                                </InputGroup>
-                            </Form.Group>
-                        </Col>
-
-                        <Col xs={12} md={6}>
-                            <Form.Group>
-                                <Form.Label>Horarios</Form.Label>
-                                <InputGroup>
-                                    <InputGroup.Text className={styles.inputGroupText}>
-                                        <Clock size={16} />
-                                    </InputGroup.Text>
-                                    <Form.Control
-                                        value={form.horarios}
-                                        onChange={handleChange("horarios")}
-                                        placeholder="9:00 a 18:00"
-                                        className={styles.formControl}
-                                        disabled={guardando}
-                                    />
-                                </InputGroup>
-                            </Form.Group>
-                        </Col>
-
-                        <Col xs={12}>
-                            <div className={styles.sectionTitle}>📝 Información adicional</div>
-                        </Col>
-
-                        <Col xs={12}>
-                            <Form.Group>
-                                <Form.Label>Notas</Form.Label>
-                                <InputGroup>
-                                    <InputGroup.Text className={styles.inputGroupText}>
-                                        <FileText size={16} />
-                                    </InputGroup.Text>
-                                    <Form.Control
-                                        as="textarea"
-                                        rows={3}
-                                        value={form.notas}
-                                        onChange={handleChange("notas")}
-                                        placeholder="Observaciones, preferencias, historial..."
-                                        className={styles.formControl}
-                                        style={{ resize: "none" }}
-                                        disabled={guardando}
-                                    />
-                                </InputGroup>
-                                <div className={styles.charCount}>{form.notas.length}/500</div>
-                            </Form.Group>
+                            <div className={styles.reminderBox}>
+                                <Form.Check type="checkbox" id="favorito-check" label={<span className="d-flex align-items-center gap-2 flex-wrap"><Star size={18} color={form.favorito ? "#cd7fa7" : "#8a7a9c"} /><span className="fw-semibold">Marcar como favorito</span><Badge bg="info" style={{ backgroundColor: "#7f9bc2" }}>Destacado</Badge></span>} checked={form.favorito} onChange={e => setForm({ ...form, favorito: e.target.checked })} disabled={guardando} />
+                                <small className="text-muted d-block ms-4 mt-1">Los contactos favoritos aparecen primero en la lista</small>
+                            </div>
                         </Col>
                     </Row>
                 </Modal.Body>
-
                 <Modal.Footer className={styles.footer}>
-                    <Button
-                        variant="outline-secondary"
-                        className={styles.cancelBtn}
-                        onClick={handleClose}
-                        disabled={guardando}
-                    >
-                        Cancelar
-                    </Button>
+                    <Button variant="outline-secondary" className={styles.cancelBtn} onClick={handleClose} disabled={guardando}>Cancelar</Button>
                     <Button type="submit" className={styles.saveBtn} disabled={guardando}>
-                        {guardando ? (
-                            <span className="d-inline-flex align-items-center gap-2">
-                                <Spinner animation="border" size="sm" />
-                                Guardando...
-                            </span>
-                        ) : isEdit ? "Actualizar" : "Crear contacto"}
+                        {guardando ? <><Spinner animation="border" size="sm" className="me-2" />Guardando...</> : (contactoEdit ? "Actualizar" : "Crear contacto")}
                     </Button>
                 </Modal.Footer>
             </Form>

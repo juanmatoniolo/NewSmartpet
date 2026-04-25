@@ -1,116 +1,128 @@
-/* ContactosMascota.module.css */
+:root {
+    --primary: #6C5C94;
+    /* Violeta principal */
+    --primary-dark: #5A4A7A;
+    --primary-light: #F3EFF9;
+    --secondary: #CD7FA7;
+    /* Rosa principal */
+    --secondary-dark: #B86A92;
+    --success: #9B8EC2;
+    --success-light: #F0ECF7;
+    --warning: #E6B8C9;
+    --warning-dark: #B86A92;
+    --info: #7F9BC2;
+    --info-light: #EEF3F9;
+    --gray-50: #FCF9FF;
+    --gray-100: #F8F5FC;
+    --gray-200: #E5D9F2;
+    --gray-300: #D1C4E0;
+    --gray-400: #B0A2C0;
+    --gray-500: #8A7A9C;
+    --gray-600: #6C5C94;
+    --gray-700: #4A3A6A;
+    --gray-800: #2E1F4A;
+    --shadow-sm: 0 2px 8px rgba(108, 92, 148, 0.08);
+    --shadow-md: 0 8px 20px rgba(108, 92, 148, 0.12);
+    --radius-sm: 0.75rem;
+    --radius-md: 1rem;
+    --radius-lg: 1.5rem;
+    --radius-full: 9999px;
+    --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
 .container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 0.5rem;
+    padding: 0.75rem;
 }
 
 /* Header */
 .header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--gray-200);
 }
 
 .titleSection h2 {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    font-size: clamp(1.35rem, 2.5vw, 1.8rem);
     font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 0.25rem;
-    font-size: clamp(1.35rem, 2vw, 1.8rem);
+    color: var(--gray-800);
+    margin: 0;
 }
 
 .titleSection small {
-    color: #64748b;
+    color: var(--gray-500);
     font-size: 0.85rem;
 }
 
 .backButton {
-    border-radius: 2rem;
-    padding: 0.4rem 1rem;
-    font-weight: 500;
-    border: 1px solid #cbd5e1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.2rem;
+    border-radius: var(--radius-full);
+    font-weight: 600;
     background: white;
-    transition: all 0.2s ease;
-    color: #334155;
-    font-size: 0.9rem;
+    border: 1px solid var(--gray-300);
+    color: var(--gray-700);
+    transition: var(--transition);
+    text-decoration: none;
 }
 
 .backButton:hover {
-    background: #f1f5f9;
-    border-color: #94a3b8;
+    background: var(--gray-100);
+    border-color: var(--gray-400);
+    transform: translateY(-2px);
+    color: var(--primary);
 }
 
-.backButton:focus-visible,
-.actionButton:focus-visible,
-.newButton:focus-visible,
-.searchInput:focus-visible,
-.filterSelect:focus-visible,
-.tabs :global(.nav-link:focus-visible) {
-    outline: 3px solid rgba(127, 155, 194, 0.35);
-    outline-offset: 2px;
-    box-shadow: none;
-}
-
-/* Tabs personalizadas - Mobile first */
+/* Tabs mejoradas */
 .tabs :global(.nav-tabs) {
-    border-bottom: 2px solid #e2e8f0;
-    gap: 0.25rem;
+    border-bottom: 2px solid var(--gray-200);
+    gap: 0.5rem;
     padding: 0 0.25rem;
     flex-wrap: nowrap;
     overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    white-space: nowrap;
-}
-
-.tabs :global(.nav-tabs::-webkit-scrollbar) {
-    display: none;
-}
-
-.tabs :global(.nav-item) {
-    flex-shrink: 0;
+    scrollbar-width: thin;
 }
 
 .tabs :global(.nav-link) {
     border: none;
-    color: #64748b;
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    border-radius: 2rem;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
+    color: var(--gray-500);
+    font-weight: 600;
+    padding: 0.6rem 1.2rem;
+    border-radius: var(--radius-full);
+    transition: var(--transition);
     background: transparent;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     white-space: nowrap;
 }
 
 .tabs :global(.nav-link:hover) {
-    background: #f1f5f9;
-    color: #334155;
+    background: var(--gray-100);
+    color: var(--gray-700);
 }
 
 .tabs :global(.nav-link.active) {
-    background: #7f9bc2;
+    background: var(--primary);
     color: white;
-    font-weight: 600;
+    box-shadow: var(--shadow-sm);
 }
 
-/* Tarjetas de resumen */
+/* Tarjetas de resumen clickeables */
 .summaryCard {
     border: none;
-    border-radius: 1rem;
-    box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-    transition: all 0.2s ease;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
     cursor: pointer;
     height: 100%;
     background: white;
@@ -118,110 +130,84 @@
 }
 
 .summaryCard:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
 }
 
 .iconCircle {
-    width: 44px;
-    height: 44px;
-    border-radius: 14px;
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: transform 0.2s;
+}
+
+.summaryCard:hover .iconCircle {
+    transform: scale(1.02);
 }
 
 .bgPrimaryLight {
-    background-color: #eef2f7;
+    background-color: var(--primary-light);
 }
 
 .bgSuccessLight {
-    background-color: #e6f4ea;
+    background-color: var(--success-light);
 }
 
 .bgInfoLight {
-    background-color: #e2f0f8;
+    background-color: var(--info-light);
 }
 
 .bgDarkLight {
-    background-color: #edf2f7;
+    background-color: var(--gray-100);
 }
 
 .textPrimary {
-    color: #7f9bc2;
+    color: #fff;
 }
 
 .textSuccess {
-    color: #6fbf8c;
+    color: var(--success);
 }
 
 .textInfo {
-    color: #5fa3c7;
+    color: var(--info);
 }
 
 .textDark {
-    color: #2d3748;
+    color: var(--gray-700);
 }
 
 .cardValue {
     font-size: clamp(1.6rem, 2.5vw, 2rem);
-    font-weight: 700;
+    font-weight: 800;
     line-height: 1.2;
 }
 
 .cardLabel {
-    color: #64748b;
-    font-size: 0.8rem;
+    color: var(--gray-500);
+    font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.5px;
+    font-weight: 600;
 }
 
 .cardPreview {
     margin-top: 0.75rem;
-    padding: 0.6rem;
-    background: #f8fafc;
-    border-radius: 10px;
+    padding: 0.75rem;
+    background: var(--gray-50);
+    border-radius: var(--radius-sm);
     font-size: 0.8rem;
+    transition: background 0.2s;
 }
 
-/* Acciones rápidas */
-.quickActions {
-    margin-top: 1.5rem;
-    padding: 1rem;
-    background: #f8fafc;
-    border-radius: 1rem;
-}
-
-.quickActions h5 {
-    font-weight: 600;
-    color: #334155;
-    font-size: 1rem;
-    margin-bottom: 0.75rem;
-}
-
-.actionButton {
-    border-radius: 2rem;
-    padding: 0.5rem 0.5rem;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.3rem;
-    transition: all 0.2s ease;
+.cardPreview:hover {
     background: white;
-    border: 1px solid #cbd5e1;
-    color: #334155;
-    font-size: 0.8rem;
-    white-space: nowrap;
-    width: 100%;
 }
 
-.actionButton:hover {
-    background: #f1f5f9;
-    border-color: #94a3b8;
-}
-
-/* Barra de búsqueda y filtro */
+/* Búsqueda y filtros */
 .searchWrapper {
     position: relative;
     width: 100%;
@@ -229,342 +215,235 @@
 
 .searchIcon {
     position: absolute;
-    left: 0.75rem;
+    left: 0.9rem;
     top: 50%;
     transform: translateY(-50%);
-    color: #64748b;
+    color: var(--gray-500);
     pointer-events: none;
-    z-index: 1;
 }
 
 .searchInput {
     padding-left: 2.5rem;
-    border-radius: 0.75rem;
-    border: 1px solid #cbd5e1;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--gray-300);
     background: white;
-    height: 42px;
+    height: 44px;
     font-size: 0.9rem;
     width: 100%;
+    transition: var(--transition);
+}
+
+.searchInput:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 3px rgba(205, 127, 167, 0.2);
 }
 
 .filterSelect {
-    border-radius: 0.75rem;
-    border: 1px solid #cbd5e1;
-    height: 42px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--gray-300);
+    height: 44px;
     background: white;
     font-size: 0.9rem;
     width: 100%;
+    cursor: pointer;
+}
+
+.filterSelect:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 3px rgba(205, 127, 167, 0.2);
 }
 
 .newButton {
-    border-radius: 2rem;
+    border-radius: var(--radius-full);
     padding: 0.5rem 1rem;
-    font-weight: 600;
-    height: 42px;
+    font-weight: 700;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    background: #7f9bc2;
+    background: var(--secondary);
     border: none;
     color: white;
-    transition: all 0.2s ease;
+    transition: var(--transition);
     font-size: 0.9rem;
     width: 100%;
-    white-space: nowrap;
 }
 
 .newButton:hover {
-    background: #6a8ab0;
+    background: var(--secondary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
 }
 
-/* Ajustes para tarjetas en lista */
-.citaCard {
-    margin-bottom: 0.75rem;
-}
-
-/* Ajustes para texto en tarjetas */
-.cardPreview strong {
-    font-size: 0.85rem;
-    display: block;
-    margin-bottom: 0.15rem;
-}
-
-.cardPreview .text-muted {
-    font-size: 0.75rem;
-}
-
-/* Ajuste para ProgressBar */
+/* ProgressBar */
 .progressBar {
-    height: 6px;
-    border-radius: 3px;
+    height: 8px;
+    border-radius: 4px;
+    background-color: var(--gray-200);
 }
 
-@media (min-width: 576px) {
-    .container {
-        padding: 0.75rem;
-    }
-
-    .tabs :global(.nav-link) {
-        padding: 0.6rem 1.2rem;
-        font-size: 0.9rem;
-    }
-
-    .iconCircle {
-        width: 48px;
-        height: 48px;
-        border-radius: 16px;
-    }
-
-    .cardLabel {
-        font-size: 0.85rem;
-    }
-
-    .quickActions {
-        padding: 1.25rem;
-    }
-
-    .quickActions h5 {
-        font-size: 1.1rem;
-    }
-
-    .actionButton {
-        padding: 0.6rem 0.75rem;
-        font-size: 0.85rem;
-    }
-
-    .searchInput,
-    .filterSelect,
-    .newButton {
-        height: 45px;
-    }
-}
-
-@media (min-width: 768px) {
-    .container {
-        padding: 1rem;
-    }
-
-    .header {
-        margin-bottom: 1.5rem;
-    }
-
-    .tabs :global(.nav-tabs) {
-        overflow-x: visible;
-        flex-wrap: wrap;
-    }
-
-    .actionButton {
-        padding: 0.65rem 1rem;
-        font-size: 0.9rem;
-    }
-
-    .searchInput,
-    .filterSelect,
-    .newButton {
-        height: 48px;
-    }
-
-    .progressBar {
-        height: 8px;
-        border-radius: 4px;
-    }
-}
-
-@media (min-width: 992px) {
-    .summaryCard:hover {
-        transform: translateY(-4px);
-    }
-}
-
-/* =========================
-   Citas estilizadas
-========================= */
-
+/* Citas */
 .citasHeader {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     gap: 1rem;
     flex-wrap: wrap;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .citasTitle {
-    margin: 0;
-    font-size: clamp(1.05rem, 2vw, 1.35rem);
-    font-weight: 700;
-    color: #1e293b;
+    font-size: clamp(1.1rem, 2vw, 1.35rem);
+    font-weight: 800;
+    color: var(--gray-800);
 }
 
 .citasSubtitle {
-    margin: 0.25rem 0 0;
-    color: #64748b;
+    color: var(--gray-500);
     font-size: 0.9rem;
-}
-
-.destacadasSection {
-    margin-bottom: 1rem;
 }
 
 .sectionBlockHeader {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 0.75rem;
     flex-wrap: wrap;
-    margin-bottom: 0.85rem;
+    margin-bottom: 1rem;
 }
 
 .sectionBadgePrimary,
 .sectionBadgeWarning {
     display: inline-flex;
     align-items: center;
-    gap: 0.45rem;
-    padding: 0.45rem 0.85rem;
-    border-radius: 999px;
-    font-size: 0.78rem;
+    gap: 0.5rem;
+    padding: 0.4rem 1rem;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
     font-weight: 700;
 }
 
 .sectionBadgePrimary {
-    background: #eef2f7;
-    color: #6f89ad;
-    border: 1px solid #dbe5f0;
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    border: 1px solid var(--gray-300);
 }
 
 .sectionBadgeWarning {
-    background: #fff7e6;
-    color: #b7791f;
-    border: 1px solid #f6d28b;
-}
-
-.sectionHint {
-    color: #64748b;
-    font-size: 0.82rem;
-    font-weight: 500;
+    background: #FFF3E6;
+    color: var(--warning-dark);
+    border: 1px solid var(--warning);
 }
 
 .citaDestacadaCard {
-    border: 1px solid #f1d9a6;
-    border-radius: 1rem;
-    background: linear-gradient(180deg, #fffdf8 0%, #fff8ea 100%);
-    box-shadow: 0 8px 20px rgba(180, 131, 37, 0.08);
+    border: 1px solid var(--warning);
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, #fffdf8, #fff8ea);
+    transition: var(--transition);
+}
+
+.citaDestacadaCard:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .citaTopRow {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    gap: 0.9rem;
+    gap: 1rem;
     flex-wrap: wrap;
 }
 
 .citaTopLeft {
     display: flex;
-    gap: 0.85rem;
+    gap: 1rem;
     align-items: flex-start;
     flex: 1;
     min-width: 0;
 }
 
 .citaIconWrap {
-    width: 42px;
-    height: 42px;
+    width: 44px;
+    height: 44px;
     border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #fff3d6;
-    color: #b7791f;
+    background: #FFF3D6;
+    color: var(--warning-dark);
     flex-shrink: 0;
 }
 
 .citaTitulo {
     margin: 0 0 0.35rem;
-    font-size: 1rem;
     font-weight: 700;
-    color: #1e293b;
+    color: var(--gray-800);
 }
 
 .citaMeta {
     display: flex;
-    gap: 0.7rem;
+    gap: 1rem;
     flex-wrap: wrap;
 }
 
 .citaMetaItem {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    color: #64748b;
+    gap: 0.4rem;
+    color: var(--gray-500);
     font-size: 0.8rem;
 }
 
 .citaActions {
     display: flex;
-    gap: 0.45rem;
+    gap: 0.5rem;
 }
 
 .iconActionBtn,
 .iconDeleteBtn {
     width: 36px;
     height: 36px;
-    border-radius: 999px;
-    border: 1px solid #dbe3ee;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--gray-300);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: #fff;
-    color: #334155;
+    background: white;
+    transition: var(--transition);
 }
 
 .iconActionBtn:hover {
-    background: #f8fafc;
-    border-color: #94a3b8;
+    background: var(--gray-100);
+    transform: scale(1.05);
 }
 
 .iconDeleteBtn:hover {
-    background: #fff1f2;
-    border-color: #fecdd3;
-    color: #be123c;
+    background: #FFF1F2;
+    border-color: #FECDD3;
+    color: #BE123C;
+    transform: scale(1.05);
 }
 
 .citaDetalleBox {
-    margin-top: 0.9rem;
-    padding: 0.85rem 0.95rem;
-    border-radius: 0.85rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: var(--radius-sm);
     background: rgba(255, 255, 255, 0.85);
-    border: 1px solid #f3e4bf;
-}
-
-.citaDetalleBox strong {
-    display: block;
-    margin-bottom: 0.3rem;
-    color: #334155;
-    font-size: 0.82rem;
-}
-
-.citaDetalleBox p {
-    margin: 0;
-    color: #475569;
-    font-size: 0.86rem;
-    line-height: 1.5;
+    border: 1px solid #F3E4BF;
 }
 
 .citaCardCustom {
     height: 100%;
-    border: 1px solid #e2e8f0;
-    border-radius: 1rem;
-    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
-    transition: all 0.2s ease;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    transition: var(--transition);
 }
 
 .citaCardCustom:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
-    border-color: #cbd5e1;
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--gray-300);
 }
 
 .citaCardHeader {
@@ -572,7 +451,7 @@
     justify-content: space-between;
     gap: 0.75rem;
     align-items: flex-start;
-    margin-bottom: 0.65rem;
+    margin-bottom: 0.75rem;
 }
 
 .citaCardTitleWrap {
@@ -581,38 +460,30 @@
 
 .citaCardTitle {
     margin: 0 0 0.35rem;
-    font-size: 0.98rem;
     font-weight: 700;
-    color: #1e293b;
-}
-
-.citaCardBadges {
-    display: flex;
-    gap: 0.35rem;
-    flex-wrap: wrap;
+    color: var(--gray-800);
 }
 
 .citaBadge {
-    background: #eef2f7 !important;
-    color: #6f89ad !important;
-    border: 1px solid #dbe5f0;
-    font-size: 0.72rem;
+    background: var(--gray-100) !important;
+    color: var(--gray-600) !important;
+    border: 1px solid var(--gray-300);
+    font-size: 0.7rem;
     font-weight: 700;
-    padding: 0.35rem 0.55rem;
-    border-radius: 999px;
+    padding: 0.3rem 0.6rem;
+    border-radius: var(--radius-full);
 }
 
 .citaMiniDate {
-    flex-shrink: 0;
-    color: #64748b;
-    font-size: 0.76rem;
+    color: var(--gray-500);
+    font-size: 0.75rem;
     font-weight: 600;
     white-space: nowrap;
 }
 
 .citaCardText {
     margin: 0 0 1rem;
-    color: #475569;
+    color: var(--gray-600);
     font-size: 0.85rem;
     line-height: 1.5;
 }
@@ -621,97 +492,381 @@
     display: flex;
     gap: 0.5rem;
     margin-top: auto;
-    padding-top: 0.9rem;
-    border-top: 1px solid #e2e8f0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--gray-200);
 }
 
 .citaFooterBtn {
     flex: 1;
-    border: 1px solid #cbd5e1;
-    background: #fff;
-    color: #334155;
-    border-radius: 999px;
+    border: 1px solid var(--gray-300);
+    background: white;
+    border-radius: var(--radius-full);
     min-height: 38px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.35rem;
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     font-weight: 600;
-    transition: all 0.2s ease;
+    transition: var(--transition);
 }
 
 .citaFooterBtn:hover {
-    background: #f8fafc;
-    border-color: #94a3b8;
+    background: var(--gray-100);
+    transform: translateY(-1px);
 }
 
 .citaFooterBtnDanger:hover {
-    background: #fff1f2;
-    border-color: #fecdd3;
-    color: #be123c;
+    background: #FFF1F2;
+    border-color: #FECDD3;
+    color: #BE123C;
 }
 
 .emptyState {
-    padding: 2rem 1rem;
-    border-radius: 1rem;
-    border: 1px dashed #cbd5e1;
-    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    padding: 2.5rem 1rem;
+    border-radius: var(--radius-md);
+    border: 2px dashed var(--gray-300);
+    background: linear-gradient(135deg, white, var(--gray-50));
     text-align: center;
 }
 
+.emptyState:hover {
+    border-color: var(--primary);
+}
+
 .emptyIcon {
-    width: 56px;
-    height: 56px;
-    margin: 0 auto 0.85rem;
-    border-radius: 18px;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 1rem;
+    border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #eef2f7;
-    color: #6f89ad;
-}
-
-.emptyState h6 {
-    margin-bottom: 0.35rem;
-    font-weight: 700;
-    color: #1e293b;
-}
-
-.emptyState p {
-    margin-bottom: 1rem;
-    color: #64748b;
-    font-size: 0.9rem;
+    background: var(--primary-light);
+    color: var(--primary);
 }
 
 .emptyButton {
-    border-radius: 999px;
-    background: #7f9bc2;
+    border-radius: var(--radius-full);
+    background: var(--secondary);
     border: none;
-    color: #fff;
-    font-weight: 600;
-    padding: 0.6rem 1rem;
+    color: white;
+    font-weight: 700;
+    padding: 0.7rem 1.5rem;
+    transition: var(--transition);
 }
 
 .emptyButton:hover {
-    background: #6a8ab0;
+    background: var(--secondary-dark);
+    transform: translateY(-2px);
 }
 
+/* Tarjetas de Socios (Amigos SP) */
+.socioCard {
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    transition: var(--transition);
+    background: white;
+    height: 100%;
+}
+
+.socioCard:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--gray-300);
+}
+
+.socioIcon {
+    font-size: 2rem;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: var(--radius-sm);
+}
+
+/* Responsive */
 @media (max-width: 576px) {
-    .citasHeader {
-        margin-bottom: 0.85rem;
+    .container {
+        padding: 0.5rem;
     }
 
-    .citaActions {
-        width: 100%;
-        justify-content: flex-end;
-    }
-
-    .citaCardFooter {
+    .header {
         flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .citasHeader {
+        flex-direction: column;
+        align-items: stretch;
     }
 
     .citaFooterBtn {
         width: 100%;
+    }
+
+    .emptyIcon {
+        width: 48px;
+        height: 48px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .tabs :global(.nav-tabs) {
+        flex-wrap: wrap;
+        overflow-x: visible;
+    }
+
+    .searchInput,
+    .filterSelect,
+    .newButton {
+        height: 48px;
+    }
+}
+
+/* ========================= */
+/* Cards profesionales Amigos SP */
+/* ========================= */
+
+.socioCard {
+    height: 100%;
+    border: 1px solid #e8e0f0;
+    border-radius: 24px;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 0 10px 28px rgba(46, 31, 74, 0.08);
+    transition:
+        transform 0.22s ease,
+        box-shadow 0.22s ease,
+        border-color 0.22s ease;
+}
+
+.socioCard:hover {
+    transform: translateY(-5px);
+    border-color: #d4c4e4;
+    box-shadow: 0 20px 46px rgba(46, 31, 74, 0.14);
+}
+
+.socioMedia {
+    position: relative;
+    height: 160px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f3eff9, #fff7fb);
+}
+
+.socioImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transform: scale(1.01);
+    transition: transform 0.35s ease;
+}
+
+.socioCard:hover .socioImage {
+    transform: scale(1.05);
+}
+
+.socioPlaceholder {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    background:
+        radial-gradient(circle at top left, rgba(205, 127, 167, 0.24), transparent 35%),
+        linear-gradient(135deg, #f3eff9 0%, #ffffff 100%);
+}
+
+.socioPlaceholder span {
+    width: 72px;
+    height: 72px;
+    border-radius: 24px;
+    display: grid;
+    place-items: center;
+    background: #ffffff;
+    font-size: 2.1rem;
+    box-shadow: 0 12px 28px rgba(108, 92, 148, 0.16);
+}
+
+.socioMediaOverlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,
+            rgba(46, 31, 74, 0.02) 0%,
+            rgba(46, 31, 74, 0.10) 55%,
+            rgba(46, 31, 74, 0.40) 100%);
+    pointer-events: none;
+}
+
+.socioTypeBadge {
+    position: absolute;
+    left: 1rem;
+    bottom: 0.9rem;
+    border: 0 !important;
+    border-radius: 999px;
+    padding: 0.42rem 0.85rem;
+    background: rgba(255, 255, 255, 0.94) !important;
+    color: #4a3a6a !important;
+    font-size: 0.76rem;
+    font-weight: 850;
+    box-shadow: 0 8px 20px rgba(46, 31, 74, 0.14);
+    z-index: 2;
+}
+
+.socioTopBadges {
+    position: absolute;
+    top: 0.85rem;
+    left: 0.85rem;
+    right: 0.85rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    z-index: 2;
+}
+
+.badgeInfo,
+.badgeDanger {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    border-radius: 999px;
+    padding: 0.34rem 0.7rem;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 850;
+    box-shadow: 0 8px 18px rgba(46, 31, 74, 0.16);
+}
+
+.badgeInfo {
+    background: #18bfe5;
+}
+
+.badgeDanger {
+    background: #dc3545;
+}
+
+.socioBody {
+    padding: 1rem 1rem 1.1rem;
+}
+
+.socioHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.9rem;
+}
+
+.socioName {
+    margin: 0;
+    color: #24183c;
+    font-size: 1.08rem;
+    font-weight: 850;
+    line-height: 1.22;
+    letter-spacing: -0.015em;
+}
+
+.socioSubtitle {
+    margin: 0.3rem 0 0;
+    color: #8a7a9c;
+    font-size: 0.84rem;
+    line-height: 1.35;
+}
+
+.socioInfoBox {
+    border: 1px solid #efe7f5;
+    border-radius: 18px;
+    background: #fcf9ff;
+    overflow: hidden;
+}
+
+.socioInfoBox:empty {
+    display: none;
+}
+
+.socioInfoRow {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    padding: 0.72rem 0.8rem;
+    color: #5f5276;
+    font-size: 0.88rem;
+    line-height: 1.35;
+    border-bottom: 1px solid #efe7f5;
+}
+
+.socioInfoRow:last-child {
+    border-bottom: 0;
+}
+
+.socioInfoIcon {
+    width: 20px;
+    flex-shrink: 0;
+    text-align: center;
+}
+
+.socioDescription {
+    margin: 0.85rem 0 0;
+    padding: 0.8rem;
+    border-radius: 18px;
+    background: #fff8fc;
+    border: 1px solid #f1dbe8;
+    color: #6d5f7d;
+    font-size: 0.84rem;
+    line-height: 1.45;
+}
+
+.socioContactBtn {
+    width: 100%;
+    min-height: 44px;
+    margin-top: 1rem;
+    border: 0;
+    border-radius: 999px;
+    background: #25d366;
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    font-size: 0.9rem;
+    font-weight: 850;
+    box-shadow: 0 10px 22px rgba(37, 211, 102, 0.22);
+    transition:
+        transform 0.18s ease,
+        background 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.socioContactBtn:hover,
+.socioContactBtn:focus {
+    background: #20bf5a;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 12px 26px rgba(37, 211, 102, 0.28);
+}
+
+@media (max-width: 576px) {
+    .socioMedia {
+        height: 140px;
+    }
+
+    .socioBody {
+        padding: 0.9rem;
+    }
+
+    .socioName {
+        font-size: 1rem;
+    }
+
+    .socioTopBadges {
+        top: 0.75rem;
+        left: 0.75rem;
+        right: 0.75rem;
     }
 }

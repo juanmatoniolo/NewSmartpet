@@ -1,6 +1,15 @@
 import React from "react";
-import { Badge, Button } from "react-bootstrap";
-import { Phone, MapPin, Clock, Star, Edit2, Trash2 } from "lucide-react";
+import { Button } from "react-bootstrap";
+import {
+    Phone,
+    MapPin,
+    Clock,
+    Star,
+    Edit2,
+    Trash2,
+    Mail,
+    Building2
+} from "lucide-react";
 import styles from "./TarjetaContacto.module.css";
 
 export default function TarjetaContacto({
@@ -13,9 +22,19 @@ export default function TarjetaContacto({
     getIconoTipo
 }) {
     const handleCardClick = (e) => {
-        if (e.target.closest('button')) return;
+        if (e.target.closest("button")) return;
         onEditar(contacto);
     };
+
+    const imagenLocal =
+        contacto.imagen ||
+        contacto.logo ||
+        contacto.foto ||
+        contacto.imagen_url ||
+        contacto.logo_url ||
+        "";
+
+    const nombreCompleto = `${contacto.nombre || ""} ${contacto.apellido || ""}`.trim();
 
     return (
         <div
@@ -30,28 +49,66 @@ export default function TarjetaContacto({
                 }
             }}
         >
-            {contacto.favorito && (
-                <div className={styles.favoriteStar}>
-                    <Star size={20} fill="currentColor" />
-                </div>
-            )}
+            <div className={styles.media}>
+                {imagenLocal ? (
+                    <img
+                        src={imagenLocal}
+                        alt={nombreCompleto || "Imagen del local"}
+                        className={styles.mediaImage}
+                    />
+                ) : (
+                    <div className={styles.mediaPlaceholder}>
+                        <span>{getIconoTipo(contacto.tipo)}</span>
+                    </div>
+                )}
 
-            <div className="card-body p-3 p-md-4">
+                <div className={styles.mediaOverlay} />
+
+                <span className={styles.typeBadge}>
+                    {renderTipo(contacto)}
+                </span>
+
+                <button
+                    type="button"
+                    className={`${styles.favoriteStar} ${contacto.favorito ? styles.favoriteStarActive : ""}`}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onToggleFavorito(contacto);
+                    }}
+                    aria-label={contacto.favorito ? "Quitar de favoritos" : "Marcar como favorito"}
+                    title={contacto.favorito ? "Quitar de favoritos" : "Marcar como favorito"}
+                >
+                    <Star size={18} fill={contacto.favorito ? "currentColor" : "none"} />
+                </button>
+            </div>
+
+            <div className={styles.body}>
                 <div className={styles.header}>
-                    <span className={styles.icon}>{getIconoTipo(contacto.tipo)}</span>
                     <div className={styles.title}>
                         <h5 className={styles.name}>
-                            {contacto.nombre} {contacto.apellido || ""}
+                            {nombreCompleto || "Contacto sin nombre"}
                         </h5>
-                        <span className={styles.typeBadge}>{renderTipo(contacto)}</span>
+
+                        {contacto.direccion ? (
+                            <p className={styles.locationPreview}>
+                                <MapPin size={14} />
+                                <span>{contacto.direccion}</span>
+                            </p>
+                        ) : (
+                            <p className={styles.locationPreview}>
+                                <Building2 size={14} />
+                                <span>Proveedor registrado</span>
+                            </p>
+                        )}
                     </div>
                 </div>
 
-                <div className="mt-3">
+                <div className={styles.infoBlock}>
                     {contacto.celular && (
                         <div className={styles.infoRow}>
                             <Phone size={16} />
                             <span>{contacto.celular}</span>
+
                             <Button
                                 className={styles.whatsappBtn}
                                 size="sm"
@@ -67,46 +124,59 @@ export default function TarjetaContacto({
 
                     {contacto.telefono_fijo && (
                         <div className={styles.infoRow}>
-                            <Phone size={14} />
+                            <Phone size={16} />
                             <span>{contacto.telefono_fijo}</span>
+                        </div>
+                    )}
+
+                    {contacto.email && (
+                        <div className={styles.infoRow}>
+                            <Mail size={16} />
+                            <span>{contacto.email}</span>
                         </div>
                     )}
 
                     {contacto.direccion && (
                         <div className={styles.infoRow}>
-                            <MapPin size={14} />
+                            <MapPin size={16} />
                             <span>{contacto.direccion}</span>
                         </div>
                     )}
 
-                    {contacto.horarios && (
+                    {(contacto.horarios || contacto.dias_atencion) && (
                         <div className={styles.infoRow}>
-                            <Clock size={14} />
+                            <Clock size={16} />
                             <span>
                                 {contacto.horarios}
-                                {contacto.dias_atencion && ` - ${contacto.dias_atencion}`}
+                                {contacto.horarios && contacto.dias_atencion ? " · " : ""}
+                                {contacto.dias_atencion}
                             </span>
                         </div>
                     )}
                 </div>
 
-                <div className={styles.citasInfo}>
-                    {contacto.ultimaCita?.fecha_evento && (
-                        <div className="text-muted mb-1">
-                            📅 Última visita: {new Date(contacto.ultimaCita.fecha_evento).toLocaleDateString("es-AR")}
-                        </div>
-                    )}
-                    {contacto.proximaCita?.fecha_evento && (
-                        <div className="text-success fw-medium">
-                            ⏰ Próxima cita: {new Date(contacto.proximaCita.fecha_evento).toLocaleDateString("es-AR")}
-                        </div>
-                    )}
-                </div>
+                {(contacto.ultimaCita?.fecha_evento || contacto.proximaCita?.fecha_evento) && (
+                    <div className={styles.citasInfo}>
+                        {contacto.ultimaCita?.fecha_evento && (
+                            <div className={styles.citaLineMuted}>
+                                📅 Última visita:{" "}
+                                {new Date(contacto.ultimaCita.fecha_evento).toLocaleDateString("es-AR")}
+                            </div>
+                        )}
+
+                        {contacto.proximaCita?.fecha_evento && (
+                            <div className={styles.citaLineSuccess}>
+                                ⏰ Próxima cita:{" "}
+                                {new Date(contacto.proximaCita.fecha_evento).toLocaleDateString("es-AR")}
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 {contacto.notas && (
                     <div className={styles.notas}>
-                        <strong className="d-block mb-1">Notas:</strong>
-                        {contacto.notas}
+                        <strong>Notas</strong>
+                        <p>{contacto.notas}</p>
                     </div>
                 )}
 
@@ -116,14 +186,15 @@ export default function TarjetaContacto({
                         onClick={() => onEditar(contacto)}
                     >
                         <Edit2 size={16} />
-                        <span className="d-none d-sm-inline">Editar</span>
+                        <span>Editar</span>
                     </Button>
+
                     <Button
-                        className={styles.actionBtn}
+                        className={`${styles.actionBtn} ${styles.deleteBtn}`}
                         onClick={() => onEliminar(contacto.id, contacto.nombre)}
                     >
                         <Trash2 size={16} />
-                        <span className="d-none d-sm-inline">Eliminar</span>
+                        <span>Eliminar</span>
                     </Button>
                 </div>
             </div>
