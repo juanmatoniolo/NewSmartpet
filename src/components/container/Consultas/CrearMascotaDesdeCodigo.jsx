@@ -7,7 +7,10 @@ import Form from "react-bootstrap/Form";
 import Spinner from "react-bootstrap/Spinner";
 import "./CrearMascotaDesdeCodigo.css";
 
-const API_BASE = "http://localhost/api-smartpet/index.php";
+import API_BASE from "../../../config/api";
+
+// 🔧 Construir URL completa con index.php
+const API_URL = `${API_BASE}/index.php`;
 
 function CrearMascotaDesdeCodigo({ usuarioId, codigoId, codigoUnico, onCreada }) {
     const [show, setShow] = useState(false);
@@ -51,7 +54,8 @@ function CrearMascotaDesdeCodigo({ usuarioId, codigoId, codigoUnico, onCreada })
     const subirImagen = async (mascotaId, file) => {
         const formDataImg = new FormData();
         formDataImg.append("imagen", file);
-        await axios.post(`${API_BASE}/upload-imagen/${mascotaId}`, formDataImg, {
+        // ✅ Usar API_URL en lugar de concatenar API_BASE + /index.php/
+        await axios.post(`${API_URL}/upload-imagen/${mascotaId}`, formDataImg, {
             headers: { "Content-Type": "multipart/form-data" },
         });
     };
@@ -76,7 +80,8 @@ function CrearMascotaDesdeCodigo({ usuarioId, codigoId, codigoUnico, onCreada })
                 persona2ig: formData.persona2ig,
                 mensajeRescate: formData.mensajeRescate,
             };
-            const response = await axios.post(`${API_BASE}/mascotas`, payload);
+            // ✅ Usar API_URL
+            const response = await axios.post(`${API_URL}/mascotas`, payload);
             const nuevaMascotaId = response.data.id;
 
             // 2. Si hay imagen, subirla

@@ -39,7 +39,10 @@ import ModalHistorial from "./ContactosMascota/ModalHistorial";
 import styles from "./ContactosMascota.module.css";
 import HeaderLogout from "../../Logout/Logout";
 
-const API_BASE = "http://localhost/api-smartpet/index.php";
+import API_BASE from "../../../config/api";
+
+// 🔧 Construir URL completa con index.php
+const API_URL = `${API_BASE}/index.php`;
 
 function ContactosMascota() {
   const { userId } = useParams();
@@ -87,7 +90,8 @@ function ContactosMascota() {
   const cargarSocios = useCallback(async () => {
     setCargandoSocios(true);
     try {
-      const res = await axios.get(`${API_BASE}/socios`);
+      // ✅ Usar API_URL
+      const res = await axios.get(`${API_URL}/socios`);
       const data = Array.isArray(res.data) ? res.data : [];
       setSocios(data);
     } catch (err) {
@@ -108,7 +112,8 @@ function ContactosMascota() {
     setLoading(true);
     setError("");
     try {
-      const resMascotas = await axios.get(`${API_BASE}/mascotas?usuario_id=${userId}`);
+      // ✅ Usar API_URL
+      const resMascotas = await axios.get(`${API_URL}/mascotas?usuario_id=${userId}`);
       const mascotasData = Array.isArray(resMascotas.data) ? resMascotas.data : [];
       setMascotas(mascotasData);
 
@@ -118,10 +123,10 @@ function ContactosMascota() {
       }
 
       const promesasContactos = mascotasData.map(m =>
-        axios.get(`${API_BASE}/contactos-mascota?mascota_id=${m.id}`).catch(() => ({ data: [] }))
+        axios.get(`${API_URL}/contactos-mascota?mascota_id=${m.id}`).catch(() => ({ data: [] }))
       );
       const promesasHistorial = mascotasData.map(m =>
-        axios.get(`${API_BASE}/historial-mascota?mascota_id=${m.id}`).catch(() => ({ data: [] }))
+        axios.get(`${API_URL}/historial-mascota?mascota_id=${m.id}`).catch(() => ({ data: [] }))
       );
 
       const resultadosContactos = await Promise.all(promesasContactos);
@@ -268,9 +273,9 @@ function ContactosMascota() {
     try {
       const payload = { ...formData };
       if (editandoContactoId) {
-        await axios.put(`${API_BASE}/contactos-mascota/${editandoContactoId}`, payload);
+        await axios.put(`${API_URL}/contactos-mascota/${editandoContactoId}`, payload);
       } else {
-        await axios.post(`${API_BASE}/contactos-mascota`, payload);
+        await axios.post(`${API_URL}/contactos-mascota`, payload);
       }
       await cargarTodosLosDatos();
       return true;
@@ -283,7 +288,7 @@ function ContactosMascota() {
   const eliminarContacto = async (id, nombre) => {
     if (!window.confirm(`¿Eliminar "${nombre}"?`)) return;
     try {
-      await axios.delete(`${API_BASE}/contactos-mascota/${id}`);
+      await axios.delete(`${API_URL}/contactos-mascota/${id}`);
       await cargarTodosLosDatos();
     } catch (err) {
       setError("Error al eliminar.");
@@ -295,7 +300,7 @@ function ContactosMascota() {
       const payload = { ...contacto, favorito: !contacto.favorito };
       delete payload.mascotaId;
       delete payload.nombreMascota;
-      await axios.put(`${API_BASE}/contactos-mascota/${contacto.id}`, payload);
+      await axios.put(`${API_URL}/contactos-mascota/${contacto.id}`, payload);
       await cargarTodosLosDatos();
     } catch (err) {
       setError("Error al actualizar favorito.");
@@ -306,9 +311,9 @@ function ContactosMascota() {
     try {
       const payload = { ...data, tipo_evento: "cita" };
       if (editandoCitaId) {
-        await axios.put(`${API_BASE}/historial-mascota/${editandoCitaId}`, payload);
+        await axios.put(`${API_URL}/historial-mascota/${editandoCitaId}`, payload);
       } else {
-        await axios.post(`${API_BASE}/historial-mascota`, payload);
+        await axios.post(`${API_URL}/historial-mascota`, payload);
       }
       await cargarTodosLosDatos();
       return true;
@@ -321,7 +326,7 @@ function ContactosMascota() {
   const eliminarCita = async (id, titulo) => {
     if (!window.confirm(`¿Eliminar "${titulo}"?`)) return;
     try {
-      await axios.delete(`${API_BASE}/historial-mascota/${id}`);
+      await axios.delete(`${API_URL}/historial-mascota/${id}`);
       await cargarTodosLosDatos();
     } catch (err) {
       setError("Error al eliminar.");
@@ -332,9 +337,9 @@ function ContactosMascota() {
     try {
       const payload = { ...data, tipo_evento: "vacuna" };
       if (editandoVacunaId) {
-        await axios.put(`${API_BASE}/historial-mascota/${editandoVacunaId}`, payload);
+        await axios.put(`${API_URL}/historial-mascota/${editandoVacunaId}`, payload);
       } else {
-        await axios.post(`${API_BASE}/historial-mascota`, payload);
+        await axios.post(`${API_URL}/historial-mascota`, payload);
       }
       await cargarTodosLosDatos();
       return true;
@@ -347,7 +352,7 @@ function ContactosMascota() {
   const eliminarVacuna = async (id, nombre) => {
     if (!window.confirm(`¿Eliminar vacuna "${nombre}"?`)) return;
     try {
-      await axios.delete(`${API_BASE}/historial-mascota/${id}`);
+      await axios.delete(`${API_URL}/historial-mascota/${id}`);
       await cargarTodosLosDatos();
     } catch (err) {
       setError("Error al eliminar.");
@@ -358,9 +363,9 @@ function ContactosMascota() {
     try {
       const payload = { ...data, tipo_evento: "historial" };
       if (editandoHistorialId) {
-        await axios.put(`${API_BASE}/historial-mascota/${editandoHistorialId}`, payload);
+        await axios.put(`${API_URL}/historial-mascota/${editandoHistorialId}`, payload);
       } else {
-        await axios.post(`${API_BASE}/historial-mascota`, payload);
+        await axios.post(`${API_URL}/historial-mascota`, payload);
       }
       await cargarTodosLosDatos();
       return true;
@@ -373,7 +378,7 @@ function ContactosMascota() {
   const eliminarHistorial = async (id, titulo) => {
     if (!window.confirm(`¿Eliminar "${titulo}"?`)) return;
     try {
-      await axios.delete(`${API_BASE}/historial-mascota/${id}`);
+      await axios.delete(`${API_URL}/historial-mascota/${id}`);
       await cargarTodosLosDatos();
     } catch (err) {
       setError("Error al eliminar.");

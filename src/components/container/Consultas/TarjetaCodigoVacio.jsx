@@ -8,9 +8,12 @@ import Spinner from "react-bootstrap/Spinner";
 import axios from "axios";
 import "./TarjetaCodigoVacio.css";
 
-const API_BASE = "http://localhost/api-smartpet/index.php";
+import API_BASE from "../../../config/api"; // Ruta correcta según tu estructura
 
 function TarjetaCodigoVacio({ codigoId, codigoUnico, usuarioId, onMascotaCreada }) {
+    // 🔧 Construir URL completa con index.php
+    const API_URL = `${API_BASE}/index.php`;
+
     const [showModal, setShowModal] = useState(false);
     const [copiado, setCopiado] = useState(false);
     const [formData, setFormData] = useState({
@@ -69,13 +72,14 @@ function TarjetaCodigoVacio({ codigoId, codigoUnico, usuarioId, onMascotaCreada 
                 ...formData,
                 sexo: formData.sexo === "Hembra" ? 1 : 0,
             };
-            const resCrear = await axios.post(`${API_BASE}/mascotas`, payload);
+            // ✅ Usar API_URL en lugar de concatenar API_BASE + /index.php/
+            const resCrear = await axios.post(`${API_URL}/mascotas`, payload);
             const mascotaId = resCrear.data.id;
 
             if (archivo) {
                 const formDataImg = new FormData();
                 formDataImg.append("imagen", archivo);
-                await axios.post(`${API_BASE}/upload-imagen/${mascotaId}`, formDataImg, {
+                await axios.post(`${API_URL}/upload-imagen/${mascotaId}`, formDataImg, {
                     headers: { "Content-Type": "multipart/form-data" },
                 });
             }

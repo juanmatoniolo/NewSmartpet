@@ -4,13 +4,17 @@ import { Modal, Button, Form, Spinner, Alert } from "react-bootstrap";
 import { RefreshCw, Search, Code, Plus } from "lucide-react";
 import TarjetaMascota from "./TarjetaMascota";
 import TarjetaCodigoVacio from "./TarjetaCodigoVacio";
-import { Link } from "react-router-dom"; // ✅ navegación
+import { Link } from "react-router-dom";
 
+// 🔧 Importar la URL base desde configuración
+import API_BASE from "../../../config/api";   // tu import actual
 import "./PanelUsuario.css";
 
-const API_BASE = "http://localhost/api-smartpet/index.php";
-
 function PanelUsuario({ usuarioId }) {
+    const API_URL = `${API_BASE}/index.php`;
+    // ✅ URL dinámica usando la variable de entorno (con fallback en config)
+    console.log('API_BASE:', API_BASE);            // 👈 agrega esto
+
     const [nombreUsuario, setNombreUsuario] = useState("");
     const [codigo, setCodigo] = useState("");
     const [mensaje, setMensaje] = useState("");
@@ -22,37 +26,34 @@ function PanelUsuario({ usuarioId }) {
     const [refrescando, setRefrescando] = useState(false);
     const [toast, setToast] = useState({ show: false, message: "", type: "" });
 
-    // Mostrar notificación temporal (toast)
     const mostrarToast = useCallback((message, type = "success") => {
         setToast({ show: true, message, type });
         setTimeout(() => setToast({ show: false, message: "", type: "" }), 3000);
     }, []);
 
-    // Cargar datos del usuario
     const cargarDatosUsuario = useCallback(async () => {
         if (!usuarioId) return;
         try {
-            const res = await axios.get(`${API_BASE}/usuarios/${usuarioId}`);
+            const res = await axios.get(`${API_URL}/usuarios/${usuarioId}`);
             setNombreUsuario(res.data?.nombre || "Usuario");
         } catch (err) {
             console.error("Error al cargar usuario", err);
             setNombreUsuario("Usuario");
         }
-    }, [usuarioId]);
+    }, [usuarioId, API_URL]);
 
-    // Cargar códigos y mascotas (misma lógica original)
     const cargarCodigos = useCallback(async () => {
         if (!usuarioId) return;
         setCargandoCodigos(true);
         try {
-            const resCodigos = await axios.get(`${API_BASE}/user-codes?usuario_id=${usuarioId}`);
+            const resCodigos = await axios.get(`${API_URL}/user-codes?usuario_id=${usuarioId}`);
             const listaCodigos = Array.isArray(resCodigos.data) ? resCodigos.data : [];
 
             const codigosConMascotas = await Promise.all(
                 listaCodigos.map(async (code) => {
                     try {
                         const resMascota = await axios.get(
-                            `${API_BASE}/mascotas?codigo_id=${code.codigo_id}&usuario_id=${usuarioId}`
+                            `${API_URL}/mascotas?codigo_id=${code.codigo_id}&usuario_id=${usuarioId}`
                         );
                         const mascotaValida =
                             resMascota.data &&
@@ -75,9 +76,8 @@ function PanelUsuario({ usuarioId }) {
         } finally {
             setCargandoCodigos(false);
         }
-    }, [usuarioId, mostrarToast]);
+    }, [usuarioId, mostrarToast, API_URL]);
 
-    // Refrescar manualmente
     const handleRefresh = useCallback(async () => {
         setRefrescando(true);
         await cargarCodigos();
@@ -85,28 +85,27 @@ function PanelUsuario({ usuarioId }) {
         mostrarToast("Lista actualizada", "info");
     }, [cargarCodigos, mostrarToast]);
 
-    // Efecto inicial
     useEffect(() => {
         if (!usuarioId) return;
         cargarDatosUsuario();
         cargarCodigos();
     }, [usuarioId, cargarDatosUsuario, cargarCodigos]);
 
-    // Filtrar códigos por nombre de mascota o código único
     const codigosFiltrados = useMemo(() => {
         if (!filtro.trim()) return codigosVinculados;
         const term = filtro.toLowerCase();
-        return codigosVinculados.filter(item => {
+        return codigosVinculados.filter((item) => {
             if (item.mascota) {
-                return item.mascota.nombre?.toLowerCase().includes(term) ||
-                    item.codigo_unico.toLowerCase().includes(term);
+                return (
+                    item.mascota.nombre?.toLowerCase().includes(term) ||
+                    item.codigo_unico.toLowerCase().includes(term)
+                );
             } else {
                 return item.codigo_unico.toLowerCase().includes(term);
             }
         });
     }, [codigosVinculados, filtro]);
 
-    // Validación y vinculación
     const handleVincular = useCallback(async () => {
         const codigoNormalizado = codigo.trim().toUpperCase();
         if (!/^[A-Z0-9]{8}$/.test(codigoNormalizado)) {
@@ -116,7 +115,7 @@ function PanelUsuario({ usuarioId }) {
         setCargando(true);
         setMensaje("");
         try {
-            await axios.post(`${API_BASE}/user-codes`, {
+            await axios.post(`${API_URL}/user-codes`, {
                 usuario_id: usuarioId,
                 codigo_unico: codigoNormalizado,
             });
@@ -135,9 +134,8 @@ function PanelUsuario({ usuarioId }) {
         } finally {
             setCargando(false);
         }
-    }, [codigo, usuarioId, cargarCodigos, mostrarToast]);
+    }, [codigo, usuarioId, cargarCodigos, mostrarToast, API_URL]);
 
-    // Skeletons de carga
     const SkeletonCard = () => (
         <div className="skeleton-card">
             <div className="skeleton-badge"></div>
@@ -152,7 +150,6 @@ function PanelUsuario({ usuarioId }) {
 
     return (
         <div className="panel-usuario-container" key={usuarioId}>
-            {/* Toast flotante */}
             {toast.show && (
                 <div className={`toast-notification ${toast.type}`}>
                     {toast.message}
@@ -162,7 +159,9 @@ function PanelUsuario({ usuarioId }) {
             <div className="bienvenida-section">
                 <div>
                     <h2>¡Bienvenido, {nombreUsuario}!</h2>
-                    <p className="bienvenida-subtext">Gestiona los códigos de tus mascotas</p>
+                    <p className="bienvenida-subtext">
+                        Gestiona los códigos de tus mascotas
+                    </p>
                 </div>
                 <div className="bienvenida-buttons">
                     <Button
@@ -179,7 +178,6 @@ function PanelUsuario({ usuarioId }) {
                     <Link to={`/agenda/${usuarioId}`} className="btn btn-agenda">
                         📅 Ver agenda general
                     </Link>
-
                 </div>
             </div>
 
@@ -215,12 +213,18 @@ function PanelUsuario({ usuarioId }) {
 
                 {cargandoCodigos ? (
                     <div className="mascotas-grid">
-                        {[...Array(3)].map((_, i) => <SkeletonCard key={i} />)}
+                        {[...Array(3)].map((_, i) => (
+                            <SkeletonCard key={i} />
+                        ))}
                     </div>
                 ) : codigosFiltrados.length === 0 ? (
                     <div className="sin-mascotas">
                         <Code size={48} strokeWidth={1} />
-                        <p>{filtro ? "No se encontraron resultados con ese filtro." : "No tienes códigos vinculados aún."}</p>
+                        <p>
+                            {filtro
+                                ? "No se encontraron resultados con ese filtro."
+                                : "No tienes códigos vinculados aún."}
+                        </p>
                         {!filtro && (
                             <Button variant="light" onClick={() => setShowModalVincular(true)}>
                                 Vincular mi primer código
@@ -251,13 +255,19 @@ function PanelUsuario({ usuarioId }) {
                 )}
             </div>
 
-            {/* Modal de vinculación mejorado */}
-            <Modal show={showModalVincular} onHide={() => { setShowModalVincular(false); setMensaje(""); }} centered>
+            <Modal
+                show={showModalVincular}
+                onHide={() => {
+                    setShowModalVincular(false);
+                    setMensaje("");
+                }}
+                centered
+            >
                 <Modal.Header closeButton>
                     <Modal.Title>Vincular nuevo código</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form onSubmit={handleVincular}>
+                    <Form>
                         <Form.Group>
                             <Form.Label>Código de 8 caracteres</Form.Label>
                             <Form.Control
@@ -274,7 +284,10 @@ function PanelUsuario({ usuarioId }) {
                                 Formato: 4 letras mayúsculas + 4 números (ej: ABCD1234)
                             </Form.Text>
                             {mensaje && (
-                                <Alert variant={mensaje.includes("✅") ? "success" : "danger"} className="mt-2">
+                                <Alert
+                                    variant={mensaje.includes("✅") ? "success" : "danger"}
+                                    className="mt-2"
+                                >
                                     {mensaje}
                                 </Alert>
                             )}
@@ -282,11 +295,19 @@ function PanelUsuario({ usuarioId }) {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowModalVincular(false)} disabled={cargando}>
+                    <Button
+                        variant="secondary"
+                        onClick={() => setShowModalVincular(false)}
+                        disabled={cargando}
+                    >
                         Cancelar
                     </Button>
                     <Button variant="primary" onClick={handleVincular} disabled={cargando}>
-                        {cargando ? <Spinner as="span" size="sm" animation="border" /> : "Vincular"}
+                        {cargando ? (
+                            <Spinner as="span" size="sm" animation="border" />
+                        ) : (
+                            "Vincular"
+                        )}
                     </Button>
                 </Modal.Footer>
             </Modal>

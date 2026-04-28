@@ -24,6 +24,8 @@ const Configuracion = () => {
     const [errorEmail, setErrorEmail] = useState("");
     const [errorPassword, setErrorPassword] = useState("");
 
+
+    const API_BASE = (process.env.REACT_APP_API_BASE || "").replace(/\/$/, "");
     // Timestamp para forzar recarga de imagen
     const [imageTimestamp, setImageTimestamp] = useState(Date.now());
 
@@ -66,7 +68,7 @@ const Configuracion = () => {
 
     const fetchUserData = async () => {
         try {
-            const res = await fetch(`http://localhost/api-smartpet/index.php/usuarios/${userId}`);
+            const res = await fetch(`${API_BASE}/index.php/usuarios/${userId}`);
             const data = await res.json();
 
             if (isMounted.current && data) {
@@ -98,7 +100,7 @@ const Configuracion = () => {
         setLoading(true);
 
         try {
-            const res = await fetch(`http://localhost/api-smartpet/index.php/upload-perfil/${userId}`, {
+            const res = await fetch(`${API_BASE}/index.php/upload-perfil/${userId}`, {
                 method: "POST",
                 body: formDataImg
             });
@@ -173,7 +175,7 @@ const Configuracion = () => {
                 recibir_emails: formData.recibir_emails ? 1 : 0
             };
 
-            const res = await fetch(`http://localhost/api-smartpet/index.php/usuarios/${userId}`, {
+            const res = await fetch(`${API_BASE}/index.php/usuarios/${userId}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json"
@@ -239,7 +241,7 @@ const Configuracion = () => {
         setPasswordLoading(true);
 
         try {
-            const res = await fetch(`http://localhost/api-smartpet/index.php/change-password`, {
+            const res = await fetch(`${API_BASE}/index.php/change-password`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

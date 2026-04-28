@@ -3,9 +3,7 @@ import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 import "./MascotaProtegida.css";
 import SmartHeader from "./SmartHeaderMascota";
-
-const API_BASE = "http://localhost/api-smartpet/index.php";
-const LOCATION_TTL_MS = 60 * 60 * 1000; // 1 hora
+import API_BASE from "../../config/api";
 
 function MascotaProtegida() {
   const { id } = useParams();
@@ -13,6 +11,12 @@ function MascotaProtegida() {
   const [mascota, setMascota] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [ubicacionEstado, setUbicacionEstado] = useState({
+    intentando: false,
+    enviada: false,
+    error: null
+  });
 
   const calcularEdad = (fechaNac) => {
     if (!fechaNac) return "Desconocida";
@@ -55,6 +59,7 @@ function MascotaProtegida() {
   const getWhatsappLink = (telefono, mensaje) => {
     const tel = limpiarTelefono(telefono);
     if (!tel) return "#";
+
     return `https://wa.me/549${tel}?text=${encodeURIComponent(
       mensaje || "Hola, encontré esta mascota."
     )}`;
@@ -94,58 +99,73 @@ function MascotaProtegida() {
     }
   };
 
-  const enviarUbicacionUnaVezPorHora = async () => {
-    const storageKey = `smartpet_geo_sent_${id}`;
+  const enviarUbicacion = async () => {
+    if (!id) return;
 
-    try {
-      const guardado = localStorage.getItem(storageKey);
-
-      if (guardado) {
-        const parsed = JSON.parse(guardado);
-        const lastSentAt = parsed?.timestamp || 0;
-
-        if (Date.now() - lastSentAt < LOCATION_TTL_MS) {
-          return;
-        }
-      }
-    } catch (e) {
-      console.warn("No se pudo leer cache de geolocalización:", e);
+    if (!("geolocation" in navigator)) {
+      setUbicacionEstado({
+        intentando: false,
+        enviada: false,
+        error: "El navegador no soporta geolocalización."
+      });
+      return;
     }
 
-    if (!("geolocation" in navigator)) return;
+    setUbicacionEstado({
+      intentando: true,
+      enviada: false,
+      error: null
+    });
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const latitud = position.coords.latitude;
         const longitud = position.coords.longitude;
+        const precision = position.coords.accuracy;
 
         try {
-          await axios.post(`${API_BASE}/mascotas/${id}/ubicacion`, {
+          const res = await axios.post(`${API_BASE}/mascotas/${id}/ubicacion`, {
             mascota_id: id,
             latitud,
             longitud,
-            origen: "landing"
+            precision,
+            origen: "landing",
+            enviar_mail: true
           });
 
-          localStorage.setItem(
-            storageKey,
-            JSON.stringify({
-              timestamp: Date.now(),
-              latitud,
-              longitud
-            })
-          );
+          console.log("Ubicación enviada correctamente:", res.data);
+
+          setUbicacionEstado({
+            intentando: false,
+            enviada: true,
+            error: null
+          });
         } catch (err) {
-          console.error("Error al enviar ubicación:", err);
+          console.error(
+            "Error al enviar ubicación:",
+            err.response?.data || err.message
+          );
+
+          setUbicacionEstado({
+            intentando: false,
+            enviada: false,
+            error: err.response?.data?.error || err.message
+          });
         }
       },
       (geoError) => {
         console.warn("No se pudo obtener ubicación:", geoError);
+
+        setUbicacionEstado({
+          intentando: false,
+          enviada: false,
+          error: "No se pudo obtener la ubicación. Puede que el usuario haya rechazado el permiso."
+        });
       },
       {
-        enableHighAccuracy: false,
-        timeout: 10000,
-        maximumAge: LOCATION_TTL_MS
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 0
       }
     );
   };
@@ -155,10 +175,11 @@ function MascotaProtegida() {
   }, [id]);
 
   useEffect(() => {
-    enviarUbicacionUnaVezPorHora();
+    enviarUbicacion();
   }, [id]);
 
   const sexoInfo = useMemo(() => obtenerSexo(mascota?.sexo), [mascota?.sexo]);
+
   const edadTexto = useMemo(() => {
     return mascota?.fecha_nacimiento
       ? calcularEdad(mascota.fecha_nacimiento)
@@ -230,7 +251,6 @@ function MascotaProtegida() {
               <p className="pet-message">
                 Si la encontraste o tenés información, ayudanos a que vuelva con su familia.
               </p>
-
               <div className="pet-tags">
                 <span className="pet-tag">
                   <span className="pet-tag-icon">{sexoInfo.icono}</span>
@@ -334,6 +354,7 @@ function MascotaProtegida() {
                         >
                           WhatsApp
                         </a>
+
                         <a
                           href={getPhoneLink(mascota.persona1tel)}
                           className="pet-action-btn call"
@@ -381,6 +402,7 @@ function MascotaProtegida() {
                         >
                           WhatsApp
                         </a>
+
                         <a
                           href={getPhoneLink(mascota.persona2tel)}
                           className="pet-action-btn call"

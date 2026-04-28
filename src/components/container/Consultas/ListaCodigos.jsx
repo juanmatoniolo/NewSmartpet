@@ -4,7 +4,7 @@ import TarjetaMascota from "./TarjetaMascota";
 import CrearMascotaDesdeCodigo from "./CrearMascotaDesdeCodigo";
 import "./ListaCodigos.css";
 
-const API_BASE = "http://localhost/api-smartpet/index.php";
+import API_BASE from "../../../config/api";
 
 function ListaCodigos({ usuarioId }) {
     const [codigos, setCodigos] = useState([]);
@@ -19,7 +19,7 @@ function ListaCodigos({ usuarioId }) {
         setCargando(true);
         setError("");
         try {
-            const resCodes = await axios.get(`${API_BASE}/user-codes?usuario_id=${usuarioId}`);
+            const resCodes = await axios.get(`${API_BASE}/index.php/user-codes?usuario_id=${usuarioId}`);
             const codigosData = Array.isArray(resCodes.data) ? resCodes.data : [];
             setCodigos(codigosData);
 
@@ -29,7 +29,7 @@ function ListaCodigos({ usuarioId }) {
                 codigosData.map(async (code) => {
                     try {
                         const resMascota = await axios.get(
-                            `${API_BASE}/mascotas?codigo_id=${code.codigo_id}&usuario_id=${usuarioId}`
+                            `${API_BASE}/index.php/mascotas?codigo_id=${code.codigo_id}&usuario_id=${usuarioId}`
                         );
                         if (resMascota.data && resMascota.data.id) {
                             mascotasMap[code.codigo_id] = resMascota.data;

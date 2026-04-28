@@ -3,7 +3,7 @@ import { Modal, Button, Form, Spinner, Row, Col } from "react-bootstrap";
 import axios from "axios";
 import "./EditarMascota.css";
 
-const API_BASE = "http://localhost/api-smartpet/index.php";
+import API_BASE from "../../../config/api";
 
 function EditarMascota({ show, handleClose, mascota, idMascota, onSave }) {
     const [formData, setFormData] = useState({
@@ -52,7 +52,7 @@ function EditarMascota({ show, handleClose, mascota, idMascota, onSave }) {
     const subirImagen = async (file) => {
         const formDataImg = new FormData();
         formDataImg.append("imagen", file);
-        const res = await axios.post(`${API_BASE}/upload-imagen/${idMascota}`, formDataImg, {
+        const res = await axios.post(`${API_BASE}/index.php/upload-imagen/${idMascota}`, formDataImg, {
             headers: { "Content-Type": "multipart/form-data" },
         });
         return res.data.url;
@@ -90,7 +90,7 @@ function EditarMascota({ show, handleClose, mascota, idMascota, onSave }) {
                 urlImg: imgUrl,
                 sexo: formData.sexo === "Hembra" ? 1 : 0,
             };
-            await axios.put(`${API_BASE}/mascotas/${idMascota}`, payload);
+            await axios.put(`${API_BASE}/index.php/mascotas/${idMascota}`, payload);
             if (onSave) onSave();
             handleClose();
         } catch (err) {

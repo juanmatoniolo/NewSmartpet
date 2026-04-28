@@ -7,7 +7,11 @@ import axios from "axios";
 import EditarMascota from "./EditarMascota";
 import "./TarjetaMascota.css";
 
-const API_BASE = "http://localhost/api-smartpet/index.php";
+// 🔧 Importar la URL base desde configuración
+import API_BASE from "../../../config/api"; // Ajusta la ruta según tu estructura
+
+// Construir la URL completa con index.php
+const API_URL = `${API_BASE}/index.php`;
 
 // Función para convertir coordenadas (lat, lon) en dirección legible (sin cambios)
 const obtenerDireccionDesdeCoordenadas = async (coordenadas) => {
@@ -63,7 +67,8 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
     const cargarScaners = useCallback(async () => {
         setCargandoUbic(true);
         try {
-            const res = await axios.get(`${API_BASE}/ubicaciones-todas?mascota_id=${mascota.id}`);
+            // ✅ Usar API_URL en lugar de API_BASE
+            const res = await axios.get(`${API_URL}/ubicaciones-todas?mascota_id=${mascota.id}`);
             const ubicacionesRaw = Array.isArray(res.data) ? res.data : [];
             const ubicacionesConDireccion = await Promise.all(
                 ubicacionesRaw.map(async (ubic) => {
