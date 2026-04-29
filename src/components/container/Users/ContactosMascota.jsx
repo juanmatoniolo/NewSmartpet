@@ -16,7 +16,6 @@ import {
 } from "react-bootstrap";
 import { Link, useParams } from "react-router-dom";
 import {
-  FileText,
   Calendar,
   Syringe,
   Users,
@@ -24,10 +23,12 @@ import {
   Heart,
   Trash2,
   Edit2,
-  Clock,
   Phone,
   Search,
-  Star
+  Star,
+  MapPin,
+  Clock,
+  ExternalLink
 } from "lucide-react";
 
 import API_BASE from "../../../config/api";
@@ -35,7 +36,6 @@ import HeaderLogout from "../../Logout/Logout";
 import ModalContacto from "./ContactosMascota/ModalContacto";
 import ModalCita from "./ContactosMascota/ModalCita";
 import ModalVacuna from "./ContactosMascota/ModalVacuna";
-import ModalHistorial from "./ContactosMascota/ModalHistorial";
 import TarjetaContacto from "./ContactosMascota/TarjetaContacto";
 
 import styles from "./ContactosMascota.module.css";
@@ -49,46 +49,8 @@ const normalizarArray = (data) => {
   if (Array.isArray(data?.contactos)) return data.contactos;
   if (Array.isArray(data?.historial)) return data.historial;
   if (Array.isArray(data?.mascotas)) return data.mascotas;
+  if (Array.isArray(data?.socios)) return data.socios;
   return [];
-};
-
-const normalizarMascotasVinculadas = (data) => {
-  const items = Array.isArray(data)
-    ? data
-    : Array.isArray(data?.data)
-      ? data.data
-      : [];
-
-  const mascotasMap = new Map();
-
-  items.forEach((item) => {
-    const mascota = item.mascota || item;
-
-    const mascotaId =
-      mascota.id ||
-      mascota.id_mascota ||
-      mascota.mascota_id ||
-      item.id_mascota ||
-      item.mascota_id;
-
-    if (!mascotaId) return;
-
-    mascotasMap.set(String(mascotaId), {
-      ...mascota,
-      id: mascotaId,
-      id_mascota: mascotaId,
-      mascota_id: mascotaId,
-      codigo_id: item.codigo_id || mascota.codigo_id || "",
-      usuario_codigo_id: item.usuario_codigo_id || item.id || "",
-      codigo_unico: item.codigo_unico || mascota.codigo_unico || "",
-      nombre: mascota.nombre || item.nombre_mascota || `Mascota #${mascotaId}`,
-      urlImg: mascota.urlImg || item.urlImg || "",
-      fecha_nacimiento: mascota.fecha_nacimiento || "",
-      sexo: mascota.sexo || ""
-    });
-  });
-
-  return Array.from(mascotasMap.values());
 };
 
 const toNumberOrNull = (value) => {
@@ -96,6 +58,10 @@ const toNumberOrNull = (value) => {
 
   const num = Number(value);
   return Number.isNaN(num) ? null : num;
+};
+
+const isComplete = (value) => {
+  return value === true || value === 1 || value === "1";
 };
 
 const formatDate = (dateStr) => {
@@ -111,6 +77,68 @@ const formatDate = (dateStr) => {
     year: "numeric"
   });
 };
+
+const normalizarMascotaDesdeCodigo = (item) => {
+  const mascota = item.mascota || item.mascota_data || item.pet || item;
+
+  const mascotaId =
+    mascota.id ||
+    mascota.id_mascota ||
+    mascota.mascota_id ||
+    item.id_mascota ||
+    item.mascota_id;
+
+  if (!mascotaId) return null;
+
+  return {
+    ...mascota,
+    id: mascotaId,
+    id_mascota: mascotaId,
+    mascota_id: mascotaId,
+    codigo_id: item.codigo_id || mascota.codigo_id || "",
+    usuario_codigo_id: item.usuario_codigo_id || item.id || "",
+    codigo_unico: item.codigo_unico || mascota.codigo_unico || "",
+    nombre:
+      mascota.nombre ||
+      item.nombre_mascota ||
+      item.nombre ||
+      `Mascota #${mascotaId}`,
+    urlImg: mascota.urlImg || item.urlImg || item.imagen || "",
+    fecha_nacimiento:
+      mascota.fecha_nacimiento || item.fecha_nacimiento || "",
+    sexo: mascota.sexo || item.sexo || ""
+  };
+};
+
+const normalizarSocio = (socio) => ({
+  ...socio,
+  id:
+    socio.id ||
+    socio.socio_id ||
+    `${socio.nombre_local || socio.nombre || "socio"}-${socio.whatsapp || socio.telefono || ""}`,
+  nombre:
+    socio.nombre_local ||
+    socio.nombre_comercial ||
+    socio.razon_social ||
+    `${socio.nombre || ""} ${socio.apellido || ""}`.trim() ||
+    "Amigo SP",
+  rubro: socio.rubro || socio.tipo_servicio || socio.tipo || socio.categoria || "Servicio",
+  direccion: socio.direccion || socio.localidad || "",
+  telefono: socio.whatsapp || socio.telefono || socio.celular || "",
+  email: socio.email || "",
+  descripcion: socio.descripcion || socio.detalle || socio.observaciones || "",
+  imagen:
+    socio.imagen ||
+    socio.logo ||
+    socio.foto ||
+    socio.urlImg ||
+    socio.imagen_url ||
+    socio.logo_url ||
+    "",
+  horarios: socio.horarios || socio.horarios_atencion || "",
+  dias_atencion: socio.dias_atencion || "",
+  web: socio.web || socio.website || socio.instagram || socio.url || ""
+});
 
 export default function ContactosMascota() {
   const { mascotaId: mascotaIdParam } = useParams();
@@ -137,18 +165,18 @@ export default function ContactosMascota() {
 
   const [showModalContacto, setShowModalContacto] = useState(false);
   const [showModalCita, setShowModalCita] = useState(false);
-  const [showModalHistorial, setShowModalHistorial] = useState(false);
   const [showModalVacuna, setShowModalVacuna] = useState(false);
 
   const [editandoContactoId, setEditandoContactoId] = useState(null);
   const [editandoCitaId, setEditandoCitaId] = useState(null);
-  const [editandoHistorialId, setEditandoHistorialId] = useState(null);
   const [editandoVacunaId, setEditandoVacunaId] = useState(null);
 
   const [contactoEdit, setContactoEdit] = useState(null);
   const [citaEdit, setCitaEdit] = useState(null);
-  const [historialEdit, setHistorialEdit] = useState(null);
   const [vacunaEdit, setVacunaEdit] = useState(null);
+
+  const [mascotaIdParaContacto, setMascotaIdParaContacto] = useState("");
+  const [volverACitaDespuesContacto, setVolverACitaDespuesContacto] = useState(false);
 
   const showSuccess = (msg) => {
     setSuccessMsg(msg);
@@ -159,19 +187,34 @@ export default function ContactosMascota() {
   const clearEditingStates = () => {
     setEditandoContactoId(null);
     setEditandoCitaId(null);
-    setEditandoHistorialId(null);
     setEditandoVacunaId(null);
     setContactoEdit(null);
     setCitaEdit(null);
-    setHistorialEdit(null);
     setVacunaEdit(null);
   };
 
+  const getItemMascotaId = (item) =>
+    item?.mascotaId ||
+    item?.mascota_id ||
+    item?.id_mascota ||
+    item?.mascota_id_fk;
+
+  const filtrarPorMascota = useCallback((data, mascotaId) => {
+    if (mascotaId === "todas") return data;
+
+    return data.filter(
+      (item) => String(getItemMascotaId(item)) === String(mascotaId)
+    );
+  }, []);
+
   const currentMascotaId = useMemo(() => {
     if (mascotaSeleccionadaId !== "todas") return mascotaSeleccionadaId;
-    if (mascotaIdParam) return mascotaIdParam;
     return mascotas[0]?.id ? String(mascotas[0].id) : "";
-  }, [mascotaSeleccionadaId, mascotaIdParam, mascotas]);
+  }, [mascotaSeleccionadaId, mascotas]);
+
+  const mascotaIdParaModal = useMemo(() => {
+    return mascotaSeleccionadaId !== "todas" ? mascotaSeleccionadaId : "";
+  }, [mascotaSeleccionadaId]);
 
   const mascotaActual = useMemo(() => {
     if (!currentMascotaId) return null;
@@ -182,12 +225,79 @@ export default function ContactosMascota() {
     );
   }, [mascotas, currentMascotaId]);
 
+  const cargarMascotaPorCodigo = useCallback(
+    async (codigoItem) => {
+      if (codigoItem.mascota) {
+        return normalizarMascotaDesdeCodigo(codigoItem);
+      }
+
+      if (!codigoItem.codigo_id) return null;
+
+      try {
+        const resMascota = await axios.get(`${API_URL}/mascotas`, {
+          params: {
+            codigo_id: codigoItem.codigo_id,
+            usuario_id: userId
+          }
+        });
+
+        const data = resMascota.data;
+
+        let mascota = null;
+
+        if (Array.isArray(data)) {
+          mascota = data[0] || null;
+        } else if (Array.isArray(data?.data)) {
+          mascota = data.data[0] || null;
+        } else if (data && typeof data === "object" && data.id) {
+          mascota = data;
+        }
+
+        if (!mascota) return null;
+
+        return normalizarMascotaDesdeCodigo({
+          ...codigoItem,
+          mascota
+        });
+      } catch (err) {
+        console.error("Error al cargar mascota por código:", err);
+        return null;
+      }
+    },
+    [userId]
+  );
+
+  const cargarMascotasVinculadas = useCallback(async () => {
+    const resVinculadas = await axios.get(`${API_URL}/user-codes`, {
+      params: {
+        usuario_id: userId
+      }
+    });
+
+    const codigos = normalizarArray(resVinculadas.data);
+
+    const mascotasPorCodigo = await Promise.all(
+      codigos.map((codigoItem) => cargarMascotaPorCodigo(codigoItem))
+    );
+
+    const mascotasMap = new Map();
+
+    mascotasPorCodigo
+      .filter(Boolean)
+      .forEach((mascota) => {
+        mascotasMap.set(String(mascota.id), mascota);
+      });
+
+    return Array.from(mascotasMap.values());
+  }, [userId, cargarMascotaPorCodigo]);
+
   const cargarSocios = useCallback(async () => {
     setCargandoSocios(true);
 
     try {
       const res = await axios.get(`${API_URL}/socios`);
-      setSocios(normalizarArray(res.data));
+      const sociosData = normalizarArray(res.data).map(normalizarSocio);
+      setSocios(sociosData);
     } catch (err) {
       console.error("Error al cargar socios:", err);
       setSocios([]);
@@ -207,13 +317,7 @@ export default function ContactosMascota() {
     setError("");
 
     try {
-      const resVinculadas = await axios.get(`${API_URL}/user-codes`, {
-        params: {
-          usuario_id: userId
-        }
-      });
-
-      const mascotasData = normalizarMascotasVinculadas(resVinculadas.data);
+      const mascotasData = await cargarMascotasVinculadas();
       setMascotas(mascotasData);
 
       if (mascotasData.length === 0) {
@@ -221,25 +325,26 @@ export default function ContactosMascota() {
         setHistorial([]);
         setVacunas([]);
         setMascotaSeleccionadaId("todas");
-        setLoading(false);
         return;
       }
 
-      const mascotaParamValida =
-        mascotaIdParam &&
-        mascotasData.some((m) => String(m.id) === String(mascotaIdParam));
+      setMascotaSeleccionadaId((prev) => {
+        if (
+          mascotaIdParam &&
+          mascotasData.some((m) => String(m.id) === String(mascotaIdParam))
+        ) {
+          return String(mascotaIdParam);
+        }
 
-      const seleccionActualValida =
-        mascotaSeleccionadaId === "todas" ||
-        mascotasData.some(
-          (m) => String(m.id) === String(mascotaSeleccionadaId)
-        );
+        if (
+          prev === "todas" ||
+          mascotasData.some((m) => String(m.id) === String(prev))
+        ) {
+          return prev;
+        }
 
-      if (mascotaParamValida) {
-        setMascotaSeleccionadaId(String(mascotaIdParam));
-      } else if (!seleccionActualValida) {
-        setMascotaSeleccionadaId("todas");
-      }
+        return "todas";
+      });
 
       const promesasContactos = mascotasData.map((m) =>
         axios
@@ -307,12 +412,12 @@ export default function ContactosMascota() {
     } finally {
       setLoading(false);
     }
-  }, [userId, mascotaSeleccionadaId, mascotaIdParam]);
+  }, [userId, mascotaIdParam, cargarMascotasVinculadas]);
 
   useEffect(() => {
     if (!userId) {
       setLoading(false);
-      return;
+      return undefined;
     }
 
     cargarTodosLosDatos();
@@ -327,20 +432,6 @@ export default function ContactosMascota() {
     const d = new Date(fecha);
     d.setHours(0, 0, 0, 0);
     return d;
-  };
-
-  const getItemMascotaId = (item) =>
-    item?.mascotaId ||
-    item?.mascota_id ||
-    item?.id_mascota ||
-    item?.mascota_id_fk;
-
-  const filtrarPorMascota = (data, mascotaId) => {
-    if (mascotaId === "todas") return data;
-
-    return data.filter(
-      (item) => String(getItemMascotaId(item)) === String(mascotaId)
-    );
   };
 
   const contactosFiltradosPorMascota = useMemo(() => {
@@ -375,7 +466,13 @@ export default function ContactosMascota() {
       if (!a.favorito && b.favorito) return 1;
       return (a.nombre || "").localeCompare(b.nombre || "");
     });
-  }, [contactos, mascotaSeleccionadaId, filtroTipo, searchTerm]);
+  }, [
+    contactos,
+    mascotaSeleccionadaId,
+    filtroTipo,
+    searchTerm,
+    filtrarPorMascota
+  ]);
 
   const citas = useMemo(() => {
     return historial
@@ -386,26 +483,9 @@ export default function ContactosMascota() {
       );
   }, [historial]);
 
-  const vacunasFiltradas = useMemo(() => {
-    return filtrarPorMascota(vacunas, mascotaSeleccionadaId);
-  }, [vacunas, mascotaSeleccionadaId]);
-
-  const bitacora = useMemo(() => {
-    return historial
-      .filter((item) => item.tipo_evento === "historial")
-      .sort(
-        (a, b) =>
-          new Date(b.fecha_evento || 0) - new Date(a.fecha_evento || 0)
-      );
-  }, [historial]);
-
-  const bitacoraFiltrada = useMemo(() => {
-    return filtrarPorMascota(bitacora, mascotaSeleccionadaId);
-  }, [bitacora, mascotaSeleccionadaId]);
-
   const citasFiltradas = useMemo(() => {
     return filtrarPorMascota(citas, mascotaSeleccionadaId);
-  }, [citas, mascotaSeleccionadaId]);
+  }, [citas, mascotaSeleccionadaId, filtrarPorMascota]);
 
   const citasProximas = useMemo(() => {
     const hoy = new Date();
@@ -416,19 +496,46 @@ export default function ContactosMascota() {
     );
   }, [citasFiltradas]);
 
+  const vacunasFiltradas = useMemo(() => {
+    return filtrarPorMascota(vacunas, mascotaSeleccionadaId);
+  }, [vacunas, mascotaSeleccionadaId, filtrarPorMascota]);
+
   const vacunasPendientes = useMemo(() => {
-    return vacunasFiltradas.filter((v) => !v.completada);
+    return vacunasFiltradas.filter((v) => !isComplete(v.completada));
   }, [vacunasFiltradas]);
+
+  const sociosFiltrados = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+
+    if (!term) return socios;
+
+    return socios.filter((socio) => {
+      const texto = [
+        socio.nombre,
+        socio.nombre_local,
+        socio.rubro,
+        socio.direccion,
+        socio.telefono,
+        socio.descripcion,
+        socio.email
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      return texto.includes(term);
+    });
+  }, [socios, searchTerm]);
 
   const calcularSaludVacunas = () => {
     if (vacunasFiltradas.length === 0) return 0;
 
-    const completadas = vacunasFiltradas.filter((v) => v.completada).length;
+    const completadas = vacunasFiltradas.filter((v) => isComplete(v.completada)).length;
     return Math.round((completadas / vacunasFiltradas.length) * 100);
   };
 
   const renderTipo = (contacto) => {
-    if (contacto.tipo === "otro") return contacto.categoria_personalizada || "Otro";
+    if (contacto?.tipo === "otro") return contacto.categoria_personalizada || "Otro";
 
     const tipos = {
       veterinario: "Veterinario",
@@ -438,7 +545,7 @@ export default function ContactosMascota() {
       guarderia: "Guardería"
     };
 
-    return tipos[contacto.tipo] || "Sin tipo";
+    return tipos[contacto?.tipo] || "Contacto";
   };
 
   const getIconoTipo = (tipo) => {
@@ -454,10 +561,63 @@ export default function ContactosMascota() {
     return mapa[tipo] || "📋";
   };
 
+  const getSocioIcon = (socio) => {
+    const tipo = String(
+      socio.tipo_servicio ||
+      socio.rubro ||
+      socio.tipo ||
+      socio.categoria ||
+      ""
+    ).toLowerCase();
+
+    if (tipo.includes("veterin")) return "🏥";
+    if (tipo.includes("pase")) return "🦮";
+    if (tipo.includes("pet")) return "🏪";
+    if (tipo.includes("pelu")) return "✂️";
+    if (tipo.includes("guard")) return "🏠";
+    if (tipo.includes("adies")) return "🎓";
+
+    return "🤝";
+  };
+
+  const getSocioImagenUrl = (socio) => {
+    const imagen =
+      socio.imagen ||
+      socio.logo ||
+      socio.foto ||
+      socio.imagen_url ||
+      socio.logo_url ||
+      "";
+
+    if (!imagen) return "";
+
+    if (String(imagen).startsWith("http")) return imagen;
+
+    return `${API_BASE}/${String(imagen).replace(/^\/+/, "")}`;
+  };
+
+  const getSocioNombre = (socio) => {
+    return (
+      socio.nombre_local ||
+      socio.nombre_comercial ||
+      socio.razon_social ||
+      `${socio.nombre || ""} ${socio.apellido || ""}`.trim() ||
+      "Amigo SP"
+    );
+  };
+
+  const getSocioTelefono = (socio) => {
+    return socio.whatsapp || socio.telefono || socio.celular || socio.telefono_contacto || "";
+  };
+
+  const getSocioTipo = (socio) => {
+    return socio.tipo_servicio || socio.rubro || socio.tipo || socio.categoria || "Servicio";
+  };
+
   const enviarWhatsApp = (celular, nombre) => {
     if (!celular) return;
 
-    let numero = celular.replace(/\D/g, "");
+    let numero = String(celular).replace(/\D/g, "");
 
     if (numero.length === 10) numero = `54${numero}`;
 
@@ -499,6 +659,19 @@ export default function ContactosMascota() {
       }
 
       await cargarTodosLosDatos();
+
+      if (volverACitaDespuesContacto) {
+        setShowModalContacto(false);
+        setVolverACitaDespuesContacto(false);
+        clearEditingStates();
+
+        setTimeout(() => {
+          setShowModalCita(true);
+        }, 150);
+
+        return true;
+      }
+
       clearEditingStates();
       return true;
     } catch (err) {
@@ -570,36 +743,6 @@ export default function ContactosMascota() {
     }
   };
 
-  const handleGuardarHistorial = async (data) => {
-    try {
-      const payload = {
-        ...payloadConMascota(data),
-        tipo_evento: "historial"
-      };
-
-      if (!payload.mascota_id) {
-        setError("Seleccioná una mascota para guardar el registro.");
-        return false;
-      }
-
-      if (editandoHistorialId) {
-        await axios.put(`${API_URL}/historial-mascota/${editandoHistorialId}`, payload);
-        showSuccess("Registro actualizado correctamente.");
-      } else {
-        await axios.post(`${API_URL}/historial-mascota`, payload);
-        showSuccess("Registro creado correctamente.");
-      }
-
-      await cargarTodosLosDatos();
-      clearEditingStates();
-      return true;
-    } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.error || "Error al guardar registro.");
-      return false;
-    }
-  };
-
   const eliminarContacto = async (id, nombre) => {
     if (!window.confirm(`¿Eliminar "${nombre}"?`)) return;
 
@@ -613,7 +756,7 @@ export default function ContactosMascota() {
     }
   };
 
-  const eliminarHistorialItem = async (id, titulo, tipo = "registro") => {
+  const eliminarHistorialItem = async (id, titulo, tipo = "elemento") => {
     if (!window.confirm(`¿Eliminar ${tipo} "${titulo}"?`)) return;
 
     try {
@@ -645,6 +788,17 @@ export default function ContactosMascota() {
 
   const abrirNuevoContacto = () => {
     clearEditingStates();
+    setMascotaIdParaContacto(mascotaIdParaModal);
+    setVolverACitaDespuesContacto(false);
+    setShowModalContacto(true);
+  };
+
+  const abrirContactoDesdeCita = (mascotaIdSeleccionada) => {
+    setMascotaIdParaContacto(mascotaIdSeleccionada);
+    setVolverACitaDespuesContacto(true);
+    setContactoEdit(null);
+    setEditandoContactoId(null);
+    setShowModalCita(false);
     setShowModalContacto(true);
   };
 
@@ -658,14 +812,16 @@ export default function ContactosMascota() {
     setShowModalVacuna(true);
   };
 
-  const abrirNuevoHistorial = () => {
-    clearEditingStates();
-    setShowModalHistorial(true);
-  };
-
   const abrirEditarContacto = (contacto) => {
     setContactoEdit(contacto);
     setEditandoContactoId(contacto.id);
+    setMascotaIdParaContacto(
+      contacto.mascota_id ||
+      contacto.id_mascota ||
+      contacto.mascotaId ||
+      mascotaIdParaModal
+    );
+    setVolverACitaDespuesContacto(false);
     setShowModalContacto(true);
   };
 
@@ -681,16 +837,19 @@ export default function ContactosMascota() {
     setShowModalVacuna(true);
   };
 
-  const abrirEditarHistorial = (registro) => {
-    setHistorialEdit(registro);
-    setEditandoHistorialId(registro.id);
-    setShowModalHistorial(true);
+  const abrirWebSocio = (socio) => {
+    const url = socio.web || socio.website || socio.instagram || socio.url;
+    if (!url) return;
+
+    const finalUrl = String(url).startsWith("http") ? url : `https://${url}`;
+    window.open(finalUrl, "_blank", "noopener,noreferrer");
   };
 
   if (loading) {
     return (
       <>
         <HeaderLogout />
+
         <Container className="py-5 text-center">
           <Spinner animation="border" variant="primary" />
           <div className="mt-3">Cargando tu agenda...</div>
@@ -709,11 +868,12 @@ export default function ContactosMascota() {
             <div className={styles.header}>
               <div className={styles.titleSection}>
                 <h2>
-                  <FileText size={24} className="me-1" />
-                  Mi Agenda General
+                  <Calendar size={24} className="me-1" />
+                  Agenda de mascotas
                 </h2>
+
                 <small>
-                  Gestioná contactos, citas, vacunas y servicios por mascota.
+                  Gestioná contactos, citas, vacunas y servicios recomendados.
                 </small>
               </div>
 
@@ -748,7 +908,9 @@ export default function ContactosMascota() {
           <Card className={styles.emptyCard}>
             <Card.Body>
               <Heart size={36} />
+
               <h5>No tenés mascotas vinculadas</h5>
+
               <p>
                 Para usar la agenda, primero vinculá un código desde tu panel.
               </p>
@@ -760,231 +922,230 @@ export default function ContactosMascota() {
           </Card>
         ) : (
           <>
-            <Row className="g-3 mb-4">
-              <Col xs={12} lg={5}>
-                <Card className={styles.selectorCard}>
-                  <Card.Body>
-                    <Form.Group>
-                      <Form.Label className="fw-bold">🐾 Ver agenda de</Form.Label>
 
-                      <Form.Select
-                        value={mascotaSeleccionadaId}
-                        onChange={(e) => setMascotaSeleccionadaId(e.target.value)}
-                      >
-                        <option value="todas">
-                          Todas mis mascotas ({mascotas.length})
-                        </option>
-
-                        {mascotas.map((m) => (
-                          <option key={m.id} value={m.id}>
-                            {m.nombre}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </Form.Group>
-
-                    {mascotaSeleccionadaId === "todas" ? (
-                      <div className="mt-3 small text-muted">
-                        Estás viendo la agenda de todas tus mascotas vinculadas.
-                      </div>
-                    ) : mascotaActual ? (
-                      <div className="mt-3 small text-muted">
-                        Estás creando actividades para{" "}
-                        <strong>{mascotaActual.nombre}</strong>.
-                      </div>
-                    ) : null}
-                  </Card.Body>
-                </Card>
-              </Col>
-
-              <Col xs={12} lg={7}>
-                <div className={styles.quickActions}>
-                  <Button onClick={abrirNuevaCita}>
-                    <Calendar size={16} />
-                    Nueva cita
-                  </Button>
-
-                  <Button onClick={abrirNuevaVacuna}>
-                    <Syringe size={16} />
-                    Nueva vacuna
-                  </Button>
-
-                  <Button onClick={abrirNuevoContacto}>
-                    <Users size={16} />
-                    Nuevo contacto
-                  </Button>
-
-                  <Button onClick={abrirNuevoHistorial}>
-                    <FileText size={16} />
-                    Nuevo registro
-                  </Button>
-                </div>
-              </Col>
-            </Row>
-
-            <Row className="g-3 mb-4">
-              <Col xs={12} sm={6} lg={3}>
-                <Card className={styles.summaryCard} onClick={abrirNuevaCita}>
-                  <Card.Body>
-                    <div className="d-flex align-items-center gap-3">
-                      <div className={`${styles.iconCircle} ${styles.bgPrimaryLight}`}>
-                        <Calendar size={22} />
-                      </div>
-
-                      <div>
-                        <div className={styles.cardLabel}>Próximas citas</div>
-                        <div className={styles.cardValue}>{citasProximas.length}</div>
-                      </div>
-                    </div>
-
-                    {citasProximas[0] ? (
-                      <div className={styles.cardPreview}>
-                        <strong>{citasProximas[0].titulo}</strong>
-                        <div>{formatDate(citasProximas[0].fecha_evento)}</div>
-                        <div className="small text-muted">
-                          🐾 {citasProximas[0].nombreMascota}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="text-muted small mt-3">
-                        Sin citas programadas
-                      </div>
-                    )}
-                  </Card.Body>
-                </Card>
-              </Col>
-
-              <Col xs={12} sm={6} lg={3}>
-                <Card className={styles.summaryCard} onClick={abrirNuevaVacuna}>
-                  <Card.Body>
-                    <div className="d-flex align-items-center gap-3">
-                      <div className={`${styles.iconCircle} ${styles.bgSuccessLight}`}>
-                        <Syringe size={22} />
-                      </div>
-
-                      <div>
-                        <div className={styles.cardLabel}>Vacunas</div>
-
-                        <div className={styles.cardValue}>
-                          {vacunasFiltradas.filter((v) => v.completada).length}/
-                          {vacunasFiltradas.length}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className={styles.cardPreview}>
-                      <ProgressBar
-                        now={calcularSaludVacunas()}
-                        className={styles.progressBar}
-                        variant="success"
-                      />
-
-                      <div className="d-flex justify-content-between mt-2 small">
-                        <span>{calcularSaludVacunas()}% completado</span>
-
-                        {vacunasPendientes.length > 0 && (
-                          <Badge bg="warning" text="dark">
-                            {vacunasPendientes.length} pendientes
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  </Card.Body>
-                </Card>
-              </Col>
-
-              <Col xs={12} sm={6} lg={3}>
-                <Card className={styles.summaryCard} onClick={abrirNuevoContacto}>
-                  <Card.Body>
-                    <div className="d-flex align-items-center gap-3">
-                      <div className={`${styles.iconCircle} ${styles.bgInfoLight}`}>
-                        <Users size={22} />
-                      </div>
-
-                      <div>
-                        <div className={styles.cardLabel}>Contactos</div>
-                        <div className={styles.cardValue}>
-                          {contactosFiltradosPorMascota.length}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className={styles.cardPreview}>
-                      <Star size={14} /> Favoritos:{" "}
-                      <strong>
-                        {contactosFiltradosPorMascota.filter((c) => c.favorito).length}
-                      </strong>
-                    </div>
-                  </Card.Body>
-                </Card>
-              </Col>
-
-              <Col xs={12} sm={6} lg={3}>
-                <Card className={styles.summaryCard} onClick={abrirNuevoHistorial}>
-                  <Card.Body>
-                    <div className="d-flex align-items-center gap-3">
-                      <div className={`${styles.iconCircle} ${styles.bgDarkLight}`}>
-                        <FileText size={22} />
-                      </div>
-
-                      <div>
-                        <div className={styles.cardLabel}>Bitácora</div>
-                        <div className={styles.cardValue}>{bitacoraFiltrada.length}</div>
-                      </div>
-                    </div>
-
-                    <div className={styles.cardPreview}>
-                      {bitacoraFiltrada[0] ? (
-                        <>
-                          <Clock size={14} /> Último:{" "}
-                          {formatDate(bitacoraFiltrada[0].fecha_evento)}
-                        </>
-                      ) : (
-                        "Sin registros"
-                      )}
-                    </div>
-                  </Card.Body>
-                </Card>
-              </Col>
-            </Row>
 
             <Tabs
               activeKey={tabActivo}
               onSelect={(key) => setTabActivo(key || "resumen")}
-              className="mb-3"
+              className={`${styles.tabs} mb-3`}
             >
               <Tab eventKey="resumen" title="Resumen">
+                <Row className="g-3 mb-4">
+                  <Col xs={12} sm={6} lg={3}>
+                    <Card className={styles.summaryCard} onClick={abrirNuevaCita}>
+                      <Card.Body>
+                        <div className="d-flex align-items-center gap-3">
+                          <div className={`${styles.iconCircle} ${styles.bgPrimaryLight}`}>
+                            <Calendar size={22} />
+                          </div>
+
+                          <div>
+                            <div className={styles.cardLabel}>Próximas citas</div>
+                            <div className={styles.cardValue}>{citasProximas.length}</div>
+                          </div>
+                        </div>
+
+                        {citasProximas[0] ? (
+                          <div className={styles.cardPreview}>
+                            <strong>{citasProximas[0].titulo}</strong>
+                            <div>{formatDate(citasProximas[0].fecha_evento)}</div>
+                            <div className="small text-muted">
+                              🐾 {citasProximas[0].nombreMascota}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="text-muted small mt-3">
+                            Sin citas programadas
+                          </div>
+                        )}
+                      </Card.Body>
+                    </Card>
+                  </Col>
+
+                  <Col xs={12} sm={6} lg={3}>
+                    <Card className={styles.summaryCard} onClick={abrirNuevaVacuna}>
+                      <Card.Body>
+                        <div className="d-flex align-items-center gap-3">
+                          <div className={`${styles.iconCircle} ${styles.bgSuccessLight}`}>
+                            <Syringe size={22} />
+                          </div>
+
+                          <div>
+                            <div className={styles.cardLabel}>Vacunas</div>
+
+                            <div className={styles.cardValue}>
+                              {vacunasFiltradas.filter((v) => isComplete(v.completada)).length}/
+                              {vacunasFiltradas.length}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className={styles.cardPreview}>
+                          <ProgressBar
+                            now={calcularSaludVacunas()}
+                            className={styles.progressBar}
+                            variant="success"
+                          />
+
+                          <div className="d-flex justify-content-between mt-2 small">
+                            <span>{calcularSaludVacunas()}% completado</span>
+
+                            {vacunasPendientes.length > 0 && (
+                              <Badge bg="warning" text="dark">
+                                {vacunasPendientes.length} pendientes
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+
+                  <Col xs={12} sm={6} lg={3}>
+                    <Card className={styles.summaryCard} onClick={abrirNuevoContacto}>
+                      <Card.Body>
+                        <div className="d-flex align-items-center gap-3">
+                          <div className={`${styles.iconCircle} ${styles.bgInfoLight}`}>
+                            <Users size={22} />
+                          </div>
+
+                          <div>
+                            <div className={styles.cardLabel}>Contactos</div>
+                            <div className={styles.cardValue}>
+                              {contactosFiltradosPorMascota.length}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className={styles.cardPreview}>
+                          <Star size={14} /> Favoritos:{" "}
+                          <strong>
+                            {contactosFiltradosPorMascota.filter((c) => c.favorito).length}
+                          </strong>
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+
+                  <Col xs={12} sm={6} lg={3}>
+                    <Card className={styles.summaryCard} onClick={() => setTabActivo("socios")}>
+                      <Card.Body>
+                        <div className="d-flex align-items-center gap-3">
+                          <div className={`${styles.iconCircle} ${styles.bgDarkLight}`}>
+                            <Heart size={22} />
+                          </div>
+
+                          <div>
+                            <div className={styles.cardLabel}>Amigos SP</div>
+                            <div className={styles.cardValue}>{socios.length}</div>
+                          </div>
+                        </div>
+
+                        <div className={styles.cardPreview}>
+                          Servicios y comercios recomendados
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                </Row>
+
                 <Row className="g-3">
                   <Col xs={12} lg={6}>
-                    <Card className={styles.panelCard}>
-                      <Card.Header>
-                        <strong>Próximas actividades</strong>
+                    <Card className={styles.homePanelCard}>
+                      <Card.Header className={styles.homePanelHeader}>
+                        <div>
+                          <strong>Próximas citas</strong>
+                          <span>Actividades agendadas más cercanas</span>
+                        </div>
+
+                        <Button
+                          type="button"
+                          className={styles.homePanelAddBtn}
+                          onClick={abrirNuevaCita}
+                        >
+                          <Plus size={15} />
+                          Nueva
+                        </Button>
                       </Card.Header>
 
-                      <Card.Body>
+                      <Card.Body className={styles.homePanelBody}>
                         {citasProximas.length === 0 ? (
-                          <div className="text-muted">No hay citas próximas.</div>
-                        ) : (
-                          citasProximas.slice(0, 6).map((cita) => (
-                            <div key={cita.id} className={styles.listItem}>
-                              <div>
-                                <strong>{cita.titulo}</strong>
-
-                                <div className="small text-muted">
-                                  {formatDate(cita.fecha_evento)} · 🐾{" "}
-                                  {cita.nombreMascota}
-                                </div>
-                              </div>
-
-                              <Button
-                                size="sm"
-                                variant="outline-primary"
-                                onClick={() => abrirEditarCita(cita)}
-                              >
-                                Editar
-                              </Button>
+                          <div className={styles.homeEmptyState}>
+                            <div className={styles.homeEmptyIcon}>
+                              <Calendar size={24} />
                             </div>
-                          ))
+
+                            <strong>No hay citas próximas</strong>
+                            <p>Agendá controles, turnos o recordatorios importantes.</p>
+
+                            <Button type="button" onClick={abrirNuevaCita}>
+                              <Plus size={15} />
+                              Crear cita
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className={styles.homeCitasList}>
+                            {citasProximas.slice(0, 4).map((cita) => {
+                              const fecha = cita.fecha_evento || cita.fecha || "";
+                              const fechaObj = fecha ? new Date(fecha) : null;
+
+                              const dia =
+                                fechaObj && !Number.isNaN(fechaObj.getTime())
+                                  ? fechaObj.toLocaleDateString("es-AR", { day: "2-digit" })
+                                  : "--";
+
+                              const mes =
+                                fechaObj && !Number.isNaN(fechaObj.getTime())
+                                  ? fechaObj.toLocaleDateString("es-AR", { month: "short" })
+                                  : "Sin fecha";
+
+                              return (
+                                <article key={cita.id} className={styles.homeCitaItem}>
+                                  <div className={styles.homeCitaDate}>
+                                    <span>{dia}</span>
+                                    <small>{mes}</small>
+                                  </div>
+
+                                  <div className={styles.homeCitaContent}>
+                                    <div className={styles.homeCitaTop}>
+                                      <h4>{cita.titulo || "Cita sin título"}</h4>
+
+                                      <span className={styles.homeCitaBadge}>
+                                        Próxima
+                                      </span>
+                                    </div>
+
+                                    <div className={styles.homeCitaMeta}>
+                                      <span>
+                                        <Calendar size={14} />
+                                        {formatDate(cita.fecha_evento)}
+                                      </span>
+
+                                      <span>
+                                        <Heart size={14} />
+                                        {cita.nombreMascota || "Mascota"}
+                                      </span>
+                                    </div>
+
+                                    {cita.nota && (
+                                      <p className={styles.homeCitaNote}>{cita.nota}</p>
+                                    )}
+                                  </div>
+
+                                  <div className={styles.homeCitaActions}>
+                                    <Button
+                                      type="button"
+                                      className={styles.homeCitaEditBtn}
+                                      onClick={() => abrirEditarCita(cita)}
+                                    >
+                                      <Edit2 size={15} />
+                                      Editar
+                                    </Button>
+                                  </div>
+                                </article>
+                              );
+                            })}
+                          </div>
                         )}
                       </Card.Body>
                     </Card>
@@ -1000,7 +1161,7 @@ export default function ContactosMascota() {
                         {vacunasPendientes.length === 0 ? (
                           <div className="text-muted">No hay vacunas pendientes.</div>
                         ) : (
-                          vacunasPendientes.slice(0, 6).map((vacuna) => (
+                          vacunasPendientes.slice(0, 5).map((vacuna) => (
                             <div key={vacuna.id} className={styles.listItem}>
                               <div>
                                 <strong>{vacuna.titulo}</strong>
@@ -1031,120 +1192,289 @@ export default function ContactosMascota() {
                 eventKey="contactos"
                 title={`Contactos (${contactosFiltradosPorMascota.length})`}
               >
-                <Row className="g-3 mb-3">
-                  <Col xs={12} md={7}>
-                    <div className={styles.searchBox}>
-                      <Search size={16} />
-
-                      <Form.Control
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        placeholder="Buscar contacto, teléfono, email o mascota..."
-                      />
+                <div className={styles.contactosSection}>
+                  <div className={styles.contactosToolbar}>
+                    <div>
+                      <h3 className={styles.sectionTitle}>Contactos útiles</h3>
+                      <p className={styles.sectionSubtitle}>
+                        Veterinarios, peluquerías, paseadores y servicios de confianza.
+                      </p>
                     </div>
-                  </Col>
 
-                  <Col xs={12} md={5}>
-                    <Form.Select
-                      value={filtroTipo}
-                      onChange={(e) => setFiltroTipo(e.target.value)}
-                    >
-                      <option value="todos">Todos los tipos</option>
-                      <option value="veterinario">Veterinario</option>
-                      <option value="peluqueria">Peluquería</option>
-                      <option value="paseador">Paseador</option>
-                      <option value="petshop">Pet Shop</option>
-                      <option value="guarderia">Guardería</option>
-                      <option value="otro">Otro</option>
-                    </Form.Select>
-                  </Col>
-                </Row>
+                    <div className={styles.contactosToolbarActions}>
+                      <Form.Select
+                        value={filtroTipo}
+                        onChange={(e) => setFiltroTipo(e.target.value)}
+                        className={styles.contactosFilter}
+                      >
+                        <option value="todos">Todos los tipos</option>
+                        <option value="veterinario">Veterinario</option>
+                        <option value="peluqueria">Peluquería</option>
+                        <option value="paseador">Paseador</option>
+                        <option value="petshop">Pet Shop</option>
+                        <option value="guarderia">Guardería</option>
+                        <option value="otro">Otro</option>
+                      </Form.Select>
 
-                <Row className="g-3">
+                      <Button className={styles.createContactoBtn} onClick={abrirNuevoContacto}>
+                        <Plus size={16} />
+                        Nuevo contacto
+                      </Button>
+                    </div>
+                  </div>
+
                   {contactosFiltradosPorMascota.length === 0 ? (
-                    <Col xs={12}>
-                      <Card className={styles.emptyCard}>
-                        <Card.Body>
-                          <Users size={34} />
-
-                          <h5>No hay contactos</h5>
-
-                          <p>
-                            Agregá veterinarios, peluquerías o paseadores para esta mascota.
-                          </p>
-
-                          <Button onClick={abrirNuevoContacto}>
-                            <Plus size={16} /> Crear contacto
-                          </Button>
-                        </Card.Body>
-                      </Card>
-                    </Col>
+                    <div className={styles.emptyInline}>
+                      <Users size={32} />
+                      <p>No hay contactos cargados para esta mascota.</p>
+                      <Button onClick={abrirNuevoContacto}>Crear contacto</Button>
+                    </div>
                   ) : (
-                    contactosFiltradosPorMascota.map((contacto) => (
-                      <Col key={contacto.id} xs={12} md={6} xl={4}>
-                        <TarjetaContacto
-                          contacto={contacto}
-                          onToggleFavorito={toggleFavorito}
-                          onEditar={abrirEditarContacto}
-                          onEliminar={eliminarContacto}
-                          onWhatsApp={enviarWhatsApp}
-                          renderTipo={renderTipo}
-                          getIconoTipo={getIconoTipo}
-                        />
-                      </Col>
-                    ))
+                    <Row className="g-3">
+                      {contactosFiltradosPorMascota.map((contacto) => {
+                        const nombreCompleto = `${contacto.nombre || ""} ${contacto.apellido || ""}`.trim();
+                        const nombreVisible = nombreCompleto || "Contacto sin nombre";
+                        const tipoVisible = renderTipo(contacto);
+                        const iconoVisible = getIconoTipo(contacto.tipo);
+                        const favorito = contacto.favorito === true || contacto.favorito === 1 || contacto.favorito === "1";
+
+                        return (
+                          <Col key={contacto.id} xs={12} md={6} xl={4}>
+                            <Card className={styles.contactoCard}>
+                              <div className={styles.contactoCardTop}>
+                                <div className={styles.contactoAvatar}>
+                                  <span>{iconoVisible}</span>
+                                </div>
+
+                                <button
+                                  type="button"
+                                  className={`${styles.contactoFavBtn} ${favorito ? styles.contactoFavActive : ""}`}
+                                  onClick={() => toggleFavorito(contacto)}
+                                  aria-label={favorito ? "Quitar favorito" : "Marcar favorito"}
+                                >
+                                  <Star size={18} fill={favorito ? "currentColor" : "none"} />
+                                </button>
+                              </div>
+
+                              <Card.Body className={styles.contactoCardBody}>
+                                <div className={styles.contactoHeader}>
+                                  <Badge className={styles.contactoTypeBadge}>
+                                    {iconoVisible} {tipoVisible}
+                                  </Badge>
+
+                                  <h4 className={styles.contactoName}>{nombreVisible}</h4>
+
+                                  {contacto.nombreMascota && (
+                                    <p className={styles.contactoPet}>
+                                      <Heart size={14} />
+                                      {contacto.nombreMascota}
+                                    </p>
+                                  )}
+                                </div>
+
+                                <div className={styles.contactoInfoBox}>
+                                  {contacto.celular && (
+                                    <div className={styles.contactoInfoRow}>
+                                      <Phone size={16} />
+                                      <span>{contacto.celular}</span>
+                                    </div>
+                                  )}
+
+                                  {contacto.email && (
+                                    <div className={styles.contactoInfoRow}>
+                                      <span className={styles.contactoMiniIcon}>@</span>
+                                      <span>{contacto.email}</span>
+                                    </div>
+                                  )}
+
+                                  {contacto.direccion && (
+                                    <div className={styles.contactoInfoRow}>
+                                      <MapPin size={16} />
+                                      <span>{contacto.direccion}</span>
+                                    </div>
+                                  )}
+
+                                  {(contacto.horarios || contacto.dias_atencion) && (
+                                    <div className={styles.contactoInfoRow}>
+                                      <Clock size={16} />
+                                      <span>
+                                        {contacto.horarios}
+                                        {contacto.horarios && contacto.dias_atencion ? " · " : ""}
+                                        {contacto.dias_atencion}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+
+                                <div className={styles.contactoActions}>
+                                  {contacto.celular && (
+                                    <Button
+                                      type="button"
+                                      className={styles.contactoWhatsappBtn}
+                                      onClick={() => enviarWhatsApp(contacto.celular, contacto.nombre)}
+                                    >
+                                      <Phone size={15} />
+                                      WhatsApp
+                                    </Button>
+                                  )}
+
+                                  <Button
+                                    type="button"
+                                    variant="outline-secondary"
+                                    className={styles.contactoActionBtn}
+                                    onClick={() => abrirEditarContacto(contacto)}
+                                  >
+                                    <Edit2 size={15} />
+                                    Editar
+                                  </Button>
+
+                                  <Button
+                                    type="button"
+                                    variant="outline-danger"
+                                    className={`${styles.contactoActionBtn} ${styles.contactoDeleteBtn}`}
+                                    onClick={() => eliminarContacto(contacto.id, nombreVisible)}
+                                  >
+                                    <Trash2 size={15} />
+                                    Eliminar
+                                  </Button>
+                                </div>
+                              </Card.Body>
+                            </Card>
+                          </Col>
+                        );
+                      })}
+                    </Row>
                   )}
-                </Row>
+                </div>
               </Tab>
 
               <Tab eventKey="citas" title={`Citas (${citasFiltradas.length})`}>
-                <Card className={styles.panelCard}>
-                  <Card.Body>
-                    {citasFiltradas.length === 0 ? (
-                      <div className={styles.emptyInline}>
-                        <Calendar size={32} />
+                <div className={styles.citasSection}>
+                  <div className={styles.citasToolbar}>
+                    <div>
+                      <h3 className={styles.sectionTitle}>Citas agendadas</h3>
+                      <p className={styles.sectionSubtitle}>
+                        Turnos, controles y actividades importantes de tus mascotas.
+                      </p>
+                    </div>
 
-                        <p>No hay citas registradas.</p>
+                    <Button className={styles.createCitaBtn} onClick={abrirNuevaCita}>
+                      <Plus size={16} />
+                      Nueva cita
+                    </Button>
+                  </div>
 
-                        <Button onClick={abrirNuevaCita}>Crear cita</Button>
-                      </div>
-                    ) : (
-                      citasFiltradas.map((cita) => (
-                        <div key={cita.id} className={styles.listItem}>
-                          <div>
-                            <strong>{cita.titulo}</strong>
+                  {citasFiltradas.length === 0 ? (
+                    <div className={styles.emptyInline}>
+                      <Calendar size={32} />
+                      <p>No hay citas registradas.</p>
+                      <Button onClick={abrirNuevaCita}>Crear cita</Button>
+                    </div>
+                  ) : (
+                    <Row className="g-3">
+                      {citasFiltradas.map((cita) => {
+                        const fecha = cita.fecha_evento || cita.fecha || "";
+                        const fechaObj = fecha ? new Date(fecha) : null;
+                        const dia = fechaObj && !Number.isNaN(fechaObj.getTime())
+                          ? fechaObj.toLocaleDateString("es-AR", { day: "2-digit" })
+                          : "--";
+                        const mes = fechaObj && !Number.isNaN(fechaObj.getTime())
+                          ? fechaObj.toLocaleDateString("es-AR", { month: "short" })
+                          : "Sin fecha";
 
-                            <div className="small text-muted">
-                              {formatDate(cita.fecha_evento)} · 🐾 {cita.nombreMascota}
-                            </div>
+                        const hoy = new Date();
+                        hoy.setHours(0, 0, 0, 0);
 
-                            {cita.nota && <div className="small mt-1">{cita.nota}</div>}
-                          </div>
+                        const esProxima =
+                          fechaObj && !Number.isNaN(fechaObj.getTime())
+                            ? fechaObj >= hoy
+                            : false;
 
-                          <div className={styles.itemActions}>
-                            <Button
-                              size="sm"
-                              variant="outline-primary"
-                              onClick={() => abrirEditarCita(cita)}
-                            >
-                              <Edit2 size={14} /> Editar
-                            </Button>
+                        return (
+                          <Col key={cita.id} xs={12} md={6} xl={4}>
+                            <Card className={styles.citaCard}>
+                              <Card.Body className={styles.citaCardBody}>
+                                <div className={styles.citaCardTop}>
+                                  <div className={styles.citaDateBox}>
+                                    <span className={styles.citaDay}>{dia}</span>
+                                    <span className={styles.citaMonth}>{mes}</span>
+                                  </div>
 
-                            <Button
-                              size="sm"
-                              variant="outline-danger"
-                              onClick={() =>
-                                eliminarHistorialItem(cita.id, cita.titulo, "cita")
-                              }
-                            >
-                              <Trash2 size={14} /> Eliminar
-                            </Button>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </Card.Body>
-                </Card>
+                                  <div className={styles.citaStatusArea}>
+                                    <Badge
+                                      bg={esProxima ? "primary" : "light"}
+                                      text={esProxima ? "light" : "dark"}
+                                      className={styles.citaStatusBadge}
+                                    >
+                                      {esProxima ? "Próxima" : "Pasada"}
+                                    </Badge>
+                                  </div>
+                                </div>
+
+                                <div className={styles.citaContent}>
+                                  <h4 className={styles.citaTitle}>
+                                    {cita.titulo || "Cita sin título"}
+                                  </h4>
+
+                                  <div className={styles.citaMeta}>
+                                    <span>
+                                      <Calendar size={14} />
+                                      {formatDate(cita.fecha_evento)}
+                                    </span>
+
+                                    <span>
+                                      <Heart size={14} />
+                                      {cita.nombreMascota || "Mascota"}
+                                    </span>
+                                  </div>
+
+                                  {cita.nota ? (
+                                    <p className={styles.citaNote}>{cita.nota}</p>
+                                  ) : (
+                                    <p className={styles.citaNoteMuted}>
+                                      Sin observaciones cargadas.
+                                    </p>
+                                  )}
+
+                                  {cita.proxima_fecha && (
+                                    <div className={styles.citaNextDate}>
+                                      <Clock size={15} />
+                                      Próxima fecha: {formatDate(cita.proxima_fecha)}
+                                    </div>
+                                  )}
+                                </div>
+
+                                <div className={styles.citaActions}>
+                                  <Button
+                                    type="button"
+                                    variant="outline-primary"
+                                    className={styles.citaActionBtn}
+                                    onClick={() => abrirEditarCita(cita)}
+                                  >
+                                    <Edit2 size={15} />
+                                    Editar
+                                  </Button>
+
+                                  <Button
+                                    type="button"
+                                    variant="outline-danger"
+                                    className={`${styles.citaActionBtn} ${styles.citaDeleteBtn}`}
+                                    onClick={() =>
+                                      eliminarHistorialItem(cita.id, cita.titulo, "cita")
+                                    }
+                                  >
+                                    <Trash2 size={15} />
+                                    Eliminar
+                                  </Button>
+                                </div>
+                              </Card.Body>
+                            </Card>
+                          </Col>
+                        );
+                      })}
+                    </Row>
+                  )}
+                </div>
               </Tab>
 
               <Tab eventKey="vacunas" title={`Vacunas (${vacunasFiltradas.length})`}>
@@ -1164,7 +1494,7 @@ export default function ContactosMascota() {
                           <div>
                             <strong>{vacuna.titulo}</strong>{" "}
 
-                            {vacuna.completada ? (
+                            {isComplete(vacuna.completada) ? (
                               <Badge bg="success">Aplicada</Badge>
                             ) : (
                               <Badge bg="warning" text="dark">
@@ -1209,112 +1539,147 @@ export default function ContactosMascota() {
                 </Card>
               </Tab>
 
-              <Tab eventKey="bitacora" title={`Bitácora (${bitacoraFiltrada.length})`}>
-                <Card className={styles.panelCard}>
-                  <Card.Body>
-                    {bitacoraFiltrada.length === 0 ? (
-                      <div className={styles.emptyInline}>
-                        <FileText size={32} />
-
-                        <p>No hay registros en bitácora.</p>
-
-                        <Button onClick={abrirNuevoHistorial}>Crear registro</Button>
-                      </div>
-                    ) : (
-                      bitacoraFiltrada.map((registro) => (
-                        <div key={registro.id} className={styles.listItem}>
-                          <div>
-                            <strong>{registro.titulo}</strong>
-
-                            <div className="small text-muted">
-                              {formatDate(registro.fecha_evento)} · 🐾 {registro.nombreMascota}
-                            </div>
-
-                            {registro.nota && (
-                              <div className="small mt-1">{registro.nota}</div>
-                            )}
-                          </div>
-
-                          <div className={styles.itemActions}>
-                            <Button
-                              size="sm"
-                              variant="outline-secondary"
-                              onClick={() => abrirEditarHistorial(registro)}
-                            >
-                              <Edit2 size={14} /> Editar
-                            </Button>
-
-                            <Button
-                              size="sm"
-                              variant="outline-danger"
-                              onClick={() =>
-                                eliminarHistorialItem(registro.id, registro.titulo, "registro")
-                              }
-                            >
-                              <Trash2 size={14} /> Eliminar
-                            </Button>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </Card.Body>
-                </Card>
-              </Tab>
-
-              <Tab eventKey="socios" title={`Amigos SP (${socios.length})`}>
-                {cargandoSocios ? (
-                  <div className="py-4 text-center">
-                    <Spinner animation="border" />
-                  </div>
-                ) : socios.length === 0 ? (
-                  <Card className={styles.emptyCard}>
-                    <Card.Body>
-                      <Heart size={34} />
-
-                      <h5>No hay socios cargados</h5>
-
-                      <p>
-                        Próximamente verás proveedores recomendados para tus mascotas.
+              <Tab eventKey="socios" title={`Amigos SP (${sociosFiltrados.length})`}>
+                <div className={styles.sociosSection}>
+                  <div className={styles.sociosToolbar}>
+                    <div>
+                      <h3 className={styles.sectionTitle}>Amigos SP</h3>
+                      <p className={styles.sectionSubtitle}>
+                        Servicios, comercios y profesionales recomendados para tus mascotas.
                       </p>
-                    </Card.Body>
-                  </Card>
-                ) : (
-                  <Row className="g-3">
-                    {socios.map((socio) => (
-                      <Col key={socio.id} xs={12} md={6} xl={4}>
-                        <Card className={styles.socioCard}>
-                          <Card.Body>
-                            <h5>{socio.nombre_local || socio.nombre}</h5>
+                    </div>
+                  </div>
 
-                            {socio.rubro && (
-                              <Badge bg="light" text="dark">
-                                {socio.rubro}
-                              </Badge>
-                            )}
+                  {cargandoSocios ? (
+                    <div className="py-4 text-center">
+                      <Spinner animation="border" />
+                    </div>
+                  ) : sociosFiltrados.length === 0 ? (
+                    <div className={styles.emptyInline}>
+                      <Heart size={32} />
+                      <p>No hay Amigos SP disponibles por ahora.</p>
+                    </div>
+                  ) : (
+                    <Row className="g-3">
+                      {sociosFiltrados.map((socio) => {
+                        const imagenUrl = getSocioImagenUrl(socio);
+                        const nombreSocio = getSocioNombre(socio);
+                        const tipoSocio = getSocioTipo(socio);
+                        const telefonoSocio = getSocioTelefono(socio);
+                        const tieneWeb = socio.web || socio.website || socio.instagram || socio.url;
 
-                            {socio.direccion && (
-                              <p className="mt-2">📍 {socio.direccion}</p>
-                            )}
+                        return (
+                          <Col key={socio.id} xs={12} md={6} xl={4}>
+                            <Card className={styles.socioCard}>
+                              <div className={styles.socioMedia}>
+                                {imagenUrl ? (
+                                  <img
+                                    src={imagenUrl}
+                                    alt={nombreSocio}
+                                    className={styles.socioImage}
+                                    loading="lazy"
+                                    onError={(e) => {
+                                      e.currentTarget.style.display = "none";
+                                    }}
+                                  />
+                                ) : (
+                                  <div className={styles.socioPlaceholder}>
+                                    <span>{getSocioIcon(socio)}</span>
+                                  </div>
+                                )}
 
-                            {socio.whatsapp && (
-                              <Button
-                                className="w-100"
-                                onClick={() =>
-                                  enviarWhatsApp(
-                                    socio.whatsapp,
-                                    socio.nombre_local || socio.nombre
-                                  )
-                                }
-                              >
-                                <Phone size={16} /> Contactar
-                              </Button>
-                            )}
-                          </Card.Body>
-                        </Card>
-                      </Col>
-                    ))}
-                  </Row>
-                )}
+                                <div className={styles.socioMediaOverlay} />
+
+                                <div className={styles.socioTopBadges}>
+                                  <span className={styles.socioMainBadge}>
+                                    {getSocioIcon(socio)} {tipoSocio}
+                                  </span>
+
+                                  {Number(socio.servicio_24h) === 1 && (
+                                    <span className={styles.badgeInfo}>24 hs</span>
+                                  )}
+
+                                  {Number(socio.emergencias) === 1 && (
+                                    <span className={styles.badgeDanger}>Emergencias</span>
+                                  )}
+                                </div>
+                              </div>
+
+                              <Card.Body className={styles.socioBody}>
+                                <div className={styles.socioHeader}>
+                                  <div>
+                                    <h5 className={styles.socioName}>{nombreSocio}</h5>
+                                    <p className={styles.socioSubtitle}>{tipoSocio}</p>
+                                  </div>
+
+                                  <div className={styles.socioHeart}>
+                                    <Heart size={18} />
+                                  </div>
+                                </div>
+
+                                <div className={styles.socioInfoBox}>
+                                  {socio.direccion && (
+                                    <div className={styles.socioInfoRow}>
+                                      <MapPin size={16} />
+                                      <span>{socio.direccion}</span>
+                                    </div>
+                                  )}
+
+                                  {telefonoSocio && (
+                                    <div className={styles.socioInfoRow}>
+                                      <Phone size={16} />
+                                      <span>{telefonoSocio}</span>
+                                    </div>
+                                  )}
+
+                                  {(socio.horarios || socio.horarios_atencion || socio.dias_atencion) && (
+                                    <div className={styles.socioInfoRow}>
+                                      <Clock size={16} />
+                                      <span>
+                                        {socio.horarios || socio.horarios_atencion || socio.dias_atencion}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+
+                                {(socio.descripcion || socio.detalle || socio.observaciones) && (
+                                  <p className={styles.socioDescription}>
+                                    {socio.descripcion || socio.detalle || socio.observaciones}
+                                  </p>
+                                )}
+
+                                <div className={styles.socioActions}>
+                                  {telefonoSocio && (
+                                    <Button
+                                      type="button"
+                                      className={styles.socioContactBtn}
+                                      onClick={() => enviarWhatsApp(telefonoSocio, nombreSocio)}
+                                    >
+                                      <Phone size={16} />
+                                      Contactar
+                                    </Button>
+                                  )}
+
+                                  {tieneWeb && (
+                                    <Button
+                                      type="button"
+                                      variant="outline-secondary"
+                                      className={styles.socioMoreBtn}
+                                      onClick={() => abrirWebSocio(socio)}
+                                    >
+                                      <ExternalLink size={16} />
+                                      Ver más
+                                    </Button>
+                                  )}
+                                </div>
+                              </Card.Body>
+                            </Card>
+                          </Col>
+                        );
+                      })}
+                    </Row>
+                  )}
+                </div>
               </Tab>
             </Tabs>
           </>
@@ -1326,11 +1691,13 @@ export default function ContactosMascota() {
             setShowModalContacto(false);
             setContactoEdit(null);
             setEditandoContactoId(null);
+            setMascotaIdParaContacto("");
+            setVolverACitaDespuesContacto(false);
           }}
           contactoEdit={contactoEdit}
           onSave={handleGuardarContacto}
           mascotas={mascotas}
-          mascotaId={currentMascotaId}
+          mascotaId={mascotaIdParaContacto || mascotaIdParaModal}
         />
 
         <ModalCita
@@ -1343,8 +1710,9 @@ export default function ContactosMascota() {
           citaEdit={citaEdit}
           contactos={contactos}
           mascotas={mascotas}
-          mascotaId={currentMascotaId}
+          mascotaId={mascotaIdParaModal}
           onSave={handleGuardarCita}
+          onCrearContacto={abrirContactoDesdeCita}
         />
 
         <ModalVacuna
@@ -1356,22 +1724,8 @@ export default function ContactosMascota() {
           }}
           vacunaEdit={vacunaEdit}
           mascotas={mascotas}
-          mascotaId={currentMascotaId}
+          mascotaId={mascotaIdParaModal}
           onSave={handleGuardarVacuna}
-        />
-
-        <ModalHistorial
-          show={showModalHistorial}
-          onHide={() => {
-            setShowModalHistorial(false);
-            setHistorialEdit(null);
-            setEditandoHistorialId(null);
-          }}
-          historialEdit={historialEdit}
-          contactos={contactos}
-          mascotas={mascotas}
-          mascotaId={currentMascotaId}
-          onSave={handleGuardarHistorial}
         />
       </Container>
     </>

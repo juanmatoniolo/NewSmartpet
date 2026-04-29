@@ -8,12 +8,29 @@ import {
     Edit2,
     Trash2,
     Mail,
-    Building2
+    Building2,
+    MessageCircle
 } from "lucide-react";
 import styles from "./TarjetaContacto.module.css";
 
+const isTrue = (value) => value === true || value === 1 || value === "1";
+
+const formatDate = (value) => {
+    if (!value) return "";
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) return "";
+
+    return date.toLocaleDateString("es-AR", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+    });
+};
+
 export default function TarjetaContacto({
-    contacto,
+    contacto = {},
     onToggleFavorito,
     onEditar,
     onEliminar,
@@ -21,10 +38,18 @@ export default function TarjetaContacto({
     renderTipo,
     getIconoTipo
 }) {
-    const handleCardClick = (e) => {
-        if (e.target.closest("button")) return;
-        onEditar(contacto);
-    };
+    const nombreCompleto = `${contacto.nombre || ""} ${contacto.apellido || ""}`.trim();
+    const nombreVisible = nombreCompleto || contacto.nombre_local || "Contacto sin nombre";
+
+    const tipoVisible =
+        typeof renderTipo === "function"
+            ? renderTipo(contacto)
+            : contacto.tipo || contacto.categoria_personalizada || "Contacto";
+
+    const iconoVisible =
+        typeof getIconoTipo === "function"
+            ? getIconoTipo(contacto.tipo)
+            : "📋";
 
     const imagenLocal =
         contacto.imagen ||
@@ -34,74 +59,119 @@ export default function TarjetaContacto({
         contacto.logo_url ||
         "";
 
-    const nombreCompleto = `${contacto.nombre || ""} ${contacto.apellido || ""}`.trim();
+    const favorito = isTrue(contacto.favorito);
+
+    const ultimaCita = contacto.ultimaCita?.fecha_evento || contacto.ultima_cita || "";
+    const proximaCita = contacto.proximaCita?.fecha_evento || contacto.proxima_cita || "";
+
+    const handleCardClick = (e) => {
+        if (e.target.closest("button, a")) return;
+        if (typeof onEditar === "function") onEditar(contacto);
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key !== "Enter" && e.key !== " ") return;
+
+        e.preventDefault();
+
+        if (typeof onEditar === "function") onEditar(contacto);
+    };
+
+    const handleFavorite = (e) => {
+        e.stopPropagation();
+
+        if (typeof onToggleFavorito === "function") {
+            onToggleFavorito(contacto);
+        }
+    };
+
+    const handleWhatsApp = (e) => {
+        e.stopPropagation();
+
+        if (typeof onWhatsApp === "function") {
+            onWhatsApp(contacto.celular || contacto.whatsapp, contacto.nombre || nombreVisible);
+        }
+    };
+
+    const handleEditar = (e) => {
+        e.stopPropagation();
+
+        if (typeof onEditar === "function") {
+            onEditar(contacto);
+        }
+    };
+
+    const handleEliminar = (e) => {
+        e.stopPropagation();
+
+        if (typeof onEliminar === "function") {
+            onEliminar(contacto.id, nombreVisible);
+        }
+    };
 
     return (
-        <div
-            className={`${styles.card} card h-100`}
+        <article
+            className={styles.card}
             onClick={handleCardClick}
             role="button"
             tabIndex={0}
-            onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    onEditar(contacto);
-                }
-            }}
+            onKeyDown={handleKeyDown}
+            aria-label={`Editar contacto ${nombreVisible}`}
         >
             <div className={styles.media}>
                 {imagenLocal ? (
                     <img
                         src={imagenLocal}
-                        alt={nombreCompleto || "Imagen del local"}
+                        alt={nombreVisible}
                         className={styles.mediaImage}
+                        loading="lazy"
+                        onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                        }}
                     />
                 ) : (
-                    <div className={styles.mediaPlaceholder}>
-                        <span>{getIconoTipo(contacto.tipo)}</span>
+                    <div className={styles.mediaPlaceholder} aria-hidden="true">
+                        <span>{iconoVisible}</span>
                     </div>
                 )}
 
                 <div className={styles.mediaOverlay} />
 
                 <span className={styles.typeBadge}>
-                    {renderTipo(contacto)}
+                    {iconoVisible} {tipoVisible}
                 </span>
 
                 <button
                     type="button"
-                    className={`${styles.favoriteStar} ${contacto.favorito ? styles.favoriteStarActive : ""}`}
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onToggleFavorito(contacto);
-                    }}
-                    aria-label={contacto.favorito ? "Quitar de favoritos" : "Marcar como favorito"}
-                    title={contacto.favorito ? "Quitar de favoritos" : "Marcar como favorito"}
+                    className={`${styles.favoriteStar} ${favorito ? styles.favoriteStarActive : ""}`}
+                    onClick={handleFavorite}
+                    aria-label={favorito ? "Quitar de favoritos" : "Marcar como favorito"}
+                    title={favorito ? "Quitar de favoritos" : "Marcar como favorito"}
                 >
-                    <Star size={18} fill={contacto.favorito ? "currentColor" : "none"} />
+                    <Star size={18} fill={favorito ? "currentColor" : "none"} />
                 </button>
             </div>
 
             <div className={styles.body}>
-                <div className={styles.header}>
+                <header className={styles.header}>
                     <div className={styles.title}>
-                        <h5 className={styles.name}>
-                            {nombreCompleto || "Contacto sin nombre"}
-                        </h5>
+                        <h5 className={styles.name}>{nombreVisible}</h5>
 
-                        {contacto.direccion ? (
-                            <p className={styles.locationPreview}>
-                                <MapPin size={14} />
-                                <span>{contacto.direccion}</span>
-                            </p>
-                        ) : (
-                            <p className={styles.locationPreview}>
-                                <Building2 size={14} />
-                                <span>Proveedor registrado</span>
-                            </p>
-                        )}
+                        <p className={styles.locationPreview}>
+                            {contacto.direccion ? (
+                                <>
+                                    <MapPin size={14} />
+                                    <span>{contacto.direccion}</span>
+                                </>
+                            ) : (
+                                <>
+                                    <Building2 size={14} />
+                                    <span>Proveedor registrado</span>
+                                </>
+                            )}
+                        </p>
                     </div>
-                </div>
+                </header>
 
                 <div className={styles.infoBlock}>
                     {contacto.celular && (
@@ -110,13 +180,12 @@ export default function TarjetaContacto({
                             <span>{contacto.celular}</span>
 
                             <Button
+                                type="button"
                                 className={styles.whatsappBtn}
                                 size="sm"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onWhatsApp(contacto.celular, contacto.nombre);
-                                }}
+                                onClick={handleWhatsApp}
                             >
+                                <MessageCircle size={14} />
                                 WhatsApp
                             </Button>
                         </div>
@@ -155,19 +224,19 @@ export default function TarjetaContacto({
                     )}
                 </div>
 
-                {(contacto.ultimaCita?.fecha_evento || contacto.proximaCita?.fecha_evento) && (
+                {(ultimaCita || proximaCita) && (
                     <div className={styles.citasInfo}>
-                        {contacto.ultimaCita?.fecha_evento && (
+                        {ultimaCita && (
                             <div className={styles.citaLineMuted}>
-                                📅 Última visita:{" "}
-                                {new Date(contacto.ultimaCita.fecha_evento).toLocaleDateString("es-AR")}
+                                <span>📅 Última visita:</span>
+                                <strong>{formatDate(ultimaCita)}</strong>
                             </div>
                         )}
 
-                        {contacto.proximaCita?.fecha_evento && (
+                        {proximaCita && (
                             <div className={styles.citaLineSuccess}>
-                                ⏰ Próxima cita:{" "}
-                                {new Date(contacto.proximaCita.fecha_evento).toLocaleDateString("es-AR")}
+                                <span>⏰ Próxima cita:</span>
+                                <strong>{formatDate(proximaCita)}</strong>
                             </div>
                         )}
                     </div>
@@ -180,24 +249,26 @@ export default function TarjetaContacto({
                     </div>
                 )}
 
-                <div className={styles.actions} onClick={(e) => e.stopPropagation()}>
+                <div className={styles.actions}>
                     <Button
+                        type="button"
                         className={styles.actionBtn}
-                        onClick={() => onEditar(contacto)}
+                        onClick={handleEditar}
                     >
                         <Edit2 size={16} />
                         <span>Editar</span>
                     </Button>
 
                     <Button
+                        type="button"
                         className={`${styles.actionBtn} ${styles.deleteBtn}`}
-                        onClick={() => onEliminar(contacto.id, contacto.nombre)}
+                        onClick={handleEliminar}
                     >
                         <Trash2 size={16} />
                         <span>Eliminar</span>
                     </Button>
                 </div>
             </div>
-        </div>
+        </article>
     );
 }

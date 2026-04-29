@@ -1,10 +1,36 @@
-import React, { useState, useEffect } from "react";
-import { Modal, Button, Form, Row, Col, InputGroup, Spinner } from "react-bootstrap";
-import { Syringe, Calendar, FileText, Package, Hash, User, CheckCircle } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import {
+    Modal,
+    Button,
+    Form,
+    Row,
+    Col,
+    InputGroup,
+    Spinner,
+    Alert
+} from "react-bootstrap";
+import {
+    Syringe,
+    Calendar,
+    FileText,
+    Package,
+    Hash,
+    User,
+    CheckCircle,
+    PawPrint
+} from "lucide-react";
 import styles from "./ModalVacuna.module.css";
 
-export default function ModalVacuna({ show, onHide, vacunaEdit, onSave }) {
+export default function ModalVacuna({
+    show,
+    onHide,
+    vacunaEdit,
+    mascotas = [],
+    mascotaId = "",
+    onSave
+}) {
     const [form, setForm] = useState({
+        mascota_id: "",
         nombre: "",
         fecha_aplicacion: "",
         proxima_dosis: "",
@@ -14,6 +40,7 @@ export default function ModalVacuna({ show, onHide, vacunaEdit, onSave }) {
         notas: "",
         completada: false
     });
+
     const [guardando, setGuardando] = useState(false);
     const [errores, setErrores] = useState({});
     const [validated, setValidated] = useState(false);
@@ -25,6 +52,11 @@ export default function ModalVacuna({ show, onHide, vacunaEdit, onSave }) {
 
         if (vacunaEdit) {
             setForm({
+                mascota_id:
+                    vacunaEdit.mascota_id?.toString() ||
+                    vacunaEdit.id_mascota?.toString() ||
+                    mascotaId?.toString() ||
+                    "",
                 nombre: vacunaEdit.titulo || "",
                 fecha_aplicacion: vacunaEdit.fecha_evento || "",
                 proxima_dosis: vacunaEdit.proxima_fecha || "",
@@ -32,10 +64,16 @@ export default function ModalVacuna({ show, onHide, vacunaEdit, onSave }) {
                 lote: vacunaEdit.lote || "",
                 veterinario: vacunaEdit.nota || "",
                 notas: vacunaEdit.notas || "",
-                completada: vacunaEdit.completada || false
+                completada:
+                    vacunaEdit.completada === true ||
+                    vacunaEdit.completada === 1 ||
+                    vacunaEdit.completada === "1"
             });
         } else {
             setForm({
+                mascota_id:
+                    mascotaId?.toString() ||
+                    (mascotas.length === 1 ? mascotas[0].id?.toString() : ""),
                 nombre: "",
                 fecha_aplicacion: "",
                 proxima_dosis: "",
@@ -49,17 +87,39 @@ export default function ModalVacuna({ show, onHide, vacunaEdit, onSave }) {
 
         setErrores({});
         setValidated(false);
-    }, [vacunaEdit, show]);
+    }, [vacunaEdit, show, mascotaId, mascotas]);
+
+    const mascotaSeleccionada = useMemo(
+        () => mascotas.find((m) => String(m.id) === String(form.mascota_id)),
+        [mascotas, form.mascota_id]
+    );
 
     const validateForm = () => {
         const errors = {};
+
+        if (!form.mascota_id) errors.mascota_id = "Seleccioná la mascota";
         if (!form.nombre.trim()) errors.nombre = "El nombre de la vacuna es obligatorio";
+
         return errors;
     };
 
     const handleClose = () => {
         if (guardando) return;
         onHide();
+    };
+
+    const setField = (field, value) => {
+        setForm((prev) => ({
+            ...prev,
+            [field]: value
+        }));
+
+        if (validated) {
+            setErrores((prev) => ({
+                ...prev,
+                [field]: ""
+            }));
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -75,33 +135,23 @@ export default function ModalVacuna({ show, onHide, vacunaEdit, onSave }) {
 
         try {
             const payload = {
-                titulo: form.nombre,
-                fecha_evento: form.fecha_aplicacion,
-                proxima_fecha: form.proxima_dosis,
-                nota: form.veterinario,
-                laboratorio: form.laboratorio,
-                lote: form.lote,
-                notas: form.notas,
-                completada: form.completada
+                mascota_id: Number(form.mascota_id),
+                id_mascota: Number(form.mascota_id),
+                titulo: form.nombre.trim(),
+                fecha_evento: form.fecha_aplicacion || null,
+                proxima_fecha: form.proxima_dosis || null,
+                nota: form.veterinario || "",
+                laboratorio: form.laboratorio || "",
+                lote: form.lote || "",
+                notas: form.notas || "",
+                completada: form.completada ? 1 : 0
             };
 
             const ok = await onSave(payload);
+
             if (ok) handleClose();
         } finally {
             setGuardando(false);
-        }
-    };
-
-    const handleChange = (field) => (e) => {
-        const value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
-        const nextForm = { ...form, [field]: value };
-
-        setForm(nextForm);
-
-        if (validated) {
-            const nextErrors = {};
-            if (!nextForm.nombre.trim()) nextErrors.nombre = "El nombre de la vacuna es obligatorio";
-            setErrores(nextErrors);
         }
     };
 
@@ -111,7 +161,7 @@ export default function ModalVacuna({ show, onHide, vacunaEdit, onSave }) {
             onHide={handleClose}
             size="lg"
             scrollable
-            centered={false}
+            centered
             backdrop={guardando ? "static" : true}
             keyboard={!guardando}
             autoFocus={false}
@@ -123,15 +173,51 @@ export default function ModalVacuna({ show, onHide, vacunaEdit, onSave }) {
                         <div className={styles.iconWrapper}>
                             <Syringe size={24} style={{ color: "#6fbf8c" }} strokeWidth={2.2} />
                         </div>
+
                         <div className={styles.title}>
-                            <h4>{isEdit ? "Editar" : "Nueva"} vacuna</h4>
-                            <small>Registra el plan de vacunación de tu mascota</small>
+                            <h4>{isEdit ? "Editar vacuna" : "Nueva vacuna"}</h4>
+                            <small>
+                                {mascotaSeleccionada
+                                    ? `Vacuna asociada a ${mascotaSeleccionada.nombre}`
+                                    : "Elegí la mascota y registrá su vacuna"}
+                            </small>
                         </div>
                     </Modal.Title>
                 </Modal.Header>
 
                 <Modal.Body className={styles.body}>
                     <Row className="g-3 g-md-4">
+                        <Col xs={12}>
+                            <div className={styles.sectionTitle}>
+                                <span>🐾</span> Mascota
+                            </div>
+
+                            <InputGroup hasValidation>
+                                <InputGroup.Text className={styles.inputGroupText}>
+                                    <PawPrint size={16} />
+                                </InputGroup.Text>
+
+                                <Form.Select
+                                    value={form.mascota_id}
+                                    onChange={(e) => setField("mascota_id", e.target.value)}
+                                    className={styles.formControl}
+                                    isInvalid={!!errores.mascota_id}
+                                    disabled={guardando || Boolean(mascotaId)}
+                                >
+                                    <option value="">Seleccioná la mascota</option>
+                                    {mascotas.map((m) => (
+                                        <option key={m.id} value={m.id}>
+                                            🐾 {m.nombre || `Mascota #${m.id}`}
+                                        </option>
+                                    ))}
+                                </Form.Select>
+
+                                <Form.Control.Feedback type="invalid">
+                                    {errores.mascota_id}
+                                </Form.Control.Feedback>
+                            </InputGroup>
+                        </Col>
+
                         <Col xs={12}>
                             <div className={styles.sectionTitle}>
                                 <span>💉</span> Vacuna
@@ -149,7 +235,7 @@ export default function ModalVacuna({ show, onHide, vacunaEdit, onSave }) {
 
                                     <Form.Control
                                         value={form.nombre}
-                                        onChange={handleChange("nombre")}
+                                        onChange={(e) => setField("nombre", e.target.value)}
                                         placeholder="Antirrábica, Óctuple, Séxtuple..."
                                         className={styles.formControl}
                                         isInvalid={!!errores.nombre}
@@ -181,7 +267,7 @@ export default function ModalVacuna({ show, onHide, vacunaEdit, onSave }) {
                                     <Form.Control
                                         type="date"
                                         value={form.fecha_aplicacion}
-                                        onChange={handleChange("fecha_aplicacion")}
+                                        onChange={(e) => setField("fecha_aplicacion", e.target.value)}
                                         className={styles.formControl}
                                         disabled={guardando}
                                     />
@@ -201,13 +287,13 @@ export default function ModalVacuna({ show, onHide, vacunaEdit, onSave }) {
                                     <Form.Control
                                         type="date"
                                         value={form.proxima_dosis}
-                                        onChange={handleChange("proxima_dosis")}
+                                        onChange={(e) => setField("proxima_dosis", e.target.value)}
                                         className={styles.formControl}
                                         disabled={guardando}
                                     />
                                 </InputGroup>
 
-                                <small className="text-muted d-block mt-1" style={{ fontSize: "0.75rem" }}>
+                                <small className="text-muted d-block mt-1">
                                     Fecha estimada para refuerzo
                                 </small>
                             </Form.Group>
@@ -230,8 +316,8 @@ export default function ModalVacuna({ show, onHide, vacunaEdit, onSave }) {
 
                                     <Form.Control
                                         value={form.laboratorio}
-                                        onChange={handleChange("laboratorio")}
-                                        placeholder="Laboratorio Richmond..."
+                                        onChange={(e) => setField("laboratorio", e.target.value)}
+                                        placeholder="Laboratorio"
                                         className={styles.formControl}
                                         disabled={guardando}
                                     />
@@ -250,7 +336,7 @@ export default function ModalVacuna({ show, onHide, vacunaEdit, onSave }) {
 
                                     <Form.Control
                                         value={form.lote}
-                                        onChange={handleChange("lote")}
+                                        onChange={(e) => setField("lote", e.target.value)}
                                         placeholder="Número de lote"
                                         className={styles.formControl}
                                         disabled={guardando}
@@ -276,7 +362,7 @@ export default function ModalVacuna({ show, onHide, vacunaEdit, onSave }) {
 
                                     <Form.Control
                                         value={form.veterinario}
-                                        onChange={handleChange("veterinario")}
+                                        onChange={(e) => setField("veterinario", e.target.value)}
                                         placeholder="Nombre del profesional"
                                         className={styles.formControl}
                                         disabled={guardando}
@@ -301,7 +387,7 @@ export default function ModalVacuna({ show, onHide, vacunaEdit, onSave }) {
                                         as="textarea"
                                         rows={4}
                                         value={form.notas}
-                                        onChange={handleChange("notas")}
+                                        onChange={(e) => setField("notas", e.target.value)}
                                         placeholder="Reacciones, observaciones, seguimiento..."
                                         className={styles.formControl}
                                         style={{ resize: "vertical" }}
@@ -312,28 +398,44 @@ export default function ModalVacuna({ show, onHide, vacunaEdit, onSave }) {
                         </Col>
 
                         <Col xs={12}>
-                            <div className={`${styles.completedBox} ${form.completada ? styles.completedBoxActive : ""}`}>
+                            <div
+                                className={`${styles.completedBox} ${form.completada ? styles.completedBoxActive : ""
+                                    }`}
+                            >
                                 <Form.Check
                                     type="checkbox"
                                     id="completada-check"
                                     label={
                                         <span className="d-flex align-items-center gap-2">
-                                            <CheckCircle size={18} color={form.completada ? "#6fbf8c" : "#8a7a9c"} />
+                                            <CheckCircle
+                                                size={18}
+                                                color={form.completada ? "#6fbf8c" : "#8a7a9c"}
+                                            />
                                             <span className="fw-semibold">Marcar como aplicada</span>
                                         </span>
                                     }
                                     checked={form.completada}
-                                    onChange={handleChange("completada")}
+                                    onChange={(e) => setField("completada", e.target.checked)}
                                     disabled={guardando}
                                 />
 
-                                <small className="text-muted d-block ms-4 mt-1" style={{ fontSize: "0.75rem" }}>
+                                <small className="text-muted d-block ms-4 mt-1">
                                     {form.completada
                                         ? "Esta vacuna se marcará como completada"
                                         : "Marcá esta opción cuando la vacuna haya sido aplicada"}
                                 </small>
                             </div>
                         </Col>
+
+                        {mascotaSeleccionada && form.nombre && (
+                            <Col xs={12}>
+                                <Alert variant="light" className="mb-0 border rounded-4">
+                                    <strong>Resumen:</strong> {form.nombre} para{" "}
+                                    <strong>{mascotaSeleccionada.nombre}</strong>
+                                    {form.fecha_aplicacion ? ` el ${form.fecha_aplicacion}` : ""}.
+                                </Alert>
+                            </Col>
+                        )}
                     </Row>
                 </Modal.Body>
 
@@ -353,7 +455,11 @@ export default function ModalVacuna({ show, onHide, vacunaEdit, onSave }) {
                                 <Spinner animation="border" size="sm" />
                                 Guardando...
                             </span>
-                        ) : isEdit ? "Actualizar" : "Crear vacuna"}
+                        ) : isEdit ? (
+                            "Actualizar vacuna"
+                        ) : (
+                            "Crear vacuna"
+                        )}
                     </Button>
                 </Modal.Footer>
             </Form>
