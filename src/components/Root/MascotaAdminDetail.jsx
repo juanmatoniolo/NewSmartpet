@@ -1,29 +1,51 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import React from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import AdminHeader from "./AdminHeader"; // ✅ Correcto (mismo directorio)
-import MascotaDetailView from "./MascotaDetailView"; // ✅ Mismo directorio
-import { useMascota } from "./useMascota"; // ✅ Ruta correcta (si existe)
-
-const API_URL = "http://localhost/api-smartpet/index.php"; // ✅ Definir API_URL
+import AdminHeader from "./AdminHeader";
+import MascotaDetailView from "./MascotaDetailView";
+import { useMascota } from "./useMascota";
+import { API_URL, getAdminHeaders } from "../../config/adminApi";
 
 const MascotaAdminDetail = () => {
     const { id } = useParams();
-    const { mascota, loading, error, sexoInfo, edadTexto, imagenSrc, getWhatsappLink, getPhoneLink, getInstagramLink, recargar } = useMascota(id);
+    const navigate = useNavigate();
+
+    const {
+        mascota,
+        loading,
+        error,
+        sexoInfo,
+        edadTexto,
+        imagenSrc,
+        getWhatsappLink,
+        getPhoneLink,
+        getInstagramLink,
+        recargar,
+    } = useMascota(id);
 
     const handleRefresh = async () => {
-        await recargar(); // Recarga los datos desde el backend
+        await recargar();
     };
 
     const handleDelete = async () => {
-        if (window.confirm("¿Eliminar esta mascota?")) {
-            try {
-                await axios.post(API_URL, { action: "deletemascota", id });
-                alert("Mascota eliminada");
-                window.location.href = "/admin/mis-mascotas";
-            } catch (err) {
-                alert("Error al eliminar: " + (err.response?.data?.error || err.message));
-            }
+        if (!window.confirm("¿Eliminar esta mascota?")) return;
+
+        try {
+            await axios.post(
+                API_URL,
+                {
+                    action: "deletemascota",
+                    id,
+                },
+                {
+                    headers: getAdminHeaders(),
+                }
+            );
+
+            alert("Mascota eliminada");
+            navigate("/admin/mis-mascotas");
+        } catch (err) {
+            alert("Error al eliminar: " + (err.response?.data?.error || err.message));
         }
     };
 
@@ -33,6 +55,7 @@ const MascotaAdminDetail = () => {
     return (
         <>
             <AdminHeader />
+
             <MascotaDetailView
                 mascota={mascota}
                 sexoInfo={sexoInfo}
@@ -49,4 +72,4 @@ const MascotaAdminDetail = () => {
     );
 };
 
-export default MascotaAdminDetail; // ✅ Exportación por defecto
+export default MascotaAdminDetail;

@@ -1,37 +1,46 @@
-// src/hooks/useMascota.js
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import axios from "axios";
-
-const API_BASE = "http://localhost/api-smartpet/index.php";
+import { API_URL, normalizeItem, resolveUploadUrl } from "../../config/adminApi";
 
 export function useMascota(mascotaId) {
     const [mascota, setMascota] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // --- Funciones auxiliares (igual que en MascotaProtegida) ---
     const calcularEdad = (fechaNac) => {
         if (!fechaNac) return "Desconocida";
+
         const fechaNacimiento = new Date(fechaNac);
-        if (isNaN(fechaNacimiento.getTime())) return "Desconocida";
+
+        if (Number.isNaN(fechaNacimiento.getTime())) return "Desconocida";
+
         const hoy = new Date();
         let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
         const mesDiferencia = hoy.getMonth() - fechaNacimiento.getMonth();
-        if (mesDiferencia < 0 || (mesDiferencia === 0 && hoy.getDate() < fechaNacimiento.getDate())) {
+
+        if (
+            mesDiferencia < 0 ||
+            (mesDiferencia === 0 && hoy.getDate() < fechaNacimiento.getDate())
+        ) {
             edad--;
         }
+
         if (edad < 1) {
             let meses = mesDiferencia;
+
             if (meses < 0) meses += 12;
             if (meses <= 0) return "Menos de 1 mes";
+
             return `${meses} mes(es)`;
         }
+
         return `${edad} año(s)`;
     };
 
     const obtenerSexo = (sexo) => {
         if (sexo === 1 || sexo === "1") return { texto: "Hembra", icono: "♀" };
         if (sexo === 0 || sexo === "0") return { texto: "Macho", icono: "♂" };
+
         return { texto: "No definido", icono: "⚥" };
     };
 
@@ -42,8 +51,14 @@ export function useMascota(mascotaId) {
 
     const getWhatsappLink = (telefono, mensaje) => {
         const tel = limpiarTelefono(telefono);
+
         if (!tel) return "#";
-        return `https://wa.me/549${tel}?text=${encodeURIComponent(mensaje || "Hola, encontré esta mascota.")}`;
+
+        const finalTel = tel.startsWith("54") ? tel : `549${tel}`;
+
+        return `https://wa.me/${finalTel}?text=${encodeURIComponent(
+            mensaje || "Hola, encontré esta mascota."
+        )}`;
     };
 
     const getPhoneLink = (telefono) => {
@@ -56,43 +71,54 @@ export function useMascota(mascotaId) {
         return `https://instagram.com/${String(ig).replace("@", "").trim()}`;
     };
 
-    // --- Carga de datos ---
-    const cargarMascota = async () => {
-        if (!mascotaId) return;
+    const cargarMascota = useCallback(async () => {
+        if (!mascotaId) {
+            setMascota(null);
+            setLoading(false);
+            return;
+        }
+
         setLoading(true);
         setError(null);
+
         try {
-            const response = await axios.get(`${API_BASE}/mascotas/${mascotaId}`);
-            const data = response.data;
-            if (!data || !data.id) {
+            const response = await axios.get(`${API_URL}/mascotas/${mascotaId}`);
+            const item = normalizeItem(response.data, "mascota");
+
+            if (!item?.id) {
                 setError("Mascota no encontrada");
                 setMascota(null);
-            } else {
-                setMascota(data);
+                return;
             }
+
+            setMascota(item);
         } catch (err) {
             console.error("Error al cargar mascota:", err);
-            setError("Error de conexión. Intente nuevamente.");
+            setError(err.response?.data?.error || "Error de conexión. Intente nuevamente.");
             setMascota(null);
         } finally {
             setLoading(false);
         }
-    };
+    }, [mascotaId]);
 
     useEffect(() => {
         cargarMascota();
-    }, [mascotaId]);
+    }, [cargarMascota]);
 
-    // --- Valores derivados con memo ---
     const sexoInfo = useMemo(() => obtenerSexo(mascota?.sexo), [mascota?.sexo]);
+
     const edadTexto = useMemo(() => {
-        return mascota?.fecha_nacimiento ? calcularEdad(mascota.fecha_nacimiento) : "Desconocida";
+        return mascota?.fecha_nacimiento
+            ? calcularEdad(mascota.fecha_nacimiento)
+            : "Desconocida";
     }, [mascota?.fecha_nacimiento]);
+
     const imagenSrc = useMemo(() => {
-        return mascota?.urlImg && mascota.urlImg.trim() !== "" ? mascota.urlImg : "/assets/smartpet-default.jpg";
+        return mascota?.urlImg && mascota.urlImg.trim() !== ""
+            ? resolveUploadUrl(mascota.urlImg)
+            : "/assets/smartpet-default.jpg";
     }, [mascota?.urlImg]);
 
-    // --- Retornar todo lo necesario ---
     return {
         mascota,
         loading,
@@ -103,6 +129,6 @@ export function useMascota(mascotaId) {
         getWhatsappLink,
         getPhoneLink,
         getInstagramLink,
-        recargar: cargarMascota, // útil para refrescar después de editar
+        recargar: cargarMascota,
     };
 }

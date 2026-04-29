@@ -2,8 +2,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./MascotaDetailView.css";
-
-const API_URL = "http://localhost/api-smartpet/index.php";
+import { API_URL, getAdminHeaders, getMultipartAdminHeaders, resolveUploadUrl } from "../../config/adminApi";
 
 const MascotaDetailView = ({
     mascota,
@@ -39,8 +38,11 @@ const MascotaDetailView = ({
     if (!mascota) return null;
 
     const getImageUrl = (src) => {
-        if (!src) return "/assets/smartpet-default.jpg";
-        return `${src}${src.includes('?') ? '&' : '?'}_=${refreshKey}`;
+        const resolved = resolveUploadUrl(src);
+
+        if (!resolved) return "/assets/smartpet-default.jpg";
+
+        return `${resolved}${resolved.includes("?") ? "&" : "?"}_=${refreshKey}`;
     };
 
     const handleInputChange = (e) => {
@@ -61,36 +63,45 @@ const MascotaDetailView = ({
 
     const handleSave = async () => {
         setLoading(true);
+
         try {
-            // 1. Enviar todos los datos de la mascota (sin la imagen ni el código)
             const updateData = { ...formData };
+
             delete updateData.urlImg;
             delete updateData.codigo_unico;
+
             updateData.id = mascota.id;
 
-            await axios.post(API_URL, { action: "updatemascota", ...updateData });
+            await axios.post(
+                API_URL,
+                {
+                    action: "updatemascota",
+                    ...updateData,
+                },
+                {
+                    headers: getAdminHeaders(),
+                }
+            );
 
-            // 2. Si se seleccionó una nueva imagen, subirla
             if (selectedImage) {
                 const formDataImg = new FormData();
-                formDataImg.append('imagen', selectedImage);
-                await axios.post(`${API_URL}/upload-imagen/${mascota.id}`, formDataImg);
+                formDataImg.append("imagen", selectedImage);
+
+                await axios.post(`${API_URL}/upload-mascota/${mascota.id}`, formDataImg, {
+                    headers: getMultipartAdminHeaders(),
+                });
             }
 
-            // 3. Recargar los datos de la mascota desde el backend (GET)
             if (onSave) {
-                await onSave(); // Debe actualizar el estado 'mascota' en el padre
+                await onSave();
             }
 
-            // 4. Forzar refresco de la imagen (evita caché)
             setRefreshKey(Date.now());
-
-            // 5. Salir del modo edición
             setIsEditing(false);
             setSelectedImage(null);
         } catch (err) {
             console.error(err);
-            alert('Error al guardar: ' + (err.response?.data?.error || err.message));
+            alert("Error al guardar: " + (err.response?.data?.error || err.message));
         } finally {
             setLoading(false);
         }
