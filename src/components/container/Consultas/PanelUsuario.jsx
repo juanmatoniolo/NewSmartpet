@@ -6,14 +6,18 @@ import TarjetaMascota from "./TarjetaMascota";
 import TarjetaCodigoVacio from "./TarjetaCodigoVacio";
 import { Link } from "react-router-dom";
 
-// 🔧 Importar la URL base desde configuración
-import API_BASE from "../../../config/api";   // tu import actual
+import API_BASE from "../../../config/api";
 import "./PanelUsuario.css";
+
+const normalizarArray = (data) => {
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data?.data)) return data.data;
+    if (Array.isArray(data?.items)) return data.items;
+    return [];
+};
 
 function PanelUsuario({ usuarioId }) {
     const API_URL = `${API_BASE}/index.php`;
-    // ✅ URL dinámica usando la variable de entorno (con fallback en config)
-    console.log('API_BASE:', API_BASE);            // 👈 agrega esto
 
     const [nombreUsuario, setNombreUsuario] = useState("");
     const [codigo, setCodigo] = useState("");
@@ -33,50 +37,83 @@ function PanelUsuario({ usuarioId }) {
 
     const cargarDatosUsuario = useCallback(async () => {
         if (!usuarioId) return;
+
         try {
             const res = await axios.get(`${API_URL}/usuarios/${usuarioId}`);
             setNombreUsuario(res.data?.nombre || "Usuario");
         } catch (err) {
-            console.error("Error al cargar usuario", err);
+            console.error("Error al cargar usuario:", err);
             setNombreUsuario("Usuario");
         }
     }, [usuarioId, API_URL]);
 
+    const cargarMascotaPorCodigo = useCallback(
+        async (codigoItem) => {
+            try {
+                const resMascota = await axios.get(`${API_URL}/mascotas`, {
+                    params: {
+                        codigo_id: codigoItem.codigo_id,
+                        usuario_id: usuarioId
+                    }
+                });
+
+                const data = resMascota.data;
+
+                if (Array.isArray(data)) {
+                    return data[0] || null;
+                }
+
+                if (Array.isArray(data?.data)) {
+                    return data.data[0] || null;
+                }
+
+                if (data && typeof data === "object" && data.id) {
+                    return data;
+                }
+
+                return null;
+            } catch (err) {
+                console.error("Error al cargar mascota por código:", err);
+                return null;
+            }
+        },
+        [API_URL, usuarioId]
+    );
+
     const cargarCodigos = useCallback(async () => {
         if (!usuarioId) return;
+
         setCargandoCodigos(true);
+
         try {
-            const resCodigos = await axios.get(`${API_URL}/user-codes?usuario_id=${usuarioId}`);
-            const listaCodigos = Array.isArray(resCodigos.data) ? resCodigos.data : [];
+            const resCodigos = await axios.get(`${API_URL}/user-codes`, {
+                params: {
+                    usuario_id: usuarioId
+                }
+            });
+
+            const listaCodigos = normalizarArray(resCodigos.data);
 
             const codigosConMascotas = await Promise.all(
                 listaCodigos.map(async (code) => {
-                    try {
-                        const resMascota = await axios.get(
-                            `${API_URL}/mascotas?codigo_id=${code.codigo_id}&usuario_id=${usuarioId}`
-                        );
-                        const mascotaValida =
-                            resMascota.data &&
-                                !Array.isArray(resMascota.data) &&
-                                typeof resMascota.data === "object" &&
-                                resMascota.data.id
-                                ? resMascota.data
-                                : null;
-                        return { ...code, mascota: mascotaValida };
-                    } catch {
-                        return { ...code, mascota: null };
-                    }
+                    const mascota = await cargarMascotaPorCodigo(code);
+
+                    return {
+                        ...code,
+                        mascota
+                    };
                 })
             );
+
             setCodigosVinculados(codigosConMascotas);
         } catch (err) {
-            console.error("Error al cargar códigos", err);
+            console.error("Error al cargar códigos:", err);
             setCodigosVinculados([]);
             mostrarToast("Error al cargar los códigos", "danger");
         } finally {
             setCargandoCodigos(false);
         }
-    }, [usuarioId, mostrarToast, API_URL]);
+    }, [usuarioId, mostrarToast, API_URL, cargarMascotaPorCodigo]);
 
     const handleRefresh = useCallback(async () => {
         setRefrescando(true);
@@ -87,46 +124,57 @@ function PanelUsuario({ usuarioId }) {
 
     useEffect(() => {
         if (!usuarioId) return;
+
         cargarDatosUsuario();
         cargarCodigos();
     }, [usuarioId, cargarDatosUsuario, cargarCodigos]);
 
     const codigosFiltrados = useMemo(() => {
         if (!filtro.trim()) return codigosVinculados;
+
         const term = filtro.toLowerCase();
+
         return codigosVinculados.filter((item) => {
-            if (item.mascota) {
-                return (
-                    item.mascota.nombre?.toLowerCase().includes(term) ||
-                    item.codigo_unico.toLowerCase().includes(term)
-                );
-            } else {
-                return item.codigo_unico.toLowerCase().includes(term);
-            }
+            const texto = [
+                item.codigo_unico,
+                item.mascota?.nombre,
+                item.mascota?.descripcion
+            ]
+                .filter(Boolean)
+                .join(" ")
+                .toLowerCase();
+
+            return texto.includes(term);
         });
     }, [codigosVinculados, filtro]);
 
     const handleVincular = useCallback(async () => {
         const codigoNormalizado = codigo.trim().toUpperCase();
+
         if (!/^[A-Z0-9]{8}$/.test(codigoNormalizado)) {
-            setMensaje("Formato inválido: 4 letras + 4 números (ej: ABCD1234)");
+            setMensaje("Formato inválido: 8 caracteres. Ej: ABCD1234");
             return;
         }
+
         setCargando(true);
         setMensaje("");
+
         try {
             await axios.post(`${API_URL}/user-codes`, {
                 usuario_id: usuarioId,
-                codigo_unico: codigoNormalizado,
+                codigo_unico: codigoNormalizado
             });
+
             setMensaje("✅ Código vinculado");
             setCodigo("");
             mostrarToast("Código vinculado correctamente", "success");
+
+            await cargarCodigos();
+
             setTimeout(() => {
                 setShowModalVincular(false);
                 setMensaje("");
-                cargarCodigos();
-            }, 1000);
+            }, 700);
         } catch (err) {
             const errorMsg = err.response?.data?.error || "Error al vincular";
             setMensaje(`❌ ${errorMsg}`);
@@ -160,9 +208,10 @@ function PanelUsuario({ usuarioId }) {
                 <div>
                     <h2>¡Bienvenido, {nombreUsuario}!</h2>
                     <p className="bienvenida-subtext">
-                        Gestiona los códigos de tus mascotas
+                        Gestioná los códigos de tus mascotas
                     </p>
                 </div>
+
                 <div className="bienvenida-buttons">
                     <Button
                         variant="primary"
@@ -187,6 +236,7 @@ function PanelUsuario({ usuarioId }) {
                         <Code size={20} /> Mis códigos vinculados
                         <span className="contador-badge">{codigosFiltrados.length}</span>
                     </h3>
+
                     <div className="header-actions">
                         <div className="search-wrapper">
                             <Search size={16} className="search-icon" />
@@ -198,12 +248,13 @@ function PanelUsuario({ usuarioId }) {
                                 className="filtro-input"
                             />
                         </div>
+
                         <Button
                             variant="outline-secondary"
                             size="sm"
                             onClick={handleRefresh}
                             disabled={refrescando || cargandoCodigos}
-                            className="btn-refresh"
+                            className="btn-refreshh"
                         >
                             <RefreshCw size={16} className={refrescando ? "spin" : ""} />
                             {refrescando ? "Actualizando..." : "Actualizar"}
@@ -223,8 +274,9 @@ function PanelUsuario({ usuarioId }) {
                         <p>
                             {filtro
                                 ? "No se encontraron resultados con ese filtro."
-                                : "No tienes códigos vinculados aún."}
+                                : "No tenés códigos vinculados aún."}
                         </p>
+
                         {!filtro && (
                             <Button variant="light" onClick={() => setShowModalVincular(true)}>
                                 Vincular mi primer código
@@ -236,7 +288,7 @@ function PanelUsuario({ usuarioId }) {
                         {codigosFiltrados.map((item) =>
                             item.mascota ? (
                                 <TarjetaMascota
-                                    key={`mascota-${item.codigo_id}`}
+                                    key={`mascota-${item.codigo_id}-${item.mascota.id}`}
                                     mascota={item.mascota}
                                     codigoUnico={item.codigo_unico}
                                     onActualizar={cargarCodigos}
@@ -266,23 +318,34 @@ function PanelUsuario({ usuarioId }) {
                 <Modal.Header closeButton>
                     <Modal.Title>Vincular nuevo código</Modal.Title>
                 </Modal.Header>
+
                 <Modal.Body>
                     <Form>
                         <Form.Group>
                             <Form.Label>Código de 8 caracteres</Form.Label>
+
                             <Form.Control
                                 type="text"
                                 placeholder="Ej: ABCD1234"
                                 value={codigo}
-                                onChange={(e) => setCodigo(e.target.value.toUpperCase())}
+                                onChange={(e) =>
+                                    setCodigo(
+                                        e.target.value
+                                            .toUpperCase()
+                                            .replace(/[^A-Z0-9]/g, "")
+                                            .slice(0, 8)
+                                    )
+                                }
                                 disabled={cargando}
                                 maxLength={8}
                                 autoFocus
                                 isInvalid={!!mensaje && !mensaje.includes("✅")}
                             />
+
                             <Form.Text className="text-muted">
-                                Formato: 4 letras mayúsculas + 4 números (ej: ABCD1234)
+                                Formato recomendado: 4 letras + 4 números. Ej: ABCD1234
                             </Form.Text>
+
                             {mensaje && (
                                 <Alert
                                     variant={mensaje.includes("✅") ? "success" : "danger"}
@@ -294,6 +357,7 @@ function PanelUsuario({ usuarioId }) {
                         </Form.Group>
                     </Form>
                 </Modal.Body>
+
                 <Modal.Footer>
                     <Button
                         variant="secondary"
@@ -302,6 +366,7 @@ function PanelUsuario({ usuarioId }) {
                     >
                         Cancelar
                     </Button>
+
                     <Button variant="primary" onClick={handleVincular} disabled={cargando}>
                         {cargando ? (
                             <Spinner as="span" size="sm" animation="border" />

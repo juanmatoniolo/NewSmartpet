@@ -1,33 +1,43 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-    FaCamera,
-    FaEnvelope,
     FaBell,
-    FaUser,
-    FaSignature,
     FaCalendarAlt,
-    FaLock,
+    FaCamera,
+    FaCheckCircle,
+    FaEnvelope,
     FaEye,
-    FaEyeSlash
+    FaEyeSlash,
+    FaLock,
+    FaSignature,
+    FaSpinner,
+    FaUser,
+    FaExclamationTriangle
 } from "react-icons/fa";
-import "./Configuracion.css";
+import API_BASE from "../config/api";
 import HeaderLogout from "../components/Logout/Logout";
+import "./Configuracion.css";
 
 const Configuracion = () => {
     const navigate = useNavigate();
     const userId = localStorage.getItem("userId");
     const isMounted = useRef(true);
+    const fileInputRef = useRef(null);
 
     const [loading, setLoading] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [uploadingPhoto, setUploadingPhoto] = useState(false);
+    const [passwordLoading, setPasswordLoading] = useState(false);
+
     const [mensaje, setMensaje] = useState("");
+    const [mensajeTipo, setMensajeTipo] = useState("success");
     const [errorEmail, setErrorEmail] = useState("");
     const [errorPassword, setErrorPassword] = useState("");
-
-
-    const API_BASE = (process.env.REACT_APP_API_BASE || "").replace(/\/$/, "");
-    // Timestamp para forzar recarga de imagen
     const [imageTimestamp, setImageTimestamp] = useState(Date.now());
+
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const [formData, setFormData] = useState({
         nombre: "",
@@ -44,12 +54,99 @@ const Configuracion = () => {
         newPassword: "",
         confirmNewPassword: ""
     });
-    const [passwordLoading, setPasswordLoading] = useState(false);
 
-    // Estados para mostrar/ocultar contraseñas
-    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-    const [showNewPassword, setShowNewPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const showMessage = (text, type = "success") => {
+        setMensaje(text);
+        setMensajeTipo(type);
+
+        window.clearTimeout(showMessage.timer);
+        showMessage.timer = window.setTimeout(() => {
+            setMensaje("");
+        }, 3500);
+    };
+
+    const buildImageUrl = (fotoPerfilValue) => {
+        if (!fotoPerfilValue) return "";
+
+        if (
+            fotoPerfilValue.startsWith("http://") ||
+            fotoPerfilValue.startsWith("https://")
+        ) {
+            return fotoPerfilValue;
+        }
+
+        const cleanPath = fotoPerfilValue.replace(/^\/+/, "");
+
+        if (cleanPath.startsWith("uploads/perfiles/")) {
+            return `${API_BASE}/${cleanPath}`;
+        }
+
+        return `${API_BASE}/uploads/perfiles/${cleanPath}`;
+    };
+
+    const normalizeUser = (user) => ({
+        nombre: user?.nombre || "",
+        apellido: user?.apellido || "",
+        email: user?.email || "",
+        confirmEmail: user?.email || "",
+        fecha_nacimiento: user?.fecha_nacimiento || "",
+        recibir_emails:
+            user?.recibir_emails === 1 ||
+            user?.recibir_emails === "1" ||
+            user?.recibir_emails === true,
+        foto_perfil: user?.foto_perfil || ""
+    });
+
+    const updateLocalUser = (updatedUser) => {
+        const userStr = localStorage.getItem("user");
+        const currentUser = userStr ? JSON.parse(userStr) : {};
+
+        localStorage.setItem("userEmail", updatedUser.email || currentUser.email || "");
+
+        localStorage.setItem(
+            "user",
+            JSON.stringify({
+                ...currentUser,
+                ...updatedUser
+            })
+        );
+
+        window.dispatchEvent(new Event("userDataUpdated"));
+    };
+
+    const fetchUserData = async () => {
+        setLoading(true);
+        setMensaje("");
+
+        try {
+            const res = await fetch(`${API_BASE}/index.php/usuarios/${userId}`);
+            const data = await res.json();
+
+            if (!res.ok || data.success === false) {
+                throw new Error(data.error || "No se pudieron cargar tus datos");
+            }
+
+            const user = data.user || data.data || data;
+
+            if (!user || !user.id) {
+                throw new Error("La API no devolvió datos válidos del usuario");
+            }
+
+            if (isMounted.current) {
+                setFormData(normalizeUser(user));
+                updateLocalUser(user);
+                setImageTimestamp(Date.now());
+            }
+        } catch (error) {
+            if (isMounted.current) {
+                showMessage(error.message || "Error al cargar datos del usuario", "error");
+            }
+        } finally {
+            if (isMounted.current) {
+                setLoading(false);
+            }
+        }
+    };
 
     useEffect(() => {
         isMounted.current = true;
@@ -63,41 +160,79 @@ const Configuracion = () => {
 
         return () => {
             isMounted.current = false;
+            window.clearTimeout(showMessage.timer);
         };
     }, [userId, navigate]);
 
-    const fetchUserData = async () => {
-        try {
-            const res = await fetch(`${API_BASE}/index.php/usuarios/${userId}`);
-            const data = await res.json();
+    const handleChange = (field, value) => {
+        setFormData((prev) => ({
+            ...prev,
+            [field]: value
+        }));
 
-            if (isMounted.current && data) {
-                setFormData((prev) => ({
-                    ...prev,
-                    nombre: data.nombre || "",
-                    apellido: data.apellido || "",
-                    email: data.email || "",
-                    confirmEmail: data.email || "",
-                    fecha_nacimiento: data.fecha_nacimiento || "",
-                    recibir_emails: data.recibir_emails === 1 || data.recibir_emails === true,
-                    foto_perfil: data.foto_perfil || ""
-                }));
-                // Actualizar timestamp para refrescar imagen
-                setImageTimestamp(Date.now());
-            }
-        } catch (error) {
-            console.error("Error al cargar datos:", error);
+        if (field === "email" || field === "confirmEmail") {
+            setErrorEmail("");
         }
     };
 
+
+    const refreshUserAfterPhotoUpload = async () => {
+        const res = await fetch(`${API_BASE}/index.php/usuarios/${userId}`);
+        const data = await res.json();
+
+        if (!res.ok || data.success === false) {
+            throw new Error(data.error || "No se pudo refrescar el usuario");
+        }
+
+        const user = data.user || data.data || data;
+
+        setFormData(normalizeUser(user));
+        updateLocalUser(user);
+        setImageTimestamp(Date.now());
+
+        window.dispatchEvent(new CustomEvent("userPhotoUpdated", {
+            detail: {
+                foto_perfil: user.foto_perfil,
+                timestamp: Date.now()
+            }
+        }));
+
+        window.dispatchEvent(new CustomEvent("userDataUpdated", {
+            detail: {
+                user,
+                timestamp: Date.now()
+            }
+        }));
+    };
+    const handlePasswordInputChange = (field, value) => {
+        setPasswordData((prev) => ({
+            ...prev,
+            [field]: value
+        }));
+
+        setErrorPassword("");
+    };
+
     const handleImageUpload = async (e) => {
-        const file = e.target.files[0];
+        const file = e.target.files?.[0];
         if (!file) return;
+
+        const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+
+        if (!allowedTypes.includes(file.type)) {
+            showMessage("Formato inválido. Usá JPG, PNG o WEBP", "error");
+            return;
+        }
+
+        if (file.size > 2 * 1024 * 1024) {
+            showMessage("La imagen no puede superar los 2MB", "error");
+            return;
+        }
 
         const formDataImg = new FormData();
         formDataImg.append("imagen", file);
 
-        setLoading(true);
+        setUploadingPhoto(true);
 
         try {
             const res = await fetch(`${API_BASE}/index.php/upload-perfil/${userId}`, {
@@ -107,64 +242,86 @@ const Configuracion = () => {
 
             const data = await res.json();
 
-            if (data.success && isMounted.current) {
-                // Actualizar estado con la nueva URL
-                setFormData((prev) => ({
-                    ...prev,
-                    foto_perfil: data.url
-                }));
-                // Cambiar timestamp para forzar recarga
-                setImageTimestamp(Date.now());
+            if (!res.ok || !data.success) {
+                throw new Error(data.error || "No se pudo actualizar la foto");
+            }
 
-                // Actualizar localStorage
-                const userStr = localStorage.getItem("user");
-                if (userStr) {
-                    const user = JSON.parse(userStr);
-                    user.foto_perfil = data.url;
-                    localStorage.setItem("user", JSON.stringify(user));
-                }
-                // Disparar evento para actualizar header
-                window.dispatchEvent(new Event("userPhotoUpdated"));
-                setMensaje("Foto actualizada correctamente");
-                setTimeout(() => setMensaje(""), 3000);
-            } else {
-                if (isMounted.current) {
-                    setMensaje(data.error || "No se pudo actualizar la foto");
-                }
+            const fotoPerfilPath = data.foto_perfil || data.url;
+
+            if (!fotoPerfilPath) {
+                throw new Error("La API no devolvió la ruta de la foto");
             }
+
+            setFormData((prev) => ({
+                ...prev,
+                foto_perfil: fotoPerfilPath
+            }));
+
+            updateLocalUser({
+                id: userId,
+                foto_perfil: fotoPerfilPath
+            });
+
+            setImageTimestamp(Date.now());
+
+            await refreshUserAfterPhotoUpload();
+
+            showMessage("Foto actualizada correctamente", "success");
         } catch (error) {
-            if (isMounted.current) {
-                setMensaje("Error al subir la imagen");
-            }
+            showMessage(error.message || "Error al subir la imagen", "error");
         } finally {
-            if (isMounted.current) {
-                setLoading(false);
+            setUploadingPhoto(false);
+
+            if (fileInputRef.current) {
+                fileInputRef.current.value = "";
             }
         }
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const validateProfileForm = () => {
         setErrorEmail("");
-        setMensaje("");
 
-        if (formData.email !== formData.confirmEmail) {
-            setErrorEmail("Los correos electrónicos no coinciden");
-            return;
+        const nombre = formData.nombre.trim();
+        const apellido = formData.apellido.trim();
+        const email = formData.email.trim();
+        const confirmEmail = formData.confirmEmail.trim();
+
+        if (!nombre) {
+            showMessage("El nombre no puede estar vacío", "error");
+            return false;
         }
 
-        if (!formData.email.trim()) {
+        if (!apellido) {
+            showMessage("El apellido no puede estar vacío", "error");
+            return false;
+        }
+
+        if (!email) {
             setErrorEmail("El email no puede estar vacío");
-            return;
+            return false;
+        }
+
+        if (email !== confirmEmail) {
+            setErrorEmail("Los correos electrónicos no coinciden");
+            return false;
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(formData.email)) {
+
+        if (!emailRegex.test(email)) {
             setErrorEmail("Formato de email inválido");
-            return;
+            return false;
         }
 
-        setLoading(true);
+        return true;
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!validateProfileForm()) return;
+
+        setSaving(true);
 
         try {
             const payload = {
@@ -176,7 +333,7 @@ const Configuracion = () => {
             };
 
             const res = await fetch(`${API_BASE}/index.php/usuarios/${userId}`, {
-                method: "PUT",
+                method: "PATCH",
                 headers: {
                     "Content-Type": "application/json"
                 },
@@ -185,41 +342,42 @@ const Configuracion = () => {
 
             const responseData = await res.json();
 
-            if (res.ok) {
-                if (isMounted.current) {
-                    setMensaje("Configuración guardada correctamente");
-                    localStorage.setItem("userEmail", formData.email);
-                    const userStr = localStorage.getItem("user");
-                    if (userStr) {
-                        const user = JSON.parse(userStr);
-                        user.nombre = formData.nombre;
-                        user.apellido = formData.apellido;
-                        user.email = formData.email;
-                        localStorage.setItem("user", JSON.stringify(user));
-                    }
-                    window.dispatchEvent(new Event("userDataUpdated"));
-                    setTimeout(() => setMensaje(""), 3000);
-                }
-            } else {
-                if (isMounted.current) {
-                    setMensaje(responseData.error || "Error al guardar cambios");
-                }
+            if (!res.ok || !responseData.success) {
+                throw new Error(responseData.error || "Error al guardar cambios");
+            }
+
+            const updatedUser = responseData.user || {
+                id: userId,
+                ...payload,
+                foto_perfil: formData.foto_perfil
+            };
+
+            if (isMounted.current) {
+                setFormData((prev) =>
+                    normalizeUser({
+                        ...updatedUser,
+                        foto_perfil: updatedUser.foto_perfil || prev.foto_perfil
+                    })
+                );
+
+                updateLocalUser(updatedUser);
+                showMessage("Tus datos se guardaron correctamente", "success");
             }
         } catch (error) {
             if (isMounted.current) {
-                setMensaje("Error de conexión");
+                showMessage(error.message || "Error de conexión", "error");
             }
         } finally {
             if (isMounted.current) {
-                setLoading(false);
+                setSaving(false);
             }
         }
     };
 
     const handlePasswordChange = async (e) => {
         e.preventDefault();
+
         setErrorPassword("");
-        setMensaje("");
 
         const { currentPassword, newPassword, confirmNewPassword } = passwordData;
 
@@ -243,7 +401,9 @@ const Configuracion = () => {
         try {
             const res = await fetch(`${API_BASE}/index.php/change-password`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify({
                     usuario_id: userId,
                     current_password: currentPassword,
@@ -253,247 +413,390 @@ const Configuracion = () => {
 
             const data = await res.json();
 
-            if (res.ok && data.success) {
-                setMensaje("Contraseña actualizada correctamente");
-                setPasswordData({ currentPassword: "", newPassword: "", confirmNewPassword: "" });
-                setTimeout(() => setMensaje(""), 3000);
-            } else {
-                setErrorPassword(data.error || "Error al cambiar la contraseña");
+            if (!res.ok || !data.success) {
+                throw new Error(data.error || "Error al cambiar la contraseña");
+            }
+
+            if (isMounted.current) {
+                setPasswordData({
+                    currentPassword: "",
+                    newPassword: "",
+                    confirmNewPassword: ""
+                });
+
+                showMessage("Contraseña actualizada correctamente", "success");
             }
         } catch (error) {
-            setErrorPassword("Error de conexión al cambiar la contraseña");
+            if (isMounted.current) {
+                setErrorPassword(error.message || "Error al cambiar la contraseña");
+            }
         } finally {
-            setPasswordLoading(false);
+            if (isMounted.current) {
+                setPasswordLoading(false);
+            }
         }
     };
 
-    const handleChange = (field, value) => {
-        setFormData((prev) => ({
-            ...prev,
-            [field]: value
-        }));
-    };
+    const fotoUrl = formData.foto_perfil
+        ? `${buildImageUrl(formData.foto_perfil)}?t=${imageTimestamp}`
+        : null;
 
-    const handlePasswordInputChange = (field, value) => {
-        setPasswordData((prev) => ({
-            ...prev,
-            [field]: value
-        }));
-    };
-
-    // URL de la foto con timestamp para evitar caché
-    const fotoUrl = formData.foto_perfil ? `${formData.foto_perfil}?t=${imageTimestamp}` : null;
+    const nombreCompleto = `${formData.nombre || ""} ${formData.apellido || ""}`.trim();
 
     return (
         <>
             <HeaderLogout />
 
-            <div className="config-container">
-                <div className="config-card">
-                    <div className="config-header">
-                        <h1>Configuración de perfil</h1>
-                        <p>Actualizá tu información personal, contraseña y preferencias de contacto.</p>
+            <main className="config-page">
+                <section className="config-shell" aria-labelledby="config-title">
+                    <div className="config-hero">
+                        <div>
+                            <p className="config-kicker">Mi cuenta</p>
+                            <h1 id="config-title">Configuración de perfil</h1>
+                            <p>
+                                Visualizá y actualizá tus datos personales, foto de perfil,
+                                preferencias y contraseña.
+                            </p>
+                        </div>
+
+                        <div className="config-status">
+                            {loading ? (
+                                <>
+                                    <FaSpinner className="spin" />
+                                    <span>Cargando datos...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <FaCheckCircle />
+                                    <span>Perfil activo</span>
+                                </>
+                            )}
+                        </div>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="config-form">
-                        {/* Foto de perfil */}
-                        <div className="config-section photo-section">
-                            <label className="photo-label">
-                                <div className="photo-wrapper">
+                    {mensaje && (
+                        <div className={`config-alert ${mensajeTipo === "error" ? "error" : "success"}`}>
+                            {mensajeTipo === "error" ? <FaExclamationTriangle /> : <FaCheckCircle />}
+                            <span>{mensaje}</span>
+                        </div>
+                    )}
+
+                    <div className="config-grid">
+                        <aside className="profile-card">
+                            <div className="profile-photo-wrap">
+                                <button
+                                    type="button"
+                                    className="profile-photo"
+                                    onClick={() => fileInputRef.current?.click()}
+                                    disabled={uploadingPhoto}
+                                    aria-label="Cambiar foto de perfil"
+                                >
                                     {fotoUrl ? (
-                                        <img src={fotoUrl} alt="Perfil" />
+                                        <img
+                                            src={fotoUrl}
+                                            alt={`Foto de perfil de ${nombreCompleto || "usuario"}`}
+                                            loading="lazy"
+                                            onError={() =>
+                                                setFormData((prev) => ({
+                                                    ...prev,
+                                                    foto_perfil: ""
+                                                }))
+                                            }
+                                        />
                                     ) : (
-                                        <div className="photo-placeholder">
-                                            <FaCamera />
-                                        </div>
+                                        <FaUser />
                                     )}
-                                    <div className="photo-overlay">
-                                        <FaCamera />
-                                        <span>Cambiar foto</span>
-                                    </div>
-                                </div>
+
+                                    <span className="photo-layer">
+                                        {uploadingPhoto ? <FaSpinner className="spin" /> : <FaCamera />}
+                                        <span>{uploadingPhoto ? "Subiendo..." : "Cambiar"}</span>
+                                    </span>
+                                </button>
+
                                 <input
+                                    ref={fileInputRef}
                                     type="file"
-                                    accept="image/*"
+                                    accept="image/jpeg,image/png,image/webp"
                                     onChange={handleImageUpload}
                                     hidden
                                 />
-                            </label>
-                        </div>
-
-                        {/* Nombre */}
-                        <div className="config-section">
-                            <label>
-                                <FaUser />
-                                <span>Nombre</span>
-                            </label>
-                            <input
-                                type="text"
-                                value={formData.nombre}
-                                onChange={(e) => handleChange("nombre", e.target.value)}
-                                placeholder="Tu nombre"
-                                required
-                            />
-                        </div>
-
-                        {/* Apellido */}
-                        <div className="config-section">
-                            <label>
-                                <FaSignature />
-                                <span>Apellido</span>
-                            </label>
-                            <input
-                                type="text"
-                                value={formData.apellido}
-                                onChange={(e) => handleChange("apellido", e.target.value)}
-                                placeholder="Tu apellido"
-                                required
-                            />
-                        </div>
-
-                        {/* Fecha nacimiento */}
-                        <div className="config-section">
-                            <label>
-                                <FaCalendarAlt />
-                                <span>Fecha de nacimiento</span>
-                            </label>
-                            <input
-                                type="date"
-                                value={formData.fecha_nacimiento}
-                                onChange={(e) => handleChange("fecha_nacimiento", e.target.value)}
-                            />
-                        </div>
-
-                        {/* Email */}
-                        <div className="config-section">
-                            <label>
-                                <FaEnvelope />
-                                <span>Correo electrónico</span>
-                            </label>
-                            <input
-                                type="email"
-                                value={formData.email}
-                                onChange={(e) => handleChange("email", e.target.value)}
-                                placeholder="ejemplo@correo.com"
-                                required
-                            />
-                        </div>
-
-                        {/* Confirmar email */}
-                        <div className="config-section">
-                            <label>
-                                <FaEnvelope />
-                                <span>Confirmar correo</span>
-                            </label>
-                            <input
-                                type="email"
-                                value={formData.confirmEmail}
-                                onChange={(e) => handleChange("confirmEmail", e.target.value)}
-                                placeholder="Repite tu correo"
-                                className={errorEmail ? "input-error" : ""}
-                                required
-                            />
-                            {errorEmail && <span className="error-message">{errorEmail}</span>}
-                        </div>
-
-                        {/* Notificaciones */}
-                        <div className="config-section toggle">
-                            <div className="toggle-label">
-                                <FaBell />
-                                <span>Recibir notificaciones por email</span>
                             </div>
-                            <label className="switch">
-                                <input
-                                    type="checkbox"
-                                    checked={formData.recibir_emails}
-                                    onChange={(e) => handleChange("recibir_emails", e.target.checked)}
-                                />
-                                <span className="slider"></span>
-                            </label>
-                        </div>
 
-                        {/* Sección cambio de contraseña con visibilidad */}
-                        <div className="config-section password-section">
-                            <div className="section-title">
-                                <FaLock />
-                                <span>Cambiar contraseña</span>
+                            <h2>{nombreCompleto || "Usuario SmartPet"}</h2>
+                            <p>{formData.email || "Correo no cargado"}</p>
+
+                            <div className="profile-meta">
+                                <div>
+                                    <span>Fecha nacimiento</span>
+                                    <strong>{formData.fecha_nacimiento || "Sin cargar"}</strong>
+                                </div>
+                                <div>
+                                    <span>Notificaciones</span>
+                                    <strong>{formData.recibir_emails ? "Activadas" : "Desactivadas"}</strong>
+                                </div>
                             </div>
-                            <div className="password-fields">
-                                {/* Contraseña actual */}
-                                <div className="password-input-wrapper">
-                                    <input
-                                        type={showCurrentPassword ? "text" : "password"}
-                                        placeholder="Contraseña actual"
-                                        value={passwordData.currentPassword}
-                                        onChange={(e) => handlePasswordInputChange("currentPassword", e.target.value)}
-                                    />
-                                    <button
-                                        type="button"
-                                        className="toggle-password"
-                                        onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                                    >
-                                        {showCurrentPassword ? <FaEyeSlash /> : <FaEye />}
-                                    </button>
+
+                            <button
+                                type="button"
+                                className="btn-secondary"
+                                onClick={() => fileInputRef.current?.click()}
+                                disabled={uploadingPhoto}
+                            >
+                                <FaCamera />
+                                {uploadingPhoto ? "Subiendo foto..." : "Subir nueva foto"}
+                            </button>
+                        </aside>
+
+                        <section className="config-card">
+                            <div className="card-heading">
+                                <h2>Datos personales</h2>
+                                <p>Estos datos se usan para identificar tu cuenta.</p>
+                            </div>
+
+                            <form onSubmit={handleSubmit} className="config-form">
+                                <div className="form-row">
+                                    <div className="field-group">
+                                        <label htmlFor="nombre">
+                                            <FaUser />
+                                            Nombre
+                                        </label>
+                                        <input
+                                            id="nombre"
+                                            type="text"
+                                            value={formData.nombre}
+                                            onChange={(e) => handleChange("nombre", e.target.value)}
+                                            placeholder="Tu nombre"
+                                            disabled={loading || saving}
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="field-group">
+                                        <label htmlFor="apellido">
+                                            <FaSignature />
+                                            Apellido
+                                        </label>
+                                        <input
+                                            id="apellido"
+                                            type="text"
+                                            value={formData.apellido}
+                                            onChange={(e) => handleChange("apellido", e.target.value)}
+                                            placeholder="Tu apellido"
+                                            disabled={loading || saving}
+                                            required
+                                        />
+                                    </div>
                                 </div>
 
-                                {/* Nueva contraseña */}
-                                <div className="password-input-wrapper">
+                                <div className="field-group">
+                                    <label htmlFor="fecha_nacimiento">
+                                        <FaCalendarAlt />
+                                        Fecha de nacimiento
+                                    </label>
                                     <input
-                                        type={showNewPassword ? "text" : "password"}
-                                        placeholder="Nueva contraseña"
-                                        value={passwordData.newPassword}
-                                        onChange={(e) => handlePasswordInputChange("newPassword", e.target.value)}
+                                        id="fecha_nacimiento"
+                                        type="date"
+                                        value={formData.fecha_nacimiento}
+                                        onChange={(e) => handleChange("fecha_nacimiento", e.target.value)}
+                                        disabled={loading || saving}
                                     />
-                                    <button
-                                        type="button"
-                                        className="toggle-password"
-                                        onClick={() => setShowNewPassword(!showNewPassword)}
-                                    >
-                                        {showNewPassword ? <FaEyeSlash /> : <FaEye />}
-                                    </button>
                                 </div>
 
-                                {/* Confirmar nueva contraseña */}
-                                <div className="password-input-wrapper">
-                                    <input
-                                        type={showConfirmPassword ? "text" : "password"}
-                                        placeholder="Confirmar nueva contraseña"
-                                        value={passwordData.confirmNewPassword}
-                                        onChange={(e) => handlePasswordInputChange("confirmNewPassword", e.target.value)}
-                                    />
-                                    <button
-                                        type="button"
-                                        className="toggle-password"
-                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                    >
-                                        {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
-                                    </button>
+                                <div className="form-row">
+                                    <div className="field-group">
+                                        <label htmlFor="email">
+                                            <FaEnvelope />
+                                            Correo electrónico
+                                        </label>
+                                        <input
+                                            id="email"
+                                            type="email"
+                                            value={formData.email}
+                                            onChange={(e) => handleChange("email", e.target.value)}
+                                            placeholder="ejemplo@correo.com"
+                                            disabled={loading || saving}
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="field-group">
+                                        <label htmlFor="confirmEmail">
+                                            <FaEnvelope />
+                                            Confirmar correo
+                                        </label>
+                                        <input
+                                            id="confirmEmail"
+                                            type="email"
+                                            value={formData.confirmEmail}
+                                            onChange={(e) => handleChange("confirmEmail", e.target.value)}
+                                            placeholder="Repetí tu correo"
+                                            className={errorEmail ? "input-error" : ""}
+                                            disabled={loading || saving}
+                                            required
+                                        />
+                                        {errorEmail && <small className="field-error">{errorEmail}</small>}
+                                    </div>
                                 </div>
 
-                                {errorPassword && <span className="error-message">{errorPassword}</span>}
-                                <button
-                                    type="button"
-                                    className="btn-change-password"
-                                    onClick={handlePasswordChange}
-                                    disabled={passwordLoading}
-                                >
-                                    {passwordLoading ? "Cambiando..." : "Actualizar contraseña"}
-                                </button>
-                            </div>
-                        </div>
+                                <div className="toggle-card">
+                                    <div>
+                                        <label htmlFor="recibir_emails" className="toggle-title">
+                                            <FaBell />
+                                            Recibir notificaciones por email
+                                        </label>
+                                        <p>Te avisaremos sobre novedades importantes de tu cuenta.</p>
+                                    </div>
 
-                        {mensaje && (
-                            <div className={`mensaje ${mensaje.toLowerCase().includes("error") ? "mensaje-error" : ""}`}>
-                                {mensaje}
-                            </div>
-                        )}
+                                    <label className="switch">
+                                        <input
+                                            id="recibir_emails"
+                                            type="checkbox"
+                                            checked={formData.recibir_emails}
+                                            onChange={(e) => handleChange("recibir_emails", e.target.checked)}
+                                            disabled={loading || saving}
+                                        />
+                                        <span className="slider"></span>
+                                    </label>
+                                </div>
 
-                        <button type="submit" className="btn-save" disabled={loading}>
-                            {loading ? "Guardando..." : "Guardar cambios"}
-                        </button>
-                    </form>
-                </div>
-            </div>
+                                <div className="actions-row">
+                                    <button
+                                        type="button"
+                                        className="btn-light"
+                                        onClick={fetchUserData}
+                                        disabled={loading || saving}
+                                    >
+                                        {loading ? <FaSpinner className="spin" /> : null}
+                                        Recargar datos
+                                    </button>
+
+                                    <button type="submit" className="btn-primary" disabled={loading || saving}>
+                                        {saving ? (
+                                            <>
+                                                <FaSpinner className="spin" />
+                                                Guardando...
+                                            </>
+                                        ) : (
+                                            "Guardar cambios"
+                                        )}
+                                    </button>
+                                </div>
+                            </form>
+                        </section>
+
+                        <section className="config-card password-card">
+                            <div className="card-heading">
+                                <h2>Seguridad</h2>
+                                <p>Cambiá tu contraseña periódicamente para proteger tu cuenta.</p>
+                            </div>
+
+                            <form onSubmit={handlePasswordChange} className="config-form">
+                                <div className="field-group">
+                                    <label htmlFor="currentPassword">
+                                        <FaLock />
+                                        Contraseña actual
+                                    </label>
+
+                                    <div className="password-input">
+                                        <input
+                                            id="currentPassword"
+                                            type={showCurrentPassword ? "text" : "password"}
+                                            value={passwordData.currentPassword}
+                                            onChange={(e) =>
+                                                handlePasswordInputChange("currentPassword", e.target.value)
+                                            }
+                                            placeholder="Ingresá tu contraseña actual"
+                                            disabled={passwordLoading}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowCurrentPassword((prev) => !prev)}
+                                            aria-label="Mostrar u ocultar contraseña actual"
+                                        >
+                                            {showCurrentPassword ? <FaEyeSlash /> : <FaEye />}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="form-row">
+                                    <div className="field-group">
+                                        <label htmlFor="newPassword">
+                                            <FaLock />
+                                            Nueva contraseña
+                                        </label>
+
+                                        <div className="password-input">
+                                            <input
+                                                id="newPassword"
+                                                type={showNewPassword ? "text" : "password"}
+                                                value={passwordData.newPassword}
+                                                onChange={(e) =>
+                                                    handlePasswordInputChange("newPassword", e.target.value)
+                                                }
+                                                placeholder="Mínimo 6 caracteres"
+                                                disabled={passwordLoading}
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowNewPassword((prev) => !prev)}
+                                                aria-label="Mostrar u ocultar nueva contraseña"
+                                            >
+                                                {showNewPassword ? <FaEyeSlash /> : <FaEye />}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="field-group">
+                                        <label htmlFor="confirmNewPassword">
+                                            <FaLock />
+                                            Confirmar contraseña
+                                        </label>
+
+                                        <div className="password-input">
+                                            <input
+                                                id="confirmNewPassword"
+                                                type={showConfirmPassword ? "text" : "password"}
+                                                value={passwordData.confirmNewPassword}
+                                                onChange={(e) =>
+                                                    handlePasswordInputChange("confirmNewPassword", e.target.value)
+                                                }
+                                                placeholder="Repetí la nueva contraseña"
+                                                disabled={passwordLoading}
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowConfirmPassword((prev) => !prev)}
+                                                aria-label="Mostrar u ocultar confirmación"
+                                            >
+                                                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {errorPassword && <small className="field-error">{errorPassword}</small>}
+
+                                <div className="actions-row end">
+                                    <button
+                                        type="submit"
+                                        className="btn-primary"
+                                        disabled={passwordLoading}
+                                    >
+                                        {passwordLoading ? (
+                                            <>
+                                                <FaSpinner className="spin" />
+                                                Actualizando...
+                                            </>
+                                        ) : (
+                                            "Actualizar contraseña"
+                                        )}
+                                    </button>
+                                </div>
+                            </form>
+                        </section>
+                    </div>
+                </section>
+            </main>
         </>
     );
 };

@@ -288,8 +288,3 @@
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
     /* pequeña sombra para mejorar contraste */
 }
-
-/* Ajuste del menú para que el texto de los items sea legible (ya lo es) */
-.menu-item {
-    /* ... mantén tus estilos existentes ... */
-}

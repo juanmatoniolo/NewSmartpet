@@ -1,10 +1,37 @@
-import React, { useState, useEffect } from "react";
-import { Modal, Button, Form, Row, Col, InputGroup, Badge, Spinner } from "react-bootstrap";
-import { Calendar, Clock, FileText, User, Bell } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import {
+    Modal,
+    Button,
+    Form,
+    Row,
+    Col,
+    InputGroup,
+    Badge,
+    Spinner,
+    Alert
+} from "react-bootstrap";
+import {
+    Calendar,
+    Clock,
+    FileText,
+    User,
+    Bell,
+    PawPrint,
+    CheckCircle
+} from "lucide-react";
 import styles from "./ModalCita.module.css";
 
-export default function ModalCita({ show, onHide, citaEdit, contactos = [], onSave }) {
+export default function ModalCita({
+    show,
+    onHide,
+    citaEdit,
+    contactos = [],
+    mascotas = [],
+    mascotaId = "",
+    onSave
+}) {
     const [form, setForm] = useState({
+        mascota_id: "",
         id_contacto: "",
         fecha_evento: "",
         proxima_fecha: "",
@@ -12,23 +39,37 @@ export default function ModalCita({ show, onHide, citaEdit, contactos = [], onSa
         nota: "",
         recordatorio: false
     });
+
     const [guardando, setGuardando] = useState(false);
     const [errores, setErrores] = useState({});
+
+    const isEdit = Boolean(citaEdit);
 
     useEffect(() => {
         if (!show) return;
 
         if (citaEdit) {
             setForm({
+                mascota_id:
+                    citaEdit.mascota_id?.toString() ||
+                    citaEdit.id_mascota?.toString() ||
+                    mascotaId?.toString() ||
+                    "",
                 id_contacto: citaEdit.id_contacto?.toString() || "",
                 fecha_evento: citaEdit.fecha_evento || "",
                 proxima_fecha: citaEdit.proxima_fecha || "",
                 titulo: citaEdit.titulo || "",
                 nota: citaEdit.nota || "",
-                recordatorio: citaEdit.recordatorio || false
+                recordatorio:
+                    citaEdit.recordatorio === true ||
+                    citaEdit.recordatorio === 1 ||
+                    citaEdit.recordatorio === "1"
             });
         } else {
             setForm({
+                mascota_id:
+                    mascotaId?.toString() ||
+                    (mascotas.length === 1 ? mascotas[0].id?.toString() : ""),
                 id_contacto: "",
                 fecha_evento: "",
                 proxima_fecha: "",
@@ -39,16 +80,51 @@ export default function ModalCita({ show, onHide, citaEdit, contactos = [], onSa
         }
 
         setErrores({});
-    }, [citaEdit, show]);
+    }, [citaEdit, show, mascotaId, mascotas]);
+
+    const mascotaSeleccionada = useMemo(
+        () => mascotas.find((m) => String(m.id) === String(form.mascota_id)),
+        [mascotas, form.mascota_id]
+    );
+
+    const contactosFiltrados = useMemo(() => {
+        if (!form.mascota_id) return contactos;
+
+        return contactos.filter((contacto) => {
+            const contactoMascotaId =
+                contacto.mascota_id || contacto.id_mascota || contacto.mascotaId || "";
+
+            return !contactoMascotaId || String(contactoMascotaId) === String(form.mascota_id);
+        });
+    }, [contactos, form.mascota_id]);
+
+    const contactoSeleccionado = useMemo(
+        () => contactos.find((c) => String(c.id) === String(form.id_contacto)),
+        [contactos, form.id_contacto]
+    );
 
     const validateForm = () => {
         const errors = {};
 
+        if (!form.mascota_id) errors.mascota_id = "Seleccioná la mascota";
         if (!form.titulo.trim()) errors.titulo = "El título es obligatorio";
         if (!form.nota.trim()) errors.nota = "El detalle es obligatorio";
         if (!form.fecha_evento.trim()) errors.fecha_evento = "La fecha es obligatoria";
 
         return errors;
+    };
+
+    const setField = (field, value) => {
+        setForm((prev) => ({
+            ...prev,
+            [field]: value,
+            ...(field === "mascota_id" ? { id_contacto: "" } : {})
+        }));
+
+        setErrores((prev) => ({
+            ...prev,
+            [field]: ""
+        }));
     };
 
     const handleClose = () => {
@@ -60,6 +136,7 @@ export default function ModalCita({ show, onHide, citaEdit, contactos = [], onSa
         e.preventDefault();
 
         const errors = validateForm();
+
         if (Object.keys(errors).length > 0) {
             setErrores(errors);
             return;
@@ -67,7 +144,17 @@ export default function ModalCita({ show, onHide, citaEdit, contactos = [], onSa
 
         try {
             setGuardando(true);
-            const ok = await onSave(form);
+
+            const payload = {
+                ...form,
+                mascota_id: Number(form.mascota_id),
+                id_mascota: Number(form.mascota_id),
+                id_contacto: form.id_contacto ? Number(form.id_contacto) : null,
+                recordatorio: form.recordatorio ? 1 : 0
+            };
+
+            const ok = await onSave(payload);
+
             if (ok) handleClose();
         } finally {
             setGuardando(false);
@@ -82,6 +169,7 @@ export default function ModalCita({ show, onHide, citaEdit, contactos = [], onSa
             petshop: "🏪",
             guarderia: "🏠"
         };
+
         return mapa[tipo] || "📋";
     };
 
@@ -99,15 +187,13 @@ export default function ModalCita({ show, onHide, citaEdit, contactos = [], onSa
         return tipos[c.tipo] || "Sin tipo";
     };
 
-    const contactoSeleccionado = contactos.find((c) => c.id === parseInt(form.id_contacto));
-
     return (
         <Modal
             show={show}
             onHide={handleClose}
             size="lg"
             scrollable
-            centered={false}
+            centered
             backdrop={guardando ? "static" : true}
             keyboard={!guardando}
             autoFocus={false}
@@ -121,8 +207,12 @@ export default function ModalCita({ show, onHide, citaEdit, contactos = [], onSa
                         </div>
 
                         <div className={styles.title}>
-                            <h4>{citaEdit ? "Editar" : "Nueva"} cita</h4>
-                            <small>Programa y organiza las citas de tu mascota</small>
+                            <h4>{isEdit ? "Editar cita" : "Nueva cita"}</h4>
+                            <small>
+                                {mascotaSeleccionada
+                                    ? `Actividad para ${mascotaSeleccionada.nombre}`
+                                    : "Elegí la mascota y completá los datos del turno"}
+                            </small>
                         </div>
                     </Modal.Title>
                 </Modal.Header>
@@ -131,7 +221,45 @@ export default function ModalCita({ show, onHide, citaEdit, contactos = [], onSa
                     <Row className="g-3 g-md-4">
                         <Col xs={12}>
                             <div className={styles.sectionTitle}>
-                                <span>👤</span> Contacto
+                                <span>🐾</span> Mascota
+                            </div>
+
+                            <InputGroup hasValidation>
+                                <InputGroup.Text className={styles.inputGroupText}>
+                                    <PawPrint size={16} />
+                                </InputGroup.Text>
+
+                                <Form.Select
+                                    value={form.mascota_id}
+                                    onChange={(e) => setField("mascota_id", e.target.value)}
+                                    className={styles.formControl}
+                                    isInvalid={!!errores.mascota_id}
+                                    disabled={guardando || Boolean(mascotaId)}
+                                >
+                                    <option value="">Seleccioná la mascota</option>
+                                    {mascotas.map((m) => (
+                                        <option key={m.id} value={m.id}>
+                                            🐾 {m.nombre || `Mascota #${m.id}`}
+                                        </option>
+                                    ))}
+                                </Form.Select>
+
+                                <Form.Control.Feedback type="invalid">
+                                    {errores.mascota_id}
+                                </Form.Control.Feedback>
+                            </InputGroup>
+
+                            {mascotaSeleccionada && (
+                                <div className={styles.contactoPreview}>
+                                    <strong>🐾 {mascotaSeleccionada.nombre}</strong>
+                                    <span>Esta cita quedará asociada a esta mascota</span>
+                                </div>
+                            )}
+                        </Col>
+
+                        <Col xs={12}>
+                            <div className={styles.sectionTitle}>
+                                <span>👤</span> Contacto o proveedor
                             </div>
 
                             <Form.Group>
@@ -142,14 +270,15 @@ export default function ModalCita({ show, onHide, citaEdit, contactos = [], onSa
 
                                     <Form.Select
                                         value={form.id_contacto}
-                                        onChange={(e) => setForm({ ...form, id_contacto: e.target.value })}
+                                        onChange={(e) => setField("id_contacto", e.target.value)}
                                         className={styles.formControl}
                                         disabled={guardando}
                                     >
                                         <option value="">Sin contacto asociado</option>
-                                        {contactos.map((c) => (
+                                        {contactosFiltrados.map((c) => (
                                             <option key={c.id} value={c.id}>
-                                                {getIconoTipo(c.tipo)} {c.nombre} {c.apellido} - {renderTipo(c)}
+                                                {getIconoTipo(c.tipo)} {c.nombre} {c.apellido || ""} -{" "}
+                                                {renderTipo(c)}
                                             </option>
                                         ))}
                                     </Form.Select>
@@ -159,8 +288,10 @@ export default function ModalCita({ show, onHide, citaEdit, contactos = [], onSa
                             {contactoSeleccionado && (
                                 <div className={styles.contactoPreview}>
                                     <strong>
-                                        {getIconoTipo(contactoSeleccionado.tipo)} {contactoSeleccionado.nombre}
+                                        {getIconoTipo(contactoSeleccionado.tipo)}{" "}
+                                        {contactoSeleccionado.nombre} {contactoSeleccionado.apellido || ""}
                                     </strong>
+
                                     {contactoSeleccionado.celular && (
                                         <span>• {contactoSeleccionado.celular}</span>
                                     )}
@@ -188,7 +319,7 @@ export default function ModalCita({ show, onHide, citaEdit, contactos = [], onSa
                                     <Form.Control
                                         type="date"
                                         value={form.fecha_evento}
-                                        onChange={(e) => setForm({ ...form, fecha_evento: e.target.value })}
+                                        onChange={(e) => setField("fecha_evento", e.target.value)}
                                         className={styles.formControl}
                                         isInvalid={!!errores.fecha_evento}
                                         disabled={guardando}
@@ -213,13 +344,13 @@ export default function ModalCita({ show, onHide, citaEdit, contactos = [], onSa
                                     <Form.Control
                                         type="date"
                                         value={form.proxima_fecha}
-                                        onChange={(e) => setForm({ ...form, proxima_fecha: e.target.value })}
+                                        onChange={(e) => setField("proxima_fecha", e.target.value)}
                                         className={styles.formControl}
                                         disabled={guardando}
                                     />
                                 </InputGroup>
 
-                                <small className="text-muted d-block mt-1" style={{ fontSize: "0.75rem" }}>
+                                <small className="text-muted d-block mt-1">
                                     Fecha tentativa del próximo control
                                 </small>
                             </Form.Group>
@@ -239,8 +370,8 @@ export default function ModalCita({ show, onHide, citaEdit, contactos = [], onSa
 
                                 <Form.Control
                                     value={form.titulo}
-                                    onChange={(e) => setForm({ ...form, titulo: e.target.value })}
-                                    placeholder="Control anual, Vacunación, Peluquería..."
+                                    onChange={(e) => setField("titulo", e.target.value)}
+                                    placeholder="Control anual, vacunación, peluquería..."
                                     className={styles.fullRounded}
                                     isInvalid={!!errores.titulo}
                                     disabled={guardando}
@@ -270,8 +401,8 @@ export default function ModalCita({ show, onHide, citaEdit, contactos = [], onSa
                                         as="textarea"
                                         rows={4}
                                         value={form.nota}
-                                        onChange={(e) => setForm({ ...form, nota: e.target.value })}
-                                        placeholder="Motivo de la cita, tratamiento, observaciones..."
+                                        onChange={(e) => setField("nota", e.target.value)}
+                                        placeholder="Motivo, tratamiento, observaciones..."
                                         className={styles.formControl}
                                         style={{ resize: "vertical" }}
                                         isInvalid={!!errores.nota}
@@ -292,23 +423,41 @@ export default function ModalCita({ show, onHide, citaEdit, contactos = [], onSa
                                     id="recordatorio-check"
                                     label={
                                         <span className="d-flex align-items-center gap-2 flex-wrap">
-                                            <Bell size={18} color={form.recordatorio ? "#cd7fa7" : "#8a7a9c"} />
+                                            <Bell
+                                                size={18}
+                                                color={form.recordatorio ? "#cd7fa7" : "#8a7a9c"}
+                                            />
                                             <span className="fw-semibold">Activar recordatorio</span>
-                                            <Badge bg="info" style={{ backgroundColor: "#7f9bc2", fontSize: "0.7rem" }}>
+                                            <Badge bg="info" style={{ backgroundColor: "#7f9bc2" }}>
                                                 Próximamente
                                             </Badge>
                                         </span>
                                     }
                                     checked={form.recordatorio}
-                                    onChange={(e) => setForm({ ...form, recordatorio: e.target.checked })}
+                                    onChange={(e) => setField("recordatorio", e.target.checked)}
                                     disabled={guardando}
                                 />
 
-                                <small className="text-muted d-block ms-4 mt-1" style={{ fontSize: "0.75rem" }}>
+                                <small className="text-muted d-block ms-4 mt-1">
                                     Recibirás una notificación antes de la cita
                                 </small>
                             </div>
                         </Col>
+
+                        {mascotaSeleccionada && form.titulo && form.fecha_evento && (
+                            <Col xs={12}>
+                                <Alert variant="light" className="mb-0 border rounded-4">
+                                    <div className="d-flex align-items-start gap-2">
+                                        <CheckCircle size={18} color="#6c5c94" />
+                                        <div>
+                                            <strong>Resumen:</strong> {form.titulo} para{" "}
+                                            <strong>{mascotaSeleccionada.nombre}</strong> el{" "}
+                                            <strong>{form.fecha_evento}</strong>.
+                                        </div>
+                                    </div>
+                                </Alert>
+                            </Col>
+                        )}
                     </Row>
                 </Modal.Body>
 
@@ -328,7 +477,11 @@ export default function ModalCita({ show, onHide, citaEdit, contactos = [], onSa
                                 <Spinner animation="border" size="sm" />
                                 Guardando...
                             </span>
-                        ) : citaEdit ? "Actualizar" : "Crear cita"}
+                        ) : isEdit ? (
+                            "Actualizar cita"
+                        ) : (
+                            "Crear cita"
+                        )}
                     </Button>
                 </Modal.Footer>
             </Form>
