@@ -3,7 +3,9 @@ import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 import "./MascotaProtegida.css";
 import SmartHeader from "./SmartHeaderMascota";
-import API_BASE from "../../config/api";
+import { API_URL, getImageUrl, withCacheBust } from "../../config/api";
+
+const PLACEHOLDER_IMG = "/assets/smartpet-default.jpg";
 
 function MascotaProtegida() {
   const { id } = useParams();
@@ -15,7 +17,7 @@ function MascotaProtegida() {
   const [ubicacionEstado, setUbicacionEstado] = useState({
     intentando: false,
     enviada: false,
-    error: null
+    error: null,
   });
 
   const calcularEdad = (fechaNac) => {
@@ -60,7 +62,9 @@ function MascotaProtegida() {
     const tel = limpiarTelefono(telefono);
     if (!tel) return "#";
 
-    return `https://wa.me/549${tel}?text=${encodeURIComponent(
+    const telefonoFinal = tel.startsWith("54") ? tel : `549${tel}`;
+
+    return `https://wa.me/${telefonoFinal}?text=${encodeURIComponent(
       mensaje || "Hola, encontré esta mascota."
     )}`;
   };
@@ -80,8 +84,8 @@ function MascotaProtegida() {
       setLoading(true);
       setError(null);
 
-      const resMascota = await axios.get(`${API_BASE}/mascotas/${id}`);
-      const data = resMascota.data;
+      const resMascota = await axios.get(`${API_URL}/mascotas/${id}`);
+      const data = resMascota.data?.mascota || resMascota.data?.data || resMascota.data;
 
       if (!data || !data.id) {
         setError("Mascota no encontrada");
@@ -92,7 +96,10 @@ function MascotaProtegida() {
       setMascota(data);
     } catch (err) {
       console.error("Error al cargar mascota:", err);
-      setError("Error de conexión. Intente nuevamente.");
+      setError(
+        err.response?.data?.error ||
+        "Error de conexión. Intente nuevamente."
+      );
       setMascota(null);
     } finally {
       setLoading(false);
@@ -106,7 +113,7 @@ function MascotaProtegida() {
       setUbicacionEstado({
         intentando: false,
         enviada: false,
-        error: "El navegador no soporta geolocalización."
+        error: "El navegador no soporta geolocalización.",
       });
       return;
     }
@@ -114,7 +121,7 @@ function MascotaProtegida() {
     setUbicacionEstado({
       intentando: true,
       enviada: false,
-      error: null
+      error: null,
     });
 
     navigator.geolocation.getCurrentPosition(
@@ -124,21 +131,23 @@ function MascotaProtegida() {
         const precision = position.coords.accuracy;
 
         try {
-          const res = await axios.post(`${API_BASE}/mascotas/${id}/ubicacion`, {
+          const ubicacion = `${latitud},${longitud}`;
+
+          await axios.post(`${API_URL}/ubicaciones`, {
+            id_mascota: id,
             mascota_id: id,
+            ubicacion,
             latitud,
             longitud,
             precision,
             origen: "landing",
-            enviar_mail: true
+            enviar_mail: true,
           });
-
-          console.log("Ubicación enviada correctamente:", res.data);
 
           setUbicacionEstado({
             intentando: false,
             enviada: true,
-            error: null
+            error: null,
           });
         } catch (err) {
           console.error(
@@ -149,7 +158,7 @@ function MascotaProtegida() {
           setUbicacionEstado({
             intentando: false,
             enviada: false,
-            error: err.response?.data?.error || err.message
+            error: err.response?.data?.error || err.message,
           });
         }
       },
@@ -159,23 +168,26 @@ function MascotaProtegida() {
         setUbicacionEstado({
           intentando: false,
           enviada: false,
-          error: "No se pudo obtener la ubicación. Puede que el usuario haya rechazado el permiso."
+          error:
+            "No se pudo obtener la ubicación. Puede que el usuario haya rechazado el permiso.",
         });
       },
       {
         enableHighAccuracy: true,
         timeout: 20000,
-        maximumAge: 0
+        maximumAge: 0,
       }
     );
   };
 
   useEffect(() => {
     cargarDatosMascota();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   useEffect(() => {
     enviarUbicacion();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const sexoInfo = useMemo(() => obtenerSexo(mascota?.sexo), [mascota?.sexo]);
@@ -186,10 +198,12 @@ function MascotaProtegida() {
       : "Desconocida";
   }, [mascota?.fecha_nacimiento]);
 
-  const imagenSrc =
-    mascota?.urlImg && mascota.urlImg.trim() !== ""
-      ? mascota.urlImg
-      : "/assets/smartpet-default.jpg";
+  const imagenSrc = useMemo(() => {
+    const baseUrl = getImageUrl(mascota?.urlImg, PLACEHOLDER_IMG);
+    const version = mascota?.updated_at || mascota?.urlImg || Date.now();
+
+    return withCacheBust(baseUrl, version);
+  }, [mascota?.urlImg, mascota?.updated_at]);
 
   if (loading) {
     return (
@@ -235,8 +249,10 @@ function MascotaProtegida() {
                 src={imagenSrc}
                 alt={`Foto de ${mascota.nombre || "la mascota"}`}
                 className="pet-image"
+                loading="eager"
                 onError={(e) => {
-                  e.target.src = "/assets/smartpet-default.jpg";
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = PLACEHOLDER_IMG;
                 }}
               />
             </div>
@@ -251,6 +267,7 @@ function MascotaProtegida() {
               <p className="pet-message">
                 Si la encontraste o tenés información, ayudanos a que vuelva con su familia.
               </p>
+
               <div className="pet-tags">
                 <span className="pet-tag">
                   <span className="pet-tag-icon">{sexoInfo.icono}</span>
@@ -280,9 +297,7 @@ function MascotaProtegida() {
 
               <div className="pet-contact-highlight">
                 <h3>Contactá a su familia</h3>
-                <p>
-                  Elegí el medio más rápido para avisar que la encontraste.
-                </p>
+                <p>Elegí el medio más rápido para avisar que la encontraste.</p>
 
                 <div className="pet-quick-actions">
                   {mascota.persona1tel && (
@@ -320,6 +335,12 @@ function MascotaProtegida() {
                   )}
                 </div>
               </div>
+
+              {ubicacionEstado.enviada && (
+                <p className="pet-location-status">
+                  📍 Ubicación enviada correctamente.
+                </p>
+              )}
             </div>
           </section>
 
