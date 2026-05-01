@@ -1,15 +1,16 @@
 // Login.jsx
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import "./login.css";
+import axios from "axios";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 
-
-import axios from "axios";
+import API_BASE from "../../config/api";
 import SmartHeader from "../nav/SmartHeader";
 import Footers from "../footer/Footer";
 
-const API_LOGIN = "http://localhost/api-smartpet/index.php/login";
+import "./login.css";
+
+const API_LOGIN = `${API_BASE}/index.php/login`;
 
 function Login() {
 	const [email, setEmail] = useState("");
@@ -17,46 +18,71 @@ function Login() {
 	const [error, setError] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
 	const [loading, setLoading] = useState(false);
+
 	const navigate = useNavigate();
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+
+		const cleanEmail = email.trim().toLowerCase();
+
+		if (!cleanEmail || !password) {
+			setError("Ingresá email y contraseña.");
+			return;
+		}
+
 		setError("");
 		setLoading(true);
 
 		try {
-			const res = await axios.post(API_LOGIN, {
-				email: email.trim(),
-				password: password,
-			});
-
-			if (res.data.success && res.data.user) {
-				const user = res.data.user;
-
-				// Guardar datos completos en localStorage
-				localStorage.setItem("user", JSON.stringify(user));
-				localStorage.setItem("userId", user.id);
-				localStorage.setItem("userEmail", user.email);
-				localStorage.setItem("userName", `${user.nombre} ${user.apellido || ""}`.trim());
-				localStorage.setItem("userRoot", user.root ? "1" : "0");
-				localStorage.setItem("userPhoto", user.foto_perfil || "");
-
-				if (user.root && user.root == 1) {
-					navigate("/admin");
-				} else {
-					navigate(`/Consultas/${user.id}`);   // ← cambia aquí
+			const res = await axios.post(
+				API_LOGIN,
+				{
+					email: cleanEmail,
+					password,
+				},
+				{
+					headers: {
+						"Content-Type": "application/json",
+					},
 				}
-			} else {
-				setError("Respuesta inesperada del servidor");
+			);
+
+			const user = res.data?.user;
+
+			if (!res.data?.success || !user?.id) {
+				setError(res.data?.error || "Respuesta inesperada del servidor.");
+				return;
 			}
+
+			const nombreCompleto = `${user.nombre || ""} ${user.apellido || ""}`.trim();
+
+			localStorage.setItem("user", JSON.stringify(user));
+			localStorage.setItem("userId", String(user.id));
+			localStorage.setItem("userEmail", user.email || cleanEmail);
+			localStorage.setItem("userName", nombreCompleto || "Usuario");
+			localStorage.setItem("userRoot", Number(user.root) === 1 ? "1" : "0");
+			localStorage.setItem("userPhoto", user.foto_perfil || "");
+
+			if (Number(user.root) === 1) {
+				navigate("/admin", { replace: true });
+				return;
+			}
+
+			navigate(`/Consultas/${user.id}`, { replace: true });
 		} catch (err) {
 			console.error("Login error:", err);
-			if (err.response && err.response.data && err.response.data.error) {
-				setError(err.response.data.error);
-			} else if (err.response && err.response.status === 401) {
-				setError("Email o contraseña incorrectos");
+
+			const status = err.response?.status;
+			const apiError = err.response?.data?.error;
+			const debugMessage = err.response?.data?.debug?.message;
+
+			if (status === 401) {
+				setError("Email o contraseña incorrectos.");
+			} else if (apiError) {
+				setError(debugMessage ? `${apiError}: ${debugMessage}` : apiError);
 			} else {
-				setError("Error de conexión. Intente nuevamente.");
+				setError("Error de conexión. Verificá tu internet o intentá nuevamente.");
 			}
 		} finally {
 			setLoading(false);
@@ -66,6 +92,7 @@ function Login() {
 	return (
 		<>
 			<SmartHeader />
+
 			<main className="login-main">
 				<div className="login-card">
 					<div className="login-card-header">
@@ -90,6 +117,7 @@ function Login() {
 
 						<div className="login-field">
 							<label htmlFor="password">Contraseña</label>
+
 							<div className="login-password-wrap">
 								<input
 									type={showPassword ? "text" : "password"}
@@ -101,12 +129,13 @@ function Login() {
 									autoComplete="current-password"
 									disabled={loading}
 								/>
+
 								<button
 									type="button"
 									className="login-eye"
-									onClick={() => setShowPassword(!showPassword)}
-									tabIndex="-1"
+									onClick={() => setShowPassword((prev) => !prev)}
 									aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+									disabled={loading}
 								>
 									{showPassword ? <IoMdEyeOff /> : <IoMdEye />}
 								</button>
@@ -122,11 +151,11 @@ function Login() {
 						<button
 							type="submit"
 							className="login-btn"
-							disabled={loading || !email || !password}
+							disabled={loading || !email.trim() || !password}
 						>
 							{loading ? (
 								<>
-									<span className="spinner"></span> Ingresando...
+									<span className="spinner" /> Ingresando...
 								</>
 							) : (
 								"Entrar"
@@ -143,6 +172,7 @@ function Login() {
 					</p>
 				</div>
 			</main>
+
 			<Footers />
 		</>
 	);

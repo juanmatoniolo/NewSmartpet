@@ -1,361 +1,839 @@
-import React, { useEffect, useState, useCallback, useRef, useMemo } from "react";
-import { Link } from "react-router-dom";
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
 import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import { Modal, Button, Spinner } from "react-bootstrap";
+import {
+    RefreshCw,
+    Search,
+    Dog,
+    Edit3,
+    CalendarDays,
+    ArrowLeft,
+    MapPin,
+} from "lucide-react";
+
 import AdminHeader from "./AdminHeader";
-import { Search, User, RefreshCw, MapPin, X } from "lucide-react";
-import Card from "react-bootstrap/Card";
-import Button from "react-bootstrap/Button";
-import Badge from "react-bootstrap/Badge";
-import Modal from "react-bootstrap/Modal";
+import { API_URL, getImageUrl, withCacheBust } from "../../config/api";
+
 import "./MisMascotas.css";
 
-const API_URL = "http://localhost/api-smartpet/index.php";
+const PLACEHOLDER_IMG = "/a.jpg";
 
-const MisMascotas = () => {
+const MAX_SCANERS = 10;
+const DIRECCION_TIMEOUT_MS = 3500;
+const DIRECCION_DELAY_MS = 250;
+
+const direccionCache = new Map();
+
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const normalizarArray = (data) => {
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data?.data)) return data.data;
+    if (Array.isArray(data?.mascotas)) return data.mascotas;
+    if (Array.isArray(data?.items)) return data.items;
+    if (Array.isArray(data?.ubicaciones)) return data.ubicaciones;
+    return [];
+};
+
+const getUsuarioLocal = () => {
+    try {
+        return JSON.parse(localStorage.getItem("user") || "{}");
+    } catch {
+        return {};
+    }
+};
+
+const getUsuarioId = () => {
+    const userId = localStorage.getItem("userId");
+
+    if (userId) return userId;
+
+    const user = getUsuarioLocal();
+    return user?.id ? String(user.id) : "";
+};
+
+const getIsRoot = () => {
+    const userRoot = localStorage.getItem("userRoot");
+
+    if (userRoot === "1") return true;
+
+    const user = getUsuarioLocal();
+    return Number(user?.root) === 1;
+};
+
+const getAdminHeaders = () => ({
+    "X-User-Id": getUsuarioId(),
+});
+
+const getSexoTexto = (sexo) => {
+    if (sexo === 0 || sexo === "0") return "Macho";
+    if (sexo === 1 || sexo === "1") return "Hembra";
+    return "No definido";
+};
+
+const calcularEdad = (fechaNac) => {
+    if (!fechaNac) return "Edad desconocida";
+
+    const nacimiento = new Date(fechaNac);
+
+    if (Number.isNaN(nacimiento.getTime())) return "Edad desconocida";
+
+    const hoy = new Date();
+    let edad = hoy.getFullYear() - nacimiento.getFullYear();
+    const mes = hoy.getMonth() - nacimiento.getMonth();
+
+    if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+        edad--;
+    }
+
+    if (edad < 0) return "Edad desconocida";
+    if (edad === 0) return "Menos de 1 año";
+
+    return `${edad} año${edad !== 1 ? "s" : ""}`;
+};
+
+const normalizarMascotaDesdeCodigo = (item) => {
+    if (item?.mascota?.id) {
+        return {
+            ...item.mascota,
+            codigo_unico: item.codigo_unico || item.mascota.codigo_unico,
+            codigo_id: item.codigo_id || item.mascota.codigo_id,
+        };
+    }
+
+    if (item?.mascota_id || item?.id_mascota) {
+        return {
+            id: item.mascota_id || item.id_mascota,
+            id_mascota: item.mascota_id || item.id_mascota,
+            codigo_id: item.codigo_id,
+            codigo_unico: item.codigo_unico,
+            nombre: item.mascota_nombre || item.nombre || "",
+            fecha_nacimiento: item.fecha_nacimiento || "",
+            sexo: item.sexo ?? "",
+            urlImg: item.urlImg || "",
+            direccion: item.direccion || "",
+            descripcion: item.descripcion || "",
+            persona1: item.persona1 || "",
+            persona1tel: item.persona1tel || "",
+            persona1ig: item.persona1ig || "",
+            persona2: item.persona2 || "",
+            persona2tel: item.persona2tel || "",
+            persona2ig: item.persona2ig || "",
+            mensajeRescate: item.mensajeRescate || "",
+            updated_at: item.updated_at || item.fecha_actualizacion || "",
+        };
+    }
+
+    return null;
+};
+
+const normalizarCoordenadas = (ubic) => {
+    const coordenadas =
+        ubic?.ubicacion ||
+        ubic?.coordenadas ||
+        (ubic?.lat && ubic?.lon ? `${ubic.lat},${ubic.lon}` : "");
+
+    return String(coordenadas || "").trim();
+};
+
+const crearScannerKey = (ubic, index) =>
+    ubic?.id || `${ubic?.fecha_hora || ubic?.created_at || "scanner"}-${index}`;
+
+const esCoordenada = (valor = "") => {
+    return /^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/.test(String(valor).trim());
+};
+
+const getGoogleMapsUrl = (coordenadas) => {
+    if (!coordenadas) return "#";
+
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+        coordenadas
+    )}`;
+};
+
+const getTextoUbicacion = (ubic) => {
+    if (ubic.cargandoDireccion) {
+        return "Buscando dirección aproximada...";
+    }
+
+    if (ubic.direccionLegible && !esCoordenada(ubic.direccionLegible)) {
+        return ubic.direccionLegible;
+    }
+
+    return "Ubicación registrada en Google Maps";
+};
+
+const fetchConTimeout = async (
+    url,
+    options = {},
+    timeoutMs = DIRECCION_TIMEOUT_MS
+) => {
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+        return await fetch(url, {
+            ...options,
+            signal: controller.signal,
+        });
+    } finally {
+        window.clearTimeout(timeoutId);
+    }
+};
+
+const obtenerDireccionDesdeCoordenadas = async (coordenadas) => {
+    if (!coordenadas || typeof coordenadas !== "string") {
+        return "Ubicación no disponible";
+    }
+
+    if (direccionCache.has(coordenadas)) {
+        return direccionCache.get(coordenadas);
+    }
+
+    const partes = coordenadas.split(",");
+
+    if (partes.length !== 2) {
+        direccionCache.set(coordenadas, coordenadas);
+        return coordenadas;
+    }
+
+    const lat = parseFloat(partes[0].trim());
+    const lon = parseFloat(partes[1].trim());
+
+    if (Number.isNaN(lat) || Number.isNaN(lon)) {
+        direccionCache.set(coordenadas, coordenadas);
+        return coordenadas;
+    }
+
+    try {
+        const response = await fetchConTimeout(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=16&addressdetails=1`,
+            {
+                headers: {
+                    "Accept-Language": "es",
+                },
+            }
+        );
+
+        if (!response.ok) {
+            direccionCache.set(coordenadas, coordenadas);
+            return coordenadas;
+        }
+
+        const data = await response.json();
+        let direccion = coordenadas;
+
+        if (data?.display_name) {
+            const calle = data.address?.road || data.address?.pedestrian || "";
+            const numero = data.address?.house_number || "";
+            const ciudad =
+                data.address?.city ||
+                data.address?.town ||
+                data.address?.village ||
+                data.address?.state ||
+                "";
+
+            if (calle && numero) {
+                direccion = `${calle} ${numero}${ciudad ? `, ${ciudad}` : ""}`;
+            } else if (calle) {
+                direccion = `${calle}${ciudad ? `, ${ciudad}` : ""}`;
+            } else {
+                direccion = data.display_name.split(",").slice(0, 3).join(",").trim();
+            }
+        }
+
+        direccionCache.set(coordenadas, direccion);
+        return direccion;
+    } catch {
+        direccionCache.set(coordenadas, coordenadas);
+        return coordenadas;
+    }
+};
+
+function MisMascotas() {
+    const navigate = useNavigate();
+
     const [mascotas, setMascotas] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [refreshKey, setRefreshKey] = useState(Date.now());
+    const [refreshing, setRefreshing] = useState(false);
+    const [error, setError] = useState("");
+    const [search, setSearch] = useState("");
+    const [imageVersion, setImageVersion] = useState(Date.now());
 
-    const [searchTerm, setSearchTerm] = useState("");
-    const [usuariosEncontrados, setUsuariosEncontrados] = useState([]);
-    const [buscandoUsuarios, setBuscandoUsuarios] = useState(false);
-    const [selectedUserId, setSelectedUserId] = useState(null);
-    const [selectedUserNombre, setSelectedUserNombre] = useState("");
-    const [mostrarDropdown, setMostrarDropdown] = useState(false);
+    const [showModalScaners, setShowModalScaners] = useState(false);
+    const [mascotaScaners, setMascotaScaners] = useState(null);
+    const [ubicaciones, setUbicaciones] = useState([]);
+    const [cargandoUbic, setCargandoUbic] = useState(false);
+    const [cargandoDirecciones, setCargandoDirecciones] = useState(false);
+    const [errorUbicaciones, setErrorUbicaciones] = useState("");
 
-    const [showMapModal, setShowMapModal] = useState(false);
-    const [mapLoading, setMapLoading] = useState(false);
-    const [mapCoordinates, setMapCoordinates] = useState({ lat: null, lng: null });
-    const [mapMascotaNombre, setMapMascotaNombre] = useState("");
+    const requestIdRef = useRef(0);
 
-    const user = JSON.parse(localStorage.getItem("user"));
-    const adminId = user?.id;
+    const usuarioId = getUsuarioId();
+    const isRoot = getIsRoot();
 
-    const fetchingRef = useRef(false);
+    const cargarMascotasDesdeCodigos = useCallback(async () => {
+        const res = await axios.get(`${API_URL}/user-codes`, {
+            params: {
+                usuario_id: usuarioId,
+            },
+            timeout: 10000,
+        });
 
-    const cargarMascotas = useCallback(async (userId, mostrarLoading = true) => {
-        if (!userId || fetchingRef.current) return;
+        const codigos = normalizarArray(res.data);
 
-        if (mostrarLoading) setLoading(true);
+        return codigos
+            .map(normalizarMascotaDesdeCodigo)
+            .filter((mascota) => mascota && mascota.id);
+    }, [usuarioId]);
 
-        fetchingRef.current = true;
-        setError(null);
+    const cargarMascotasDirectas = useCallback(async () => {
+        const res = await axios.get(`${API_URL}/mascotas`, {
+            params: {
+                usuario_id: usuarioId,
+            },
+            timeout: 10000,
+        });
 
-        try {
-            const res = await axios.get(`${API_URL}/mascotas?usuario_id=${userId}`);
-            setMascotas(Array.isArray(res.data) ? res.data : []);
-            setRefreshKey(Date.now());
-        } catch (err) {
-            console.error(err);
-            setError("Error al cargar las mascotas: " + (err.response?.data?.error || err.message));
-            setMascotas([]);
-        } finally {
-            fetchingRef.current = false;
-            if (mostrarLoading) setLoading(false);
-        }
+        return normalizarArray(res.data);
+    }, [usuarioId]);
+
+    const cargarMascotasRoot = useCallback(async () => {
+        const res = await axios.post(
+            API_URL,
+            {
+                action: "getmascotas",
+            },
+            {
+                headers: getAdminHeaders(),
+                timeout: 10000,
+            }
+        );
+
+        return normalizarArray(res.data);
     }, []);
 
-    useEffect(() => {
-        if (adminId && !selectedUserId) {
-            setSelectedUserId(adminId);
-            setSelectedUserNombre(`${user?.nombre} ${user?.apellido || ""} (tuyo)`);
-            cargarMascotas(adminId);
-        }
-    }, [adminId, cargarMascotas, selectedUserId, user]);
-
-    const buscarUsuarios = async (query) => {
-        if (!query.trim()) {
-            setUsuariosEncontrados([]);
-            setMostrarDropdown(false);
+    const cargarMascotas = useCallback(async () => {
+        if (!usuarioId) {
+            setError("No se encontró el usuario logueado.");
+            setMascotas([]);
+            setLoading(false);
+            setRefreshing(false);
             return;
         }
 
-        setBuscandoUsuarios(true);
+        setError("");
 
         try {
-            const res = await axios.post(API_URL, { action: "getusuarios" });
-            const todos = Array.isArray(res.data) ? res.data : [];
+            let lista = [];
 
-            const filtrados = todos.filter(u =>
-                u.nombre?.toLowerCase().includes(query.toLowerCase()) ||
-                (u.apellido && u.apellido.toLowerCase().includes(query.toLowerCase())) ||
-                u.email?.toLowerCase().includes(query.toLowerCase())
+            if (isRoot) {
+                lista = await cargarMascotasRoot();
+            } else {
+                lista = await cargarMascotasDesdeCodigos();
+
+                if (lista.length === 0) {
+                    lista = await cargarMascotasDirectas();
+                }
+            }
+
+            const sinDuplicados = Array.from(
+                new Map(lista.map((m) => [String(m.id), m])).values()
             );
 
-            setUsuariosEncontrados(filtrados.slice(0, 10));
-            setMostrarDropdown(true);
+            setMascotas(sinDuplicados);
+            setImageVersion(Date.now());
         } catch (err) {
-            console.error(err);
+            console.error("Error al cargar mascotas:", err);
+
+            setError(
+                err.response?.data?.error ||
+                err.response?.data?.message ||
+                "No se pudieron cargar tus mascotas."
+            );
+
+            setMascotas([]);
         } finally {
-            setBuscandoUsuarios(false);
+            setLoading(false);
+            setRefreshing(false);
         }
+    }, [
+        usuarioId,
+        isRoot,
+        cargarMascotasRoot,
+        cargarMascotasDesdeCodigos,
+        cargarMascotasDirectas,
+    ]);
+
+    useEffect(() => {
+        cargarMascotas();
+    }, [cargarMascotas]);
+
+    useEffect(() => {
+        return () => {
+            requestIdRef.current = Date.now();
+        };
+    }, []);
+
+    const handleRefresh = async () => {
+        setRefreshing(true);
+        await cargarMascotas();
     };
 
-    const seleccionarUsuario = (usuario) => {
-        if (selectedUserId === usuario.id) return;
+    const mascotasFiltradas = useMemo(() => {
+        const term = search.trim().toLowerCase();
 
-        setSelectedUserId(usuario.id);
-        setSelectedUserNombre(`${usuario.nombre} ${usuario.apellido || ""} (ID: ${usuario.id})`);
-        setSearchTerm("");
-        setUsuariosEncontrados([]);
-        setMostrarDropdown(false);
-        cargarMascotas(usuario.id);
-    };
+        if (!term) return mascotas;
 
-    const verMisMascotas = () => {
-        if (!adminId || selectedUserId === adminId) return;
+        return mascotas.filter((m) => {
+            const texto = [
+                m.nombre,
+                m.descripcion,
+                m.direccion,
+                m.codigo_unico,
+                m.fecha_nacimiento,
+                getSexoTexto(m.sexo),
+            ]
+                .filter(Boolean)
+                .join(" ")
+                .toLowerCase();
 
-        setSelectedUserId(adminId);
-        setSelectedUserNombre(`${user?.nombre} ${user?.apellido || ""} (tuyo)`);
-        setSearchTerm("");
-        setUsuariosEncontrados([]);
-        setMostrarDropdown(false);
-        cargarMascotas(adminId);
-    };
+            return texto.includes(term);
+        });
+    }, [mascotas, search]);
 
-    const handleRefresh = () => {
-        if (selectedUserId) cargarMascotas(selectedUserId, true);
-    };
+    const actualizarDireccionEnLista = useCallback((ubicacionKey, direccionLegible) => {
+        setUbicaciones((prev) =>
+            prev.map((item) =>
+                item.__key === ubicacionKey
+                    ? {
+                        ...item,
+                        direccionLegible,
+                        cargandoDireccion: false,
+                    }
+                    : item
+            )
+        );
+    }, []);
 
-    const abrirUbicacionMascota = async (mascota) => {
-        setMapLoading(true);
-        setError(null);
+    const cargarDireccionesProgresivas = useCallback(
+        async (scaners, currentRequestId) => {
+            setCargandoDirecciones(true);
 
-        try {
-            const res = await axios.get(`${API_URL}/ubicaciones?mascota_id=${mascota.id}`);
-            const data = res.data;
+            for (const ubic of scaners) {
+                if (requestIdRef.current !== currentRequestId) return;
 
-            if (!data || !data.ubicacion) {
-                setError(`No hay ubicación registrada para ${mascota.nombre}.`);
+                if (!ubic.ubicacion) {
+                    actualizarDireccionEnLista(ubic.__key, "Ubicación no disponible");
+                    continue;
+                }
+
+                const direccionLegible = await obtenerDireccionDesdeCoordenadas(
+                    ubic.ubicacion
+                );
+
+                if (requestIdRef.current !== currentRequestId) return;
+
+                actualizarDireccionEnLista(ubic.__key, direccionLegible);
+
+                await delay(DIRECCION_DELAY_MS);
+            }
+
+            if (requestIdRef.current === currentRequestId) {
+                setCargandoDirecciones(false);
+            }
+        },
+        [actualizarDireccionEnLista]
+    );
+
+    const cargarScaners = useCallback(
+        async (mascota) => {
+            if (!mascota?.id) {
+                setErrorUbicaciones("No se encontró el ID de la mascota");
+                setUbicaciones([]);
                 return;
             }
 
-            const parts = data.ubicacion.split(",");
+            const currentRequestId = Date.now();
+            requestIdRef.current = currentRequestId;
 
-            if (parts.length !== 2) {
-                setError("La ubicación registrada tiene un formato incorrecto.");
-                return;
+            setCargandoUbic(true);
+            setCargandoDirecciones(false);
+            setErrorUbicaciones("");
+            setUbicaciones([]);
+
+            try {
+                let res;
+
+                try {
+                    res = await axios.get(`${API_URL}/ubicaciones-todas`, {
+                        params: {
+                            mascota_id: mascota.id,
+                        },
+                        timeout: 5000,
+                    });
+                } catch {
+                    res = await axios.get(`${API_URL}/ubicaciones`, {
+                        params: {
+                            mascota_id: mascota.id,
+                        },
+                        timeout: 5000,
+                    });
+                }
+
+                if (requestIdRef.current !== currentRequestId) return;
+
+                const ubicacionesRaw = normalizarArray(res.data);
+
+                const ultimosScaners = [...ubicacionesRaw]
+                    .sort((a, b) => {
+                        const fechaA = new Date(a.fecha_hora || a.created_at || 0).getTime();
+                        const fechaB = new Date(b.fecha_hora || b.created_at || 0).getTime();
+
+                        return fechaB - fechaA;
+                    })
+                    .slice(0, MAX_SCANERS)
+                    .map((ubic, index) => {
+                        const coordenadas = normalizarCoordenadas(ubic);
+                        const key = crearScannerKey(ubic, index);
+
+                        return {
+                            ...ubic,
+                            __key: key,
+                            ubicacion: coordenadas,
+                            direccionLegible: coordenadas || "Ubicación no disponible",
+                            cargandoDireccion: Boolean(coordenadas),
+                        };
+                    });
+
+                setUbicaciones(ultimosScaners);
+                setCargandoUbic(false);
+
+                if (ultimosScaners.length > 0) {
+                    await cargarDireccionesProgresivas(ultimosScaners, currentRequestId);
+                } else {
+                    setCargandoDirecciones(false);
+                }
+            } catch (err) {
+                if (requestIdRef.current !== currentRequestId) return;
+
+                console.error("Error al cargar scaners:", err);
+
+                setErrorUbicaciones(
+                    err.response?.data?.error ||
+                    err.response?.data?.message ||
+                    "No se pudieron cargar las ubicaciones"
+                );
+
+                setUbicaciones([]);
+                setCargandoUbic(false);
+                setCargandoDirecciones(false);
             }
+        },
+        [cargarDireccionesProgresivas]
+    );
 
-            const lat = parseFloat(parts[0]);
-            const lng = parseFloat(parts[1]);
+    const handleVerUbicaciones = useCallback(
+        (mascota) => {
+            setMascotaScaners(mascota);
+            setShowModalScaners(true);
+            cargarScaners(mascota);
+        },
+        [cargarScaners]
+    );
 
-            if (Number.isNaN(lat) || Number.isNaN(lng)) {
-                setError("Las coordenadas de ubicación no son válidas.");
-                return;
-            }
+    const handleCerrarScaners = useCallback(() => {
+        requestIdRef.current = Date.now();
+        setShowModalScaners(false);
+        setMascotaScaners(null);
+        setUbicaciones([]);
+        setErrorUbicaciones("");
+        setCargandoUbic(false);
+        setCargandoDirecciones(false);
+    }, []);
 
-            setMapCoordinates({ lat, lng });
-            setMapMascotaNombre(mascota.nombre);
-            setShowMapModal(true);
-        } catch (err) {
-            console.error(err);
-            setError("Error al cargar la ubicación: " + (err.response?.data?.error || err.message));
-        } finally {
-            setMapLoading(false);
-        }
-    };
-
-    const TarjetaMascotaAdmin = ({ mascota, refreshKey }) => {
-        const edad = useMemo(() => {
-            if (!mascota.fecha_nacimiento) return "Desconocida";
-
-            const hoy = new Date();
-            const nac = new Date(mascota.fecha_nacimiento);
-
-            let edadCalc = hoy.getFullYear() - nac.getFullYear();
-            const mesDiff = hoy.getMonth() - nac.getMonth();
-
-            if (mesDiff < 0 || (mesDiff === 0 && hoy.getDate() < nac.getDate())) {
-                edadCalc--;
-            }
-
-            return `${edadCalc} año${edadCalc !== 1 ? "s" : ""}`;
-        }, [mascota.fecha_nacimiento]);
-
-        const imagenSrc = mascota.urlImg && mascota.urlImg.trim() !== "" ? mascota.urlImg : "/a.jpg";
-        const imageUrl = imagenSrc + (imagenSrc.includes("?") ? `&_=${refreshKey}` : `?_=${refreshKey}`);
+    const renderImagen = (mascota) => {
+        const baseUrl = getImageUrl(mascota?.urlImg, PLACEHOLDER_IMG);
+        const version = mascota?.updated_at || mascota?.urlImg || imageVersion;
+        const imgSrc = withCacheBust(baseUrl, version);
 
         return (
-            <Card className="tarjeta-mascota-card">
-                <div className="codigo-badge-wrapper">
-                    <Badge bg="dark" className="codigo-badge">
-                        {mascota.sexo == 0 ? "♂ Macho" : "♀ Hembra"}
-                    </Badge>
-                </div>
-
-                <Card.Img
-                    variant="top"
-                    src={imageUrl}
-                    alt={mascota.nombre || "Mascota"}
-                    className="mis-mascotas-card-img"
-                    onError={(e) => {
-                        e.currentTarget.src = "/a.jpg";
-                    }}
-                />
-
-                <Card.Body>
-                    <Card.Title>{mascota.nombre || "Sin nombre"}</Card.Title>
-
-                    <Card.Text>
-                        <strong>Edad:</strong> {edad}
-                        <br />
-                        <strong>Nacimiento:</strong> {mascota.fecha_nacimiento || "Fecha no registrada"}
-                    </Card.Text>
-
-                    <div className="d-flex gap-2 flex-wrap botones-acciones">
-                        <Button
-                            as={Link}
-                            to={`/admin/mis-mascotas/${mascota.id}`}
-                            variant="primary"
-                            size="sm"
-                        >
-                            Ver detalle
-                        </Button>
-
-                        <Button
-                            variant="secondary"
-                            size="sm"
-                            onClick={() => abrirUbicacionMascota(mascota)}
-                            disabled={mapLoading}
-                        >
-                            <MapPin size={15} className="me-1" />
-                            Ver ubicación
-                        </Button>
-                    </div>
-                </Card.Body>
-            </Card>
+            <img
+                src={imgSrc}
+                alt={`Foto de ${mascota?.nombre || "mascota"}`}
+                className="mis-mascotas-card-img"
+                loading="lazy"
+                onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = PLACEHOLDER_IMG;
+                }}
+            />
         );
     };
+
+    const cantidadScaners = ubicaciones.length;
 
     return (
         <>
             <AdminHeader />
 
-            <div className="mis-mascotas-container">
-                <div className="header-busqueda">
-                    <h2>
-                        <User size={24} /> Mis mascotas
-                    </h2>
-
-                    <div className="busqueda-usuario">
-                        <div className="search-wrapper">
-                            <Search size={18} className="search-icon" />
-
-                            <input
-                                type="text"
-                                placeholder="Buscar usuario por nombre, apellido o email..."
-                                value={searchTerm}
-                                onChange={(e) => {
-                                    setSearchTerm(e.target.value);
-                                    buscarUsuarios(e.target.value);
-                                }}
-                                onFocus={() => searchTerm.trim() && setMostrarDropdown(true)}
-                            />
-
-                            {buscandoUsuarios && <RefreshCw size={16} className="spin" />}
-                        </div>
-
-                        {mostrarDropdown && usuariosEncontrados.length > 0 && (
-                            <div className="dropdown-resultados">
-                                {usuariosEncontrados.map(u => (
-                                    <div
-                                        key={u.id}
-                                        className="resultado-item"
-                                        onClick={() => seleccionarUsuario(u)}
-                                    >
-                                        <strong>{u.nombre} {u.apellido}</strong> - {u.email}
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-
-                        <button className="btn-mis-mascotas" onClick={verMisMascotas}>
-                            Ver mis mascotas
+            <main className="mis-mascotas-page">
+                <section className="mis-mascotas-header">
+                    <div>
+                        <button
+                            type="button"
+                            className="mis-mascotas-back"
+                            onClick={() => navigate(-1)}
+                        >
+                            <ArrowLeft size={18} />
+                            Volver
                         </button>
 
-                        <button className="btn-refresh" onClick={handleRefresh} title="Refrescar">
-                            <RefreshCw size={16} />
-                        </button>
+                        <h1>
+                            <Dog size={28} />
+                            Mis mascotas
+                        </h1>
+
+                        <p>
+                            {isRoot
+                                ? "Vista administrador: todas las mascotas registradas."
+                                : "Mascotas vinculadas a tus códigos SmartPet."}
+                        </p>
                     </div>
-                </div>
 
-                <div className="usuario-actual">
-                    Mostrando mascotas de: <strong>{selectedUserNombre || "Cargando..."}</strong>
+                    <button
+                        type="button"
+                        className="mis-mascotas-refresh"
+                        onClick={handleRefresh}
+                        disabled={loading || refreshing}
+                    >
+                        <RefreshCw
+                            size={18}
+                            className={refreshing ? "mis-mascotas-spin" : ""}
+                        />
+                        {refreshing ? "Actualizando..." : "Actualizar"}
+                    </button>
+                </section>
 
-                    {selectedUserId && selectedUserId !== adminId && (
-                        <button className="btn-cambiar" onClick={verMisMascotas}>
-                            Volver a las mías
-                        </button>
-                    )}
-                </div>
+                <section className="mis-mascotas-toolbar">
+                    <div className="mis-mascotas-search">
+                        <Search size={18} />
 
-                {error && <div className="alert-error">{error}</div>}
-
-                {loading ? (
-                    <div className="cargando-texto">Cargando mascotas...</div>
-                ) : mascotas.length === 0 ? (
-                    <div className="sin-mascotas">
-                        <p>🐾 No hay mascotas registradas para este usuario.</p>
+                        <input
+                            type="text"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="Buscar por nombre, código o descripción..."
+                        />
                     </div>
-                ) : (
-                    <div className="mascotas-grid">
-                        {mascotas.map(m => (
-                            <TarjetaMascotaAdmin
-                                key={m.id}
-                                mascota={m}
-                                refreshKey={refreshKey}
-                            />
-                        ))}
+
+                    <span className="mis-mascotas-count">
+                        {mascotasFiltradas.length} mascota
+                        {mascotasFiltradas.length !== 1 ? "s" : ""}
+                    </span>
+                </section>
+
+                {error && (
+                    <div className="mis-mascotas-alert error">
+                        <span>{error}</span>
+
+                        <button type="button" onClick={handleRefresh}>
+                            Reintentar
+                        </button>
                     </div>
                 )}
-            </div>
 
-            <Modal
-                show={showMapModal}
-                onHide={() => setShowMapModal(false)}
-                size="lg"
-                centered
-            >
+                {loading ? (
+                    <section className="mis-mascotas-grid">
+                        {[1, 2, 3].map((item) => (
+                            <article className="mis-mascotas-skeleton" key={item}>
+                                <div className="mis-mascotas-skeleton-img" />
+                                <div className="mis-mascotas-skeleton-line big" />
+                                <div className="mis-mascotas-skeleton-line" />
+                                <div className="mis-mascotas-skeleton-line short" />
+                            </article>
+                        ))}
+                    </section>
+                ) : mascotasFiltradas.length === 0 ? (
+                    <section className="mis-mascotas-empty">
+                        <Dog size={52} />
+
+                        <h2>No hay mascotas para mostrar</h2>
+
+                        <p>
+                            {search
+                                ? "No encontramos resultados con ese filtro."
+                                : "No hay mascotas vinculadas a este usuario todavía."}
+                        </p>
+                    </section>
+                ) : (
+                    <section className="mis-mascotas-grid">
+                        {mascotasFiltradas.map((mascota) => (
+                            <article className="mis-mascotas-card" key={mascota.id}>
+                                <div className="mis-mascotas-img-wrap">
+                                    {renderImagen(mascota)}
+
+                                    <span className="mis-mascotas-sex">
+                                        {getSexoTexto(mascota.sexo)}
+                                    </span>
+                                </div>
+
+                                <div className="mis-mascotas-card-body">
+                                    <div className="mis-mascotas-title-row">
+                                        <h2>{mascota.nombre || "Mascota sin nombre"}</h2>
+
+                                        {mascota.codigo_unico && (
+                                            <span className="mis-mascotas-code">
+                                                {mascota.codigo_unico}
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    <p className="mis-mascotas-meta">
+                                        <CalendarDays size={16} />
+                                        {calcularEdad(mascota.fecha_nacimiento)}
+                                    </p>
+
+                                    <p className="mis-mascotas-description">
+                                        {mascota.descripcion || "Sin descripción cargada."}
+                                    </p>
+
+                                    {mascota.direccion && (
+                                        <p className="mis-mascotas-address">
+                                            📍 {mascota.direccion}
+                                        </p>
+                                    )}
+
+                                    <div className="mis-mascotas-actions">
+                                        <button
+                                            type="button"
+                                            className="mis-mascotas-btn primary"
+                                            onClick={() => handleVerUbicaciones(mascota)}
+                                        >
+                                            <MapPin size={16} />
+                                            Ver ubicaciones
+                                        </button>
+
+                                        <Link
+                                            to={`/admin/mis-mascotas/${mascota.id}`}
+                                            className="mis-mascotas-btn ghost"
+                                        >
+                                            <Edit3 size={16} />
+                                            Editar
+                                        </Link>
+                                    </div>
+                                </div>
+                            </article>
+                        ))}
+                    </section>
+                )}
+            </main>
+
+            <Modal show={showModalScaners} onHide={handleCerrarScaners} size="lg" centered>
                 <Modal.Header closeButton>
-                    <Modal.Title>Ubicación de {mapMascotaNombre}</Modal.Title>
+                    <Modal.Title>
+                        Últimos {MAX_SCANERS} scaners de {mascotaScaners?.nombre || "mascota"}
+                        {!cargandoUbic && cantidadScaners > 0 ? (
+                            <span className="scaners-count"> {cantidadScaners}</span>
+                        ) : null}
+                    </Modal.Title>
                 </Modal.Header>
 
-                <Modal.Body style={{ padding: 0 }}>
-                    {mapCoordinates.lat && mapCoordinates.lng && (
-                        <iframe
-                            title={`Ubicación de ${mapMascotaNombre}`}
-                            width="100%"
-                            height="420"
-                            frameBorder="0"
-                            style={{ border: 0 }}
-                            src={`https://www.openstreetmap.org/export/embed.html?bbox=${mapCoordinates.lng - 0.01},${mapCoordinates.lat - 0.01},${mapCoordinates.lng + 0.01},${mapCoordinates.lat + 0.01}&layer=mapnik&marker=${mapCoordinates.lat},${mapCoordinates.lng}`}
-                            allowFullScreen
-                        />
+                <Modal.Body>
+                    {cargandoUbic ? (
+                        <div className="scaners-loading">
+                            <Spinner animation="border" size="sm" />
+                            <span>Cargando scaners...</span>
+                        </div>
+                    ) : errorUbicaciones ? (
+                        <div className="scaners-empty error">
+                            <p>{errorUbicaciones}</p>
+
+                            <Button
+                                variant="outline-primary"
+                                size="sm"
+                                onClick={() => cargarScaners(mascotaScaners)}
+                            >
+                                Reintentar
+                            </Button>
+                        </div>
+                    ) : ubicaciones.length === 0 ? (
+                        <div className="scaners-empty">
+                            <p>Sin scaners registrados para esta mascota.</p>
+                        </div>
+                    ) : (
+                        <>
+                            {cargandoDirecciones && (
+                                <div className="scaners-loading small">
+                                    <Spinner animation="border" size="sm" />
+                                    <span>Buscando direcciones aproximadas...</span>
+                                </div>
+                            )}
+
+                            <div className="scaners-list">
+                                {ubicaciones.map((ubic, idx) => {
+                                    const fecha = ubic.fecha_hora || ubic.created_at || null;
+                                    const fechaTexto = fecha
+                                        ? new Date(fecha).toLocaleString("es-AR")
+                                        : "Fecha no disponible";
+
+                                    return (
+                                        <article
+                                            key={ubic.__key || ubic.id || idx}
+                                            className="scanner-item"
+                                        >
+                                            <div className="scanner-info">
+                                                <strong>📍 Calle: {getTextoUbicacion(ubic)}</strong>
+
+                                                <span>🕒 {fechaTexto}</span>
+
+                                                {ubic.ubicacion ? (
+                                                    <small>Abrir ubicación exacta en Google Maps</small>
+                                                ) : null}
+                                            </div>
+
+                                            {ubic.ubicacion ? (
+                                                <Button
+                                                    variant="outline-primary"
+                                                    size="sm"
+                                                    href={getGoogleMapsUrl(ubic.ubicacion)}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                >
+                                                    Ver en Google Maps
+                                                </Button>
+                                            ) : null}
+                                        </article>
+                                    );
+                                })}
+                            </div>
+                        </>
                     )}
                 </Modal.Body>
 
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowMapModal(false)}>
-                        <X size={15} className="me-1" />
-                        Cerrar
+                    <Button
+                        variant="outline-primary"
+                        onClick={() => cargarScaners(mascotaScaners)}
+                        disabled={cargandoUbic || !mascotaScaners}
+                    >
+                        Actualizar
                     </Button>
 
-                    <Button
-                        as="a"
-                        variant="primary"
-                        href={`https://www.google.com/maps?q=${mapCoordinates.lat},${mapCoordinates.lng}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <MapPin size={15} className="me-1" />
-                        Abrir en Google Maps
+                    <Button variant="secondary" onClick={handleCerrarScaners}>
+                        Cerrar
                     </Button>
                 </Modal.Footer>
             </Modal>
         </>
     );
-};
+}
 
 export default MisMascotas;

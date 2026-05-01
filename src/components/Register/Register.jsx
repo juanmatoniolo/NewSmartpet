@@ -5,8 +5,10 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import SmartHeader from "../nav/SmartHeader";
+import API_BASE from "../../config/api";
 
-const API_URL = "http://localhost/api-smartpet/index.php/usuarios";
+
+const API_URL = `${API_BASE}/index.php/usuarios`;
 
 const initialForm = {
 	nombre: "",

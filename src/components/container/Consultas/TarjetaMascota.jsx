@@ -4,7 +4,7 @@ import React, {
     useCallback,
     useMemo,
     useRef,
-    memo
+    memo,
 } from "react";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
@@ -12,12 +12,14 @@ import Modal from "react-bootstrap/Modal";
 import Badge from "react-bootstrap/Badge";
 import Spinner from "react-bootstrap/Spinner";
 import axios from "axios";
+
 import EditarMascota from "./EditarMascota";
 import "./TarjetaMascota.css";
-import API_BASE from "../../../config/api";
+
+import API_BASE, { getImageUrl, withCacheBust } from "../../../config/api";
 
 const API_URL = `${API_BASE}/index.php`;
-const PLACEHOLDER_IMG = "https://via.placeholder.com/300?text=Sin+imagen";
+const PLACEHOLDER_IMG = "/a.jpg";
 const MAX_SCANERS = 10;
 const DIRECCION_TIMEOUT_MS = 3500;
 const DIRECCION_DELAY_MS = 250;
@@ -77,7 +79,7 @@ const fetchConTimeout = async (url, options = {}, timeoutMs = DIRECCION_TIMEOUT_
     try {
         return await fetch(url, {
             ...options,
-            signal: controller.signal
+            signal: controller.signal,
         });
     } finally {
         window.clearTimeout(timeoutId);
@@ -113,8 +115,8 @@ const obtenerDireccionDesdeCoordenadas = async (coordenadas) => {
             `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=16&addressdetails=1`,
             {
                 headers: {
-                    "Accept-Language": "es"
-                }
+                    "Accept-Language": "es",
+                },
             }
         );
 
@@ -166,17 +168,6 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
 
     const requestIdRef = useRef(0);
 
-    const buildImageUrl = useCallback((url) => {
-        if (!url) return PLACEHOLDER_IMG;
-
-        if (url.startsWith("http://") || url.startsWith("https://")) {
-            return url;
-        }
-
-        const cleanPath = url.replace(/^\/+/, "");
-        return `${API_BASE}/${cleanPath}`;
-    }, []);
-
     const edad = useMemo(() => {
         if (!mascota?.fecha_nacimiento) return "Desconocida";
 
@@ -201,11 +192,11 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
     }, [mascota?.fecha_nacimiento]);
 
     const imagen = useMemo(() => {
-        const baseUrl = buildImageUrl(mascota?.urlImg);
+        const baseUrl = getImageUrl(mascota?.urlImg, PLACEHOLDER_IMG);
         const version = mascota?.updated_at || mascota?.urlImg || imageVersion;
 
-        return `${baseUrl}?v=${encodeURIComponent(version)}`;
-    }, [mascota?.urlImg, mascota?.updated_at, imageVersion, buildImageUrl]);
+        return withCacheBust(baseUrl, version);
+    }, [mascota?.urlImg, mascota?.updated_at, imageVersion]);
 
     const actualizarDireccionEnLista = useCallback((ubicacionKey, direccionLegible) => {
         setUbicaciones((prev) =>
@@ -214,7 +205,7 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
                     ? {
                         ...item,
                         direccionLegible,
-                        cargandoDireccion: false
+                        cargandoDireccion: false,
                     }
                     : item
             )
@@ -272,16 +263,16 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
             try {
                 res = await axios.get(`${API_URL}/ubicaciones-todas`, {
                     params: {
-                        mascota_id: mascota.id
+                        mascota_id: mascota.id,
                     },
-                    timeout: 5000
+                    timeout: 5000,
                 });
             } catch {
                 res = await axios.get(`${API_URL}/ubicaciones`, {
                     params: {
-                        mascota_id: mascota.id
+                        mascota_id: mascota.id,
                     },
-                    timeout: 5000
+                    timeout: 5000,
                 });
             }
 
@@ -306,7 +297,7 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
                         __key: key,
                         ubicacion: coordenadas,
                         direccionLegible: coordenadas || "Ubicación no disponible",
-                        cargandoDireccion: Boolean(coordenadas)
+                        cargandoDireccion: Boolean(coordenadas),
                     };
                 });
 
@@ -417,6 +408,7 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
                     alt={`Foto de ${mascota?.nombre || "mascota"}`}
                     loading="lazy"
                     onError={(e) => {
+                        e.currentTarget.onerror = null;
                         e.currentTarget.src = PLACEHOLDER_IMG;
                     }}
                 />
@@ -492,9 +484,12 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
                                         : "Fecha no disponible";
 
                                     return (
-                                        <article key={ubic.__key || ubic.id || idx} className="scanner-item">
+                                        <article
+                                            key={ubic.__key || ubic.id || idx}
+                                            className="scanner-item"
+                                        >
                                             <div className="scanner-info">
-                                                <strong>📍Calle: {getTextoUbicacion(ubic)}</strong>
+                                                <strong>📍 Calle: {getTextoUbicacion(ubic)}</strong>
 
                                                 <span>🕒 {fechaTexto}</span>
 

@@ -1,8 +1,8 @@
-// App.jsx (corregido)
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Homepage from "./pages/home";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+
+import Homepage from "./pages/home";
 import Login from "./components/Login/Login";
 import Register from "./components/Register/Register";
 import Consultas from "./components/container/Users/Consultas";
@@ -19,7 +19,8 @@ import MascotaAdminDetail from "./components/Root/MascotaAdminDetail";
 
 function App() {
 	const [authenticated, setAuthenticated] = React.useState(
-		localStorage.getItem('authenticated') === 'true'
+		localStorage.getItem("authenticated") === "true" ||
+		!!localStorage.getItem("userId")
 	);
 
 	const handleLogout = () => {
@@ -33,12 +34,20 @@ function App() {
 				{/* Rutas públicas */}
 				<Route path="/" element={<Homepage />} />
 				<Route path="/Comprar" element={<Buy />} />
+				<Route path="/comprar" element={<Buy />} />
 				<Route path="/NewSmartpet" element={<Homepage />} />
+				<Route path="/newsmartpet" element={<Homepage />} />
 				<Route path="/Login" element={<Login />} />
+				<Route path="/login" element={<Login />} />
 				<Route path="/Register" element={<Register />} />
-				<Route path="/MascotaProtegida/:id" element={<MascotaProtegida />} />
+				<Route path="/register" element={<Register />} />
 
-				{/* Rutas protegidas (requieren autenticación) */}
+				{/* Ruta pública para QR / NFC */}
+				<Route path="/MascotaProtegida/:id" element={<MascotaProtegida />} />
+				<Route path="/mascotaProtegida/:id" element={<MascotaProtegida />} />
+				<Route path="/mascotaprotegida/:id" element={<MascotaProtegida />} />
+
+				{/* Rutas protegidas usuario */}
 				<Route
 					path="/Consultas/:id"
 					element={
@@ -47,6 +56,16 @@ function App() {
 						</ProtectedRoute>
 					}
 				/>
+
+				<Route
+					path="/consultas/:id"
+					element={
+						<ProtectedRoute>
+							<Consultas />
+						</ProtectedRoute>
+					}
+				/>
+
 				<Route
 					path="/MisMascotas/:id"
 					element={
@@ -55,6 +74,7 @@ function App() {
 						</ProtectedRoute>
 					}
 				/>
+
 				<Route
 					path="/agenda/:userId"
 					element={
@@ -63,6 +83,7 @@ function App() {
 						</ProtectedRoute>
 					}
 				/>
+
 				<Route
 					path="/configuracion"
 					element={
@@ -71,6 +92,8 @@ function App() {
 						</ProtectedRoute>
 					}
 				/>
+
+				{/* Rutas protegidas admin */}
 				<Route
 					path="/admin"
 					element={
@@ -81,7 +104,25 @@ function App() {
 				/>
 
 				<Route
-					path="/admin/mis-mascotas/id"
+					path="/admin/mis-mascotas"
+					element={
+						<ProtectedRoute adminOnly={true}>
+							<MisMascotas />
+						</ProtectedRoute>
+					}
+				/>
+
+				<Route
+					path="/admin/mis-mascotas/:id"
+					element={
+						<ProtectedRoute adminOnly={true}>
+							<MascotaAdminDetail />
+						</ProtectedRoute>
+					}
+				/>
+
+				<Route
+					path="/admin/mascotas"
 					element={
 						<ProtectedRoute adminOnly={true}>
 							<MascotasAdm />
@@ -89,18 +130,16 @@ function App() {
 					}
 				/>
 
-				<Route path="/admin/mis-mascotas" element={<ProtectedRoute adminOnly={true}>
-					<MisMascotas />
-				</ProtectedRoute>}
+				<Route
+					path="/admin/mascotas/:id"
+					element={
+						<ProtectedRoute adminOnly={true}>
+							<MascotaAdminDetail />
+						</ProtectedRoute>
+					}
 				/>
 
-
-				<Route path="/admin/mis-mascotas/:id" element={<ProtectedRoute adminOnly={true}>
-					<MascotaAdminDetail />
-				</ProtectedRoute>} />
-
-
-				{/* Ruta dashboard protegida manualmente */}
+				{/* Dashboard legacy */}
 				<Route
 					path="/dashboard"
 					element={
@@ -110,12 +149,11 @@ function App() {
 								<Dashboard />
 							</>
 						) : (
-							<Navigate to="/Login" replace />
+							<Navigate to="/login" replace />
 						)
 					}
 				/>
 
-				{/* Opcional: redirigir cualquier ruta no encontrada */}
 				<Route path="*" element={<Navigate to="/" replace />} />
 			</Routes>
 		</BrowserRouter>
