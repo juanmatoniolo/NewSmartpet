@@ -208,6 +208,62 @@ const SECTIONS = {
       id_mascota: { endpoint: "mascotas", label: (m) => m.nombre },
     },
   },
+  productos: {
+    title: "Productos",
+    icon: Tag,
+    endpoint: "productos",
+    singular: "producto",
+    fields: [
+      {
+        name: "titulo",
+        label: "Título",
+        type: "text",
+        required: true,
+      },
+      {
+        name: "descripcion",
+        label: "Descripción",
+        type: "textarea",
+      },
+      {
+        name: "precio",
+        label: "Precio",
+        type: "number",
+        required: true,
+        step: "0.01",
+        min: "0",
+      },
+      {
+        name: "imagen1",
+        label: "Imagen 1",
+        type: "text",
+        placeholder: "uploads/productos/producto-1.webp",
+      },
+      {
+        name: "imagen2",
+        label: "Imagen 2",
+        type: "text",
+        placeholder: "uploads/productos/producto-2.webp",
+      },
+      {
+        name: "imagen3",
+        label: "Imagen 3",
+        type: "text",
+        placeholder: "uploads/productos/producto-3.webp",
+      },
+      {
+        name: "oferta",
+        label: "En oferta",
+        type: "checkbox",
+      },
+      {
+        name: "activo",
+        label: "Activo",
+        type: "checkbox",
+      },
+    ],
+    columns: ["foto", "titulo", "precio", "oferta", "activo"],
+  },
 
   socios: {
     title: "Socios SmartPet",

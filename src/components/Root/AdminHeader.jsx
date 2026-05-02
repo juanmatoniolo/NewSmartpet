@@ -1,146 +1,123 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
+// src/components/Root/AdminHeader.jsx
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Modal } from "react-bootstrap";
+import axios from "axios";
 import {
-    FaSignOutAlt,
-    FaUsers,
-    FaChartBar,
+    FaBars,
+    FaCamera,
     FaHome,
     FaPaw,
-    FaCamera
+    FaSignOutAlt,
+    FaTimes,
+    FaBoxOpen,
 } from "react-icons/fa";
-import { Helmet } from "react-helmet";
-import { Modal } from "react-bootstrap";
+
+import API_BASE, { getImageUrl, withCacheBust } from "../../config/api";
 import "./AdminHeader.css";
 
-import {
-    API_URL,
-    getAdminHeaders,
-    resolveUploadUrl
-} from "../../config/adminApi";
+const API_URL = `${API_BASE}/index.php`;
+const DEFAULT_AVATAR = "/default.jpg";
 
-const AdminHeader = () => {
+const getStoredUser = () => {
+    try {
+        return JSON.parse(localStorage.getItem("user") || "{}");
+    } catch {
+        return {};
+    }
+};
+
+const getInitials = (user) => {
+    const nombre = user?.nombre || "";
+    const apellido = user?.apellido || "";
+
+    const initials = `${nombre.charAt(0)}${apellido.charAt(0)}`.trim();
+
+    return initials ? initials.toUpperCase() : "SP";
+};
+
+function AdminHeader() {
     const navigate = useNavigate();
-
-    const [menuOpen, setMenuOpen] = useState(false);
-    const [drawerOpen, setDrawerOpen] = useState(false);
-    const [fotoPerfil, setFotoPerfil] = useState("");
-    const [showProfileModal, setShowProfileModal] = useState(false);
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [previewUrl, setPreviewUrl] = useState(null);
-    const [uploading, setUploading] = useState(false);
-
     const menuRef = useRef(null);
     const fileInputRef = useRef(null);
 
-    const user = useMemo(() => {
-        try {
-            return JSON.parse(localStorage.getItem("user") || "{}");
-        } catch {
-            return {};
-        }
-    }, []);
+    const [user, setUser] = useState(getStoredUser);
+    const [menuOpen, setMenuOpen] = useState(false);
+    const [drawerOpen, setDrawerOpen] = useState(false);
 
-    const userId = localStorage.getItem("userId") || user?.id || "";
+    const [showProfileModal, setShowProfileModal] = useState(false);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [previewUrl, setPreviewUrl] = useState("");
+    const [uploading, setUploading] = useState(false);
+    const [error, setError] = useState("");
 
-    const cleanupModalEffects = () => {
-        document.body.classList.remove("modal-open");
-        document.body.style.removeProperty("overflow");
-        document.body.style.removeProperty("padding-right");
+    const initials = useMemo(() => getInitials(user), [user]);
 
-        document.querySelectorAll(".modal-backdrop").forEach((el) => el.remove());
-    };
-
-    const closeProfileModal = () => {
-        setShowProfileModal(false);
-        setSelectedFile(null);
-
-        if (previewUrl) {
-            URL.revokeObjectURL(previewUrl);
-        }
-
-        setPreviewUrl(null);
-
-        setTimeout(cleanupModalEffects, 80);
-    };
-
-    const updateLocalUser = (nextUser) => {
-        const mergedUser = {
-            ...user,
-            ...nextUser
-        };
-
-        localStorage.setItem("user", JSON.stringify(mergedUser));
-
-        if (mergedUser.id) {
-            localStorage.setItem("userId", String(mergedUser.id));
-        }
-    };
+    const fotoPerfil = useMemo(() => {
+        const foto = user?.foto_perfil || localStorage.getItem("userPhoto") || "";
+        return foto ? withCacheBust(getImageUrl(foto, DEFAULT_AVATAR), foto) : "";
+    }, [user?.foto_perfil]);
 
     useEffect(() => {
-        const loadUserPhoto = async () => {
-            if (user?.foto_perfil) {
-                setFotoPerfil(resolveUploadUrl(user.foto_perfil));
-                return;
-            }
-
-            if (!userId) return;
-
-            try {
-                const res = await fetch(`${API_URL}/usuarios/${userId}`, {
-                    headers: getAdminHeaders()
-                });
-
-                const data = await res.json();
-
-                if (data?.foto_perfil) {
-                    const fotoUrl = resolveUploadUrl(data.foto_perfil);
-                    setFotoPerfil(fotoUrl);
-                    updateLocalUser({
-                        ...data,
-                        foto_perfil: data.foto_perfil
-                    });
-                }
-            } catch (error) {
-                console.error("Error al cargar foto de perfil:", error);
-            }
-        };
-
-        loadUserPhoto();
-    }, [userId]);
-
-    useEffect(() => {
-        const handler = (e) => {
-            if (menuRef.current && !menuRef.current.contains(e.target)) {
+        const handleClickOutside = (event) => {
+            if (menuRef.current && !menuRef.current.contains(event.target)) {
                 setMenuOpen(false);
             }
         };
 
-        document.addEventListener("mousedown", handler);
+        document.addEventListener("mousedown", handleClickOutside);
 
-        return () => document.removeEventListener("mousedown", handler);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
     }, []);
 
     useEffect(() => {
-        document.body.style.overflow = drawerOpen ? "hidden" : "";
-
         return () => {
-            document.body.style.overflow = "";
-        };
-    }, [drawerOpen]);
-
-    useEffect(() => {
-        return () => {
-            if (previewUrl) {
+            if (previewUrl?.startsWith("blob:")) {
                 URL.revokeObjectURL(previewUrl);
             }
-
-            cleanupModalEffects();
         };
     }, [previewUrl]);
 
     const handleLogout = () => {
         localStorage.clear();
-        navigate("/login");
+        setMenuOpen(false);
+        setDrawerOpen(false);
+        navigate("/login", { replace: true });
+    };
+
+    const closeProfileModal = () => {
+        if (uploading) return;
+
+        setShowProfileModal(false);
+        setSelectedFile(null);
+        setError("");
+
+        if (previewUrl?.startsWith("blob:")) {
+            URL.revokeObjectURL(previewUrl);
+        }
+
+        setPreviewUrl("");
+
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
+    };
+
+    const cleanupModalEffects = () => {
+        setSelectedFile(null);
+        setError("");
+
+        if (previewUrl?.startsWith("blob:")) {
+            URL.revokeObjectURL(previewUrl);
+        }
+
+        setPreviewUrl("");
+
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
     };
 
     const handleFileChange = (e) => {
@@ -151,82 +128,79 @@ const AdminHeader = () => {
         const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
 
         if (!allowedTypes.includes(file.type)) {
-            alert("Formato inválido. Usá JPG, PNG o WEBP.");
+            setError("Formato inválido. Usá JPG, PNG o WEBP.");
+            e.target.value = "";
             return;
         }
 
-        if (file.size > 3 * 1024 * 1024) {
-            alert("La imagen no puede superar los 3MB.");
+        if (file.size > 5 * 1024 * 1024) {
+            setError("La imagen no puede superar los 5MB.");
+            e.target.value = "";
             return;
         }
 
-        if (previewUrl) {
+        if (previewUrl?.startsWith("blob:")) {
             URL.revokeObjectURL(previewUrl);
         }
 
         setSelectedFile(file);
         setPreviewUrl(URL.createObjectURL(file));
+        setError("");
     };
 
     const handleUploadPhoto = async () => {
-        if (!selectedFile || !userId) return;
+        if (!selectedFile || !user?.id) return;
 
         setUploading(true);
-
-        const formData = new FormData();
-        formData.append("imagen", selectedFile);
+        setError("");
 
         try {
-            const response = await fetch(`${API_URL}/upload-perfil/${userId}`, {
-                method: "POST",
-                headers: getAdminHeaders(),
-                body: formData
+            const formData = new FormData();
+            formData.append("imagen", selectedFile);
+
+            const res = await axios.post(`${API_URL}/upload-perfil/${user.id}`, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    "X-User-Id": user.id,
+                },
             });
 
-            const result = await response.json();
-
-            if (!response.ok || !result.success) {
-                throw new Error(result.error || "Error al subir la foto");
+            if (res.data?.success === false) {
+                throw new Error(res.data?.error || "No se pudo actualizar la foto.");
             }
 
-            const rawPhoto = result.foto_perfil || result.user?.foto_perfil || result.url;
-            const photoUrl = resolveUploadUrl(rawPhoto);
+            const updatedUser = res.data?.user || {
+                ...user,
+                foto_perfil: res.data?.foto_perfil || user.foto_perfil,
+            };
 
-            setFotoPerfil(`${photoUrl}?t=${Date.now()}`);
-
-            updateLocalUser({
-                ...(result.user || {}),
-                foto_perfil: rawPhoto
-            });
-
-            window.dispatchEvent(new Event("userPhotoUpdated"));
+            setUser(updatedUser);
+            localStorage.setItem("user", JSON.stringify(updatedUser));
+            localStorage.setItem("userPhoto", updatedUser.foto_perfil || "");
 
             closeProfileModal();
-        } catch (error) {
-            console.error("Error uploading photo:", error);
-            alert(error.message || "Error de conexión");
+        } catch (err) {
+            console.error("Error al subir foto:", err);
+            setError(
+                err.response?.data?.error ||
+                err.message ||
+                "No se pudo actualizar la foto de perfil."
+            );
         } finally {
             setUploading(false);
         }
     };
 
-    const initials = user?.nombre ? user.nombre.charAt(0).toUpperCase() : "A";
-
     return (
         <>
-            <Helmet>
-                <title>SmartPet | Admin</title>
-                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            </Helmet>
-
             <header className="ah-header">
-                <div className="ah-inner">
+                <div className="ah-container">
                     <div className="ah-left">
                         <button
-                            className={`ah-hamburger ${drawerOpen ? "active" : ""}`}
-                            onClick={() => setDrawerOpen((v) => !v)}
-                            aria-label="Menú"
+                            className="ah-menu"
                             type="button"
+                            onClick={() => setDrawerOpen(true)}
+                            aria-label="Abrir menú"
                         >
                             <span />
                             <span />
@@ -293,6 +267,14 @@ const AdminHeader = () => {
                                 </Link>
 
                                 <Link
+                                    to="/admin/productos"
+                                    className="ah-drop-item"
+                                    onClick={() => setMenuOpen(false)}
+                                >
+                                    <FaBoxOpen /> Productos
+                                </Link>
+
+                                <Link
                                     to="/admin"
                                     className="ah-drop-item"
                                     onClick={() => setMenuOpen(false)}
@@ -317,7 +299,7 @@ const AdminHeader = () => {
                 <div className="ah-drawer-head">
                     <div className="ah-drawer-avatar">
                         {fotoPerfil ? (
-                            <img src={fotoPerfil} alt="Avatar" className="imagenperfil" />
+                            <img src={fotoPerfil} alt="Avatar" />
                         ) : (
                             <span>{initials}</span>
                         )}
@@ -329,24 +311,28 @@ const AdminHeader = () => {
                         </p>
                         <p className="ah-drawer-email">{user?.email}</p>
                     </div>
+
+                    <button
+                        type="button"
+                        className="ah-drawer-close"
+                        onClick={() => setDrawerOpen(false)}
+                        aria-label="Cerrar menú"
+                    >
+                        <FaTimes />
+                    </button>
                 </div>
 
                 <nav className="ah-drawer-nav">
-                    <Link
-                        to="/admin"
+                    <button
                         className="ah-drawer-link"
-                        onClick={() => setDrawerOpen(false)}
+                        type="button"
+                        onClick={() => {
+                            setShowProfileModal(true);
+                            setDrawerOpen(false);
+                        }}
                     >
-                        <FaChartBar /> Dashboard
-                    </Link>
-
-                    <Link
-                        to="/admin/usuarios"
-                        className="ah-drawer-link"
-                        onClick={() => setDrawerOpen(false)}
-                    >
-                        <FaUsers /> Usuarios
-                    </Link>
+                        <FaCamera /> Cambiar foto de perfil
+                    </button>
 
                     <Link
                         to="/admin/mis-mascotas"
@@ -357,16 +343,24 @@ const AdminHeader = () => {
                     </Link>
 
                     <Link
-                        to="/"
+                        to="/admin/productos"
                         className="ah-drawer-link"
                         onClick={() => setDrawerOpen(false)}
                     >
-                        <FaHome /> Ver sitio
+                        <FaBoxOpen /> Productos
+                    </Link>
+
+                    <Link
+                        to="/admin"
+                        className="ah-drawer-link"
+                        onClick={() => setDrawerOpen(false)}
+                    >
+                        <FaHome /> Dashboard
                     </Link>
                 </nav>
 
                 <div className="ah-drawer-foot">
-                    <button className="ah-drawer-logout" onClick={handleLogout} type="button">
+                    <button className="ah-drawer-logout" onClick={handleLogout}>
                         <FaSignOutAlt /> Cerrar sesión
                     </button>
                 </div>
@@ -398,10 +392,16 @@ const AdminHeader = () => {
                             <img src={previewUrl} alt="Vista previa" />
                         ) : (
                             <div className="ah-modal-avatar-placeholder">
-                                {fotoPerfil ? <img src={fotoPerfil} alt="Foto actual" /> : <span>{initials}</span>}
+                                {fotoPerfil ? (
+                                    <img src={fotoPerfil} alt="Foto actual" />
+                                ) : (
+                                    <span>{initials}</span>
+                                )}
                             </div>
                         )}
                     </div>
+
+                    {error && <p className="ah-modal-error">{error}</p>}
 
                     <input
                         type="file"
@@ -443,6 +443,6 @@ const AdminHeader = () => {
             </Modal>
         </>
     );
-};
+}
 
 export default AdminHeader;

@@ -16,6 +16,7 @@ import HeaderLogout from "./components/Logout/Logout";
 import MascotasAdm from "./components/Root/MascotasAdm";
 import MisMascotas from "./components/Root/MisMascotas";
 import MascotaAdminDetail from "./components/Root/MascotaAdminDetail";
+import Productos from "./components/Root/Productos";
 
 function App() {
 	const [authenticated, setAuthenticated] = React.useState(
@@ -151,6 +152,15 @@ function App() {
 						) : (
 							<Navigate to="/login" replace />
 						)
+					}
+				/>
+
+				<Route
+					path="/admin/productos"
+					element={
+						<ProtectedRoute adminOnly={true}>
+							<Productos />
+						</ProtectedRoute>
 					}
 				/>
 
