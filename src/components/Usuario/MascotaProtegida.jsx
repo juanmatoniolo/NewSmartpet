@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 import "./MascotaProtegida.css";
@@ -7,8 +7,138 @@ import { API_URL, getImageUrl, withCacheBust } from "../../config/api";
 
 const PLACEHOLDER_IMG = "/assets/smartpet-default.jpg";
 
+const LOCATION_CACHE_PREFIX = "smartpet_location_scan_";
+const LOCATION_TTL_MS = 60 * 60 * 1000;
+const MIN_DISTANCE_METERS = 200;
+
+const getLocationCacheKey = (mascotaId) => {
+  return `${LOCATION_CACHE_PREFIX}${mascotaId}`;
+};
+
+const getDistanceInMeters = (lat1, lon1, lat2, lon2) => {
+  const R = 6371000;
+  const toRad = (value) => (value * Math.PI) / 180;
+
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) *
+    Math.cos(toRad(lat2)) *
+    Math.sin(dLon / 2) *
+    Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c;
+};
+
+const getStoredScan = (mascotaId) => {
+  try {
+    const raw = localStorage.getItem(getLocationCacheKey(mascotaId));
+
+    if (!raw) return null;
+
+    const parsed = JSON.parse(raw);
+
+    if (
+      !parsed ||
+      !parsed.timestamp ||
+      parsed.latitud === undefined ||
+      parsed.longitud === undefined
+    ) {
+      return null;
+    }
+
+    return parsed;
+  } catch {
+    return null;
+  }
+};
+
+const shouldSendLocation = ({ mascotaId, latitud, longitud }) => {
+  const stored = getStoredScan(mascotaId);
+
+  if (!stored) return true;
+
+  const elapsed = Date.now() - Number(stored.timestamp);
+
+  const distance = getDistanceInMeters(
+    Number(stored.latitud),
+    Number(stored.longitud),
+    Number(latitud),
+    Number(longitud)
+  );
+
+  if (elapsed >= LOCATION_TTL_MS) return true;
+
+  if (distance >= MIN_DISTANCE_METERS) return true;
+
+  return false;
+};
+
+const saveLocationScan = ({ mascotaId, latitud, longitud, ubicacion }) => {
+  try {
+    localStorage.setItem(
+      getLocationCacheKey(mascotaId),
+      JSON.stringify({
+        mascotaId,
+        latitud,
+        longitud,
+        ubicacion,
+        timestamp: Date.now(),
+      })
+    );
+  } catch {
+    // Si localStorage falla, no rompemos la vista pública.
+  }
+};
+
+const getDireccionAproximada = async (latitud, longitud) => {
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitud}&lon=${longitud}&zoom=16&addressdetails=1`,
+      {
+        headers: {
+          "Accept-Language": "es",
+        },
+      }
+    );
+
+    if (!res.ok) return "";
+
+    const data = await res.json();
+
+    if (!data?.display_name) return "";
+
+    const calle = data.address?.road || data.address?.pedestrian || "";
+    const numero = data.address?.house_number || "";
+    const ciudad =
+      data.address?.city ||
+      data.address?.town ||
+      data.address?.village ||
+      data.address?.state ||
+      "";
+
+    if (calle && numero) {
+      return `${calle} ${numero}${ciudad ? `, ${ciudad}` : ""}`;
+    }
+
+    if (calle) {
+      return `${calle}${ciudad ? `, ${ciudad}` : ""}`;
+    }
+
+    return data.display_name.split(",").slice(0, 3).join(",").trim();
+  } catch {
+    return "";
+  }
+};
+
 function MascotaProtegida() {
   const { id } = useParams();
+
+  const ubicacionEnviadaRef = useRef(false);
 
   const [mascota, setMascota] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -17,6 +147,7 @@ function MascotaProtegida() {
   const [ubicacionEstado, setUbicacionEstado] = useState({
     intentando: false,
     enviada: false,
+    omitida: false,
     error: null,
   });
 
@@ -24,7 +155,10 @@ function MascotaProtegida() {
     if (!fechaNac) return "Desconocida";
 
     const fechaNacimiento = new Date(fechaNac);
-    if (Number.isNaN(fechaNacimiento.getTime())) return "Desconocida";
+
+    if (Number.isNaN(fechaNacimiento.getTime())) {
+      return "Desconocida";
+    }
 
     const hoy = new Date();
     let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
@@ -39,18 +173,35 @@ function MascotaProtegida() {
 
     if (edad < 1) {
       let meses = mesDiferencia;
+
       if (meses < 0) meses += 12;
       if (meses <= 0) return "Menos de 1 mes";
-      return `${meses} mes(es)`;
+
+      return `${meses} mes${meses !== 1 ? "es" : ""}`;
     }
 
-    return `${edad} año(s)`;
+    return `${edad} año${edad !== 1 ? "s" : ""}`;
   };
 
   const obtenerSexo = (sexo) => {
-    if (sexo === 1 || sexo === "1") return { texto: "Hembra", icono: "♀" };
-    if (sexo === 0 || sexo === "0") return { texto: "Macho", icono: "♂" };
-    return { texto: "No definido", icono: "⚥" };
+    if (sexo === 1 || sexo === "1") {
+      return {
+        texto: "Hembra",
+        icono: "♀",
+      };
+    }
+
+    if (sexo === 0 || sexo === "0") {
+      return {
+        texto: "Macho",
+        icono: "♂",
+      };
+    }
+
+    return {
+      texto: "No definido",
+      icono: "⚥",
+    };
   };
 
   const limpiarTelefono = (telefono) => {
@@ -60,6 +211,7 @@ function MascotaProtegida() {
 
   const getWhatsappLink = (telefono, mensaje) => {
     const tel = limpiarTelefono(telefono);
+
     if (!tel) return "#";
 
     const telefonoFinal = tel.startsWith("54") ? tel : `549${tel}`;
@@ -85,7 +237,11 @@ function MascotaProtegida() {
       setError(null);
 
       const resMascota = await axios.get(`${API_URL}/mascotas/${id}`);
-      const data = resMascota.data?.mascota || resMascota.data?.data || resMascota.data;
+
+      const data =
+        resMascota.data?.mascota ||
+        resMascota.data?.data ||
+        resMascota.data;
 
       if (!data || !data.id) {
         setError("Mascota no encontrada");
@@ -96,10 +252,12 @@ function MascotaProtegida() {
       setMascota(data);
     } catch (err) {
       console.error("Error al cargar mascota:", err);
+
       setError(
         err.response?.data?.error ||
         "Error de conexión. Intente nuevamente."
       );
+
       setMascota(null);
     } finally {
       setLoading(false);
@@ -113,6 +271,7 @@ function MascotaProtegida() {
       setUbicacionEstado({
         intentando: false,
         enviada: false,
+        omitida: false,
         error: "El navegador no soporta geolocalización.",
       });
       return;
@@ -121,6 +280,7 @@ function MascotaProtegida() {
     setUbicacionEstado({
       intentando: true,
       enviada: false,
+      omitida: false,
       error: null,
     });
 
@@ -129,14 +289,36 @@ function MascotaProtegida() {
         const latitud = position.coords.latitude;
         const longitud = position.coords.longitude;
         const precision = position.coords.accuracy;
+        const ubicacion = `${latitud},${longitud}`;
+
+        const puedeEnviar = shouldSendLocation({
+          mascotaId: id,
+          latitud,
+          longitud,
+        });
+
+        if (!puedeEnviar) {
+          setUbicacionEstado({
+            intentando: false,
+            enviada: false,
+            omitida: true,
+            error: null,
+          });
+
+          return;
+        }
 
         try {
-          const ubicacion = `${latitud},${longitud}`;
+          const direccionAproximada = await getDireccionAproximada(
+            latitud,
+            longitud
+          );
 
           await axios.post(`${API_URL}/ubicaciones`, {
             id_mascota: id,
             mascota_id: id,
             ubicacion,
+            direccion_aproximada: direccionAproximada || ubicacion,
             latitud,
             longitud,
             precision,
@@ -144,9 +326,17 @@ function MascotaProtegida() {
             enviar_mail: true,
           });
 
+          saveLocationScan({
+            mascotaId: id,
+            latitud,
+            longitud,
+            ubicacion,
+          });
+
           setUbicacionEstado({
             intentando: false,
             enviada: true,
+            omitida: false,
             error: null,
           });
         } catch (err) {
@@ -158,6 +348,7 @@ function MascotaProtegida() {
           setUbicacionEstado({
             intentando: false,
             enviada: false,
+            omitida: false,
             error: err.response?.data?.error || err.message,
           });
         }
@@ -168,6 +359,7 @@ function MascotaProtegida() {
         setUbicacionEstado({
           intentando: false,
           enviada: false,
+          omitida: false,
           error:
             "No se pudo obtener la ubicación. Puede que el usuario haya rechazado el permiso.",
         });
@@ -186,7 +378,14 @@ function MascotaProtegida() {
   }, [id]);
 
   useEffect(() => {
+    if (!id) return;
+
+    if (ubicacionEnviadaRef.current) return;
+
+    ubicacionEnviadaRef.current = true;
+
     enviarUbicacion();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
@@ -289,6 +488,7 @@ function MascotaProtegida() {
 
               <div className="pet-description-card">
                 <h2>Sobre {mascota.nombre || "esta mascota"}</h2>
+
                 <p>
                   {mascota.descripcion ||
                     "No hay una descripción adicional disponible por el momento."}
@@ -297,6 +497,7 @@ function MascotaProtegida() {
 
               <div className="pet-contact-highlight">
                 <h3>Contactá a su familia</h3>
+
                 <p>Elegí el medio más rápido para avisar que la encontraste.</p>
 
                 <div className="pet-quick-actions">
@@ -335,18 +536,13 @@ function MascotaProtegida() {
                   )}
                 </div>
               </div>
-
-              {ubicacionEstado.enviada && (
-                <p className="pet-location-status">
-                  📍 Ubicación enviada correctamente.
-                </p>
-              )}
             </div>
           </section>
 
           <section className="pet-contacts-section">
             <div className="pet-section-heading">
               <h2>Personas de contacto</h2>
+
               <p>Podés comunicarte con cualquiera de estas personas.</p>
             </div>
 
@@ -355,6 +551,7 @@ function MascotaProtegida() {
                 <article className="pet-contact-card">
                   <div className="pet-contact-header">
                     <div className="pet-contact-avatar">👤</div>
+
                     <div>
                       <h3>{mascota.persona1}</h3>
                       <p>Contacto principal</p>
@@ -403,6 +600,7 @@ function MascotaProtegida() {
                 <article className="pet-contact-card">
                   <div className="pet-contact-header">
                     <div className="pet-contact-avatar">👤</div>
+
                     <div>
                       <h3>{mascota.persona2}</h3>
                       <p>Contacto alternativo</p>

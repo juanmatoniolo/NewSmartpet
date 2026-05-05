@@ -14,12 +14,14 @@ import Spinner from "react-bootstrap/Spinner";
 import axios from "axios";
 
 import EditarMascota from "./EditarMascota";
-import "./TarjetaMascota.css";
-
 import API_BASE, { getImageUrl, withCacheBust } from "../../../config/api";
+
+import "./TarjetaMascota.css";
+import { Edit3, MapPin } from "lucide-react";
 
 const API_URL = `${API_BASE}/index.php`;
 const PLACEHOLDER_IMG = "/a.jpg";
+
 const MAX_SCANERS = 10;
 const DIRECCION_TIMEOUT_MS = 3500;
 const DIRECCION_DELAY_MS = 250;
@@ -61,9 +63,7 @@ const getGoogleMapsUrl = (coordenadas) => {
 };
 
 const getTextoUbicacion = (ubic) => {
-    if (ubic.cargandoDireccion) {
-        return "Buscando dirección aproximada...";
-    }
+    if (ubic.cargandoDireccion) return "Buscando dirección aproximada...";
 
     if (ubic.direccionLegible && !esCoordenada(ubic.direccionLegible)) {
         return ubic.direccionLegible;
@@ -72,7 +72,11 @@ const getTextoUbicacion = (ubic) => {
     return "Ubicación registrada en Google Maps";
 };
 
-const fetchConTimeout = async (url, options = {}, timeoutMs = DIRECCION_TIMEOUT_MS) => {
+const fetchConTimeout = async (
+    url,
+    options = {},
+    timeoutMs = DIRECCION_TIMEOUT_MS
+) => {
     const controller = new AbortController();
     const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
 
@@ -156,6 +160,38 @@ const obtenerDireccionDesdeCoordenadas = async (coordenadas) => {
     }
 };
 
+const calcularEdad = (fechaNacimiento) => {
+    if (!fechaNacimiento) return "Desconocida";
+
+    const nacimiento = new Date(fechaNacimiento);
+
+    if (Number.isNaN(nacimiento.getTime())) return "Desconocida";
+
+    const hoy = new Date();
+    let edad = hoy.getFullYear() - nacimiento.getFullYear();
+    const mesDiff = hoy.getMonth() - nacimiento.getMonth();
+
+    if (
+        mesDiff < 0 ||
+        (mesDiff === 0 && hoy.getDate() < nacimiento.getDate())
+    ) {
+        edad--;
+    }
+
+    if (edad < 0) return "Desconocida";
+
+    if (edad === 0) {
+        let meses = mesDiff;
+
+        if (meses < 0) meses += 12;
+        if (meses <= 0) return "Menos de 1 mes";
+
+        return `${meses} mes${meses !== 1 ? "es" : ""}`;
+    }
+
+    return `${edad} año${edad !== 1 ? "s" : ""}`;
+};
+
 const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
     const [showModalEditar, setShowModalEditar] = useState(false);
     const [showModalScaners, setShowModalScaners] = useState(false);
@@ -169,26 +205,7 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
     const requestIdRef = useRef(0);
 
     const edad = useMemo(() => {
-        if (!mascota?.fecha_nacimiento) return "Desconocida";
-
-        const hoy = new Date();
-        const nacimiento = new Date(mascota.fecha_nacimiento);
-
-        if (Number.isNaN(nacimiento.getTime())) return "Desconocida";
-
-        let edadCalc = hoy.getFullYear() - nacimiento.getFullYear();
-        const mesDiff = hoy.getMonth() - nacimiento.getMonth();
-
-        if (
-            mesDiff < 0 ||
-            (mesDiff === 0 && hoy.getDate() < nacimiento.getDate())
-        ) {
-            edadCalc--;
-        }
-
-        if (edadCalc < 0) return "Desconocida";
-
-        return `${edadCalc} año${edadCalc !== 1 ? "s" : ""}`;
+        return calcularEdad(mascota?.fecha_nacimiento);
     }, [mascota?.fecha_nacimiento]);
 
     const imagen = useMemo(() => {
@@ -396,7 +413,7 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
                         bg="dark"
                         className="codigo-badge"
                         onClick={copiarCodigo}
-                        style={{ cursor: "pointer" }}
+                        title={codigoUnico ? "Copiar código" : "Sin código"}
                     >
                         {copiado ? "✓ Copiado" : `🔑 ${codigoUnico || "Sin código"}`}
                     </Badge>
@@ -421,13 +438,23 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
                     </Card.Text>
 
                     <div className="botones-acciones">
-                        <Button variant="primary" size="sm" onClick={handleAbrirEditar}>
-                            Editar
-                        </Button>
+                        <button
+                            type="button"
+                            className="mascota-action-btn primary"
+                            onClick={handleVerScaners}
+                        >
+                            <MapPin size={17} />
+                            Ver ubicaciones
+                        </button>
 
-                        <Button variant="secondary" size="sm" onClick={handleVerScaners}>
-                            Ver Scaners
-                        </Button>
+                        <button
+                            type="button"
+                            className="mascota-action-btn ghost"
+                            onClick={handleAbrirEditar}
+                        >
+                            <Edit3 size={17} />
+                            Editar datos
+                        </button>
                     </div>
                 </Card.Body>
             </Card>
@@ -459,6 +486,7 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
                     ) : errorUbicaciones ? (
                         <div className="scaners-empty error">
                             <p>{errorUbicaciones}</p>
+
                             <Button variant="outline-primary" size="sm" onClick={cargarScaners}>
                                 Reintentar
                             </Button>
@@ -534,5 +562,7 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
         </>
     );
 });
+
+TarjetaMascota.displayName = "TarjetaMascota";
 
 export default TarjetaMascota;
