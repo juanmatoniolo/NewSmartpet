@@ -161,3 +161,12 @@
 		font-size: 0.82rem;
 	}
 }
+
+.sp-navlink {
+	/* tus estilos... */
+	text-decoration: none;
+	/* quita el subrayado */
+	display: inline-block;
+	/* para que el padding se aplique bien en enlaces */
+	cursor: pointer;
+}

@@ -1,0 +1,140 @@
+.sp-products {
+    text-align: center;
+}
+
+.sp-products-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    margin-top: 2.5rem;
+}
+
+.sp-product-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
+    flex: 1 1 260px;
+    max-width: 300px;
+    box-shadow: 0 10px 28px rgba(108, 92, 148, 0.12);
+    border-top: 6px solid #CD7FA7;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s;
+}
+
+.sp-product-card:hover {
+    transform: translateY(-4px);
+}
+
+.sp-product-card h3 {
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: #2a1f3d;
+    margin-bottom: 0.6rem;
+}
+
+.sp-product-precio {
+    font-size: 2rem;
+    font-weight: 900;
+    color: #6C5C94;
+    margin: 0.5rem 0;
+}
+
+.sp-product-desc {
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 1rem;
+    min-height: 3.5rem;
+}
+
+.sp-product-extra {
+    font-size: 0.8rem;
+    background: #f4f1f9;
+    padding: 0.3rem 1rem;
+    border-radius: 20px;
+    color: #6C5C94;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+}
+
+.sp-products .sp-cta {
+    margin-top: auto;
+}
+
+.sp-products {
+    text-align: center;
+    padding: 3rem 1.5rem;
+}
+
+.sp-products-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    margin-top: 2.5rem;
+}
+
+.sp-product-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
+    flex: 1 1 260px;
+    max-width: 300px;
+    box-shadow: 0 10px 28px rgba(108, 92, 148, 0.12);
+    border-top: 6px solid #CD7FA7;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s;
+}
+
+.sp-product-card:hover {
+    transform: translateY(-4px);
+}
+
+.sp-product-card h3 {
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: #2a1f3d;
+    margin-bottom: 0.6rem;
+}
+
+.sp-product-precio {
+    font-size: 2rem;
+    font-weight: 900;
+    color: #6C5C94;
+    margin: 0.5rem 0;
+}
+
+.sp-product-desc {
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 1rem;
+    min-height: 3.5rem;
+    font-size: 0.9rem;
+}
+
+.sp-product-extra {
+    font-size: 0.8rem;
+    background: #f4f1f9;
+    padding: 0.3rem 1rem;
+    border-radius: 20px;
+    color: #6C5C94;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+}
+
+.sp-products .sp-cta {
+    margin-top: auto;
+    width: 100%;
+    text-align: center;
+}
+
+@media (max-width: 480px) {
+    .sp-product-card {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+}

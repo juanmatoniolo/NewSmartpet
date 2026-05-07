@@ -1,0 +1,74 @@
+.sp-problem {
+    padding: 3rem 1.5rem;
+    text-align: center;
+}
+
+.sp-problem-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+    margin: 2rem 0;
+}
+
+.sp-problem-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 1.8rem 1.2rem;
+    flex: 1 1 260px;
+    max-width: 300px;
+    box-shadow: 0 4px 18px rgba(108, 92, 148, 0.12);
+    border-top: 4px solid #CD7FA7;
+}
+
+.sp-problem-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 1rem;
+    background-color: #f4f1f9;
+    border-radius: 50%;
+    position: relative;
+}
+
+.sp-icon-fear::after {
+    content: "!";
+    font-size: 28px;
+    font-weight: 900;
+    color: #6C5C94;
+    line-height: 48px;
+}
+
+.sp-icon-phone::after {
+    content: "📵";
+    font-size: 24px;
+    line-height: 48px;
+    font-style: normal;
+}
+
+.sp-icon-clock::after {
+    content: "⏳";
+    font-size: 24px;
+    line-height: 48px;
+    font-style: normal;
+}
+
+.sp-problem-card p {
+    font-weight: 600;
+    color: #3f3d56;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.sp-problem-conclusion {
+    font-size: 1.15rem;
+    color: #6C5C94;
+    font-weight: 800;
+    margin-top: 1.2rem;
+}
+
+@media (max-width: 480px) {
+    .sp-problem-card {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+}

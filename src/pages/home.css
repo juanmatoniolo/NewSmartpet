@@ -455,3 +455,216 @@
         font-size: 2.5rem;
     }
 }
+
+/*
+  PARCHE home.css — reemplazá / agregá estas reglas.
+  Solo toca el bloque de video y carousel; no modifica el header.
+*/
+
+/* ── VIDEO — mobile-first ── */
+.sp-video-wrap {
+    padding: 1.5rem 1rem;
+    text-align: center;
+}
+
+.sp-video-container {
+    background: #2a1f3d;
+    border-radius: 18px;
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
+}
+
+.sp-video {
+    width: 100%;
+    max-width: 100%;
+    /* mobile: ocupa todo el ancho disponible */
+    max-height: 70vh;
+    /* nunca más alto que el viewport */
+    border-radius: 12px;
+    object-fit: contain;
+    display: block;
+}
+
+/* En pantallas medianas/grandes: volver a limitar el ancho */
+@media (min-width: 480px) {
+    .sp-video {
+        max-width: 360px;
+        max-height: 640px;
+    }
+}
+
+.sp-video-caption {
+    color: #888;
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.sp-video-tag {
+    background: #f4f1f9;
+    color: #6c5c94;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 10px;
+}
+
+/* ── CAROUSEL — mobile-first ── */
+.sp-carousel-section {
+    overflow: hidden;
+    /* evita scroll horizontal fantasma en mobile */
+}
+
+.sp-carousel-wrapper {
+    width: 100%;
+    /* Deja que Swiper maneje su overflow interno */
+}
+
+/* Swiper arrows: ocultar en mobile para no pisar las fotos */
+@media (max-width: 480px) {
+
+    .swiper-button-next,
+    .swiper-button-prev {
+        display: none !important;
+    }
+}
+
+/* ── PHOTO CARD — aspect-ratio seguro en mobile ── */
+.sp-photo-card {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    aspect-ratio: 3 / 4;
+    /* más natural en mobile que 1:1 */
+    background: #e8e0f5;
+    width: 100%;
+}
+
+.sp-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s;
+}
+
+.sp-photo-card:hover .sp-photo {
+    transform: scale(1.04);
+}
+
+/* ---------- SMARTPHONE MOCKUP ---------- */
+.phone-mockup {
+    position: relative;
+    width: 240px;
+    /* ancho del teléfono */
+    height: 480px;
+    /* alto del teléfono (proporción ~1:2) */
+    background: #111;
+    border-radius: 28px;
+    border: 2px solid #333;
+    margin: 2rem auto;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Pantalla donde se reproduce el video */
+.phone-screen {
+    width: calc(100% - 16px);
+    height: calc(100% - 16px);
+    background: #000;
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.phone-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* cubre toda la pantalla, podés cambiarlo a contain si querés verlo completo sin recorte */
+    display: block;
+}
+
+/* Botones laterales (volumen / power) */
+.phone-buttons {
+    position: absolute;
+    right: -6px;
+    top: 28%;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.phone-btn {
+    width: 4px;
+    height: 40px;
+    background: linear-gradient(to right, #222, #555, #222);
+    border-radius: 0 2px 2px 0;
+}
+
+/* Duplicamos los botones al lado izquierdo (espejados) */
+.phone-mockup::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 28%;
+    width: 4px;
+    height: 40px;
+    background: linear-gradient(to left, #222, #555, #222);
+    border-radius: 2px 0 0 2px;
+    box-shadow: 0 20px 0 0 #333;
+}
+
+/* Notch superior con cámara y altavoz */
+.phone-notch {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+    height: 20px;
+    background: #0a0a0a;
+    border-radius: 0 0 12px 12px;
+}
+
+.phone-camera {
+    position: absolute;
+    top: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #1a1a1a;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+}
+
+.phone-speaker {
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30%;
+    height: 3px;
+    background: #2a2a2a;
+    border-radius: 2px;
+}
+
+/* Responsive: en pantallas muy pequeñas reducimos el tamaño */
+@media (max-width: 480px) {
+    .phone-mockup {
+        width: 200px;
+        height: 400px;
+    }
+}

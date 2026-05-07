@@ -20,6 +20,18 @@ const faqs = [
         question: "¿Los collares necesitan baterías o recarga?",
         answer: "No. Funcionan con tecnología pasiva — siempre activos, sin baterías, sin carga, sin mantenimiento.",
     },
+    {
+        question: "¿El collar resiste el agua y los juegos?",
+        answer: "Sí. La resina epoxi y el sublimado con capa protectora están diseñados para acompañar a tu mascota en sus aventuras diarias sin despegarse ni dañarse.",
+    },
+    {
+        question: "¿Cómo recibo mi pedido?",
+        answer: "Coordinamos envío a domicilio o punto de encuentro. Si querés más de un collar, te lo llevo personalmente. Hablame por WhatsApp y lo arreglamos.",
+    },
+    {
+        question: "¿Y si quien encuentra a mi mascota no tiene un teléfono moderno?",
+        answer: "El QR funciona con cualquier smartphone con cámara. El NFC es un plus para los más tecnológicos, pero no es obligatorio: todos los collares llevan QR.",
+    },
 ];
 
 const FAQComponent = memo(() => {

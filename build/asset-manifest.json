@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.2b7f6656.css",
-    "main.js": "/static/js/main.7748bed6.js",
+    "main.css": "/static/css/main.cdbe2ac4.css",
+    "main.js": "/static/js/main.a86ba5cb.js",
     "static/js/453.3d39f2df.chunk.js": "/static/js/453.3d39f2df.chunk.js",
     "static/media/funcionamiento.mp4": "/static/media/funcionamiento.1dc3da1dc7536275a8c4.mp4",
     "static/media/b.mp4": "/static/media/b.970135a237a5d2c50771.mp4",
@@ -13,6 +13,7 @@
     "static/media/a.jpg": "/static/media/a.e61fa3c294bd080b2064.jpg",
     "static/media/img3.jpg": "/static/media/img3.f90a967c108e028f845e.jpg",
     "static/media/mine.jfif": "/static/media/mine.7d1b346743bde38f86d8.jfif",
+    "static/media/img-jm-minerva.jpg": "/static/media/img-jm-minerva.4741be84396a61128a55.jpg",
     "static/media/clientes (5).webp": "/static/media/clientes (5).246719d39921db923ce2.webp",
     "static/media/a (10).jpg": "/static/media/a (10).c510418035daf497652c.jpg",
     "static/media/clientes (2).webp": "/static/media/clientes (2).772d8e74376b7d6177ca.webp",
@@ -28,12 +29,12 @@
     "static/media/logobien.svg": "/static/media/logobien.b28ae095f530ba51dd4c291227cba525.svg",
     "static/media/letrasBlancas.svg": "/static/media/letrasBlancas.63ad970b55a551c96045b8a4087456df.svg",
     "index.html": "/index.html",
-    "main.2b7f6656.css.map": "/static/css/main.2b7f6656.css.map",
-    "main.7748bed6.js.map": "/static/js/main.7748bed6.js.map",
+    "main.cdbe2ac4.css.map": "/static/css/main.cdbe2ac4.css.map",
+    "main.a86ba5cb.js.map": "/static/js/main.a86ba5cb.js.map",
     "453.3d39f2df.chunk.js.map": "/static/js/453.3d39f2df.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.2b7f6656.css",
-    "static/js/main.7748bed6.js"
+    "static/css/main.cdbe2ac4.css",
+    "static/js/main.a86ba5cb.js"
   ]
 }

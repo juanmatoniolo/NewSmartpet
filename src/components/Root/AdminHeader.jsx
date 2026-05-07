@@ -4,12 +4,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { Modal } from "react-bootstrap";
 import axios from "axios";
 import {
-    FaBars,
     FaCamera,
     FaHome,
     FaPaw,
     FaSignOutAlt,
-    FaTimes,
     FaBoxOpen,
 } from "react-icons/fa";
 
@@ -30,9 +28,7 @@ const getStoredUser = () => {
 const getInitials = (user) => {
     const nombre = user?.nombre || "";
     const apellido = user?.apellido || "";
-
     const initials = `${nombre.charAt(0)}${apellido.charAt(0)}`.trim();
-
     return initials ? initials.toUpperCase() : "SP";
 };
 
@@ -43,8 +39,6 @@ function AdminHeader() {
 
     const [user, setUser] = useState(getStoredUser);
     const [menuOpen, setMenuOpen] = useState(false);
-    const [drawerOpen, setDrawerOpen] = useState(false);
-
     const [showProfileModal, setShowProfileModal] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
     const [previewUrl, setPreviewUrl] = useState("");
@@ -64,12 +58,8 @@ function AdminHeader() {
                 setMenuOpen(false);
             }
         };
-
         document.addEventListener("mousedown", handleClickOutside);
-
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
+        return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
     useEffect(() => {
@@ -83,23 +73,18 @@ function AdminHeader() {
     const handleLogout = () => {
         localStorage.clear();
         setMenuOpen(false);
-        setDrawerOpen(false);
         navigate("/login", { replace: true });
     };
 
     const closeProfileModal = () => {
         if (uploading) return;
-
         setShowProfileModal(false);
         setSelectedFile(null);
         setError("");
-
         if (previewUrl?.startsWith("blob:")) {
             URL.revokeObjectURL(previewUrl);
         }
-
         setPreviewUrl("");
-
         if (fileInputRef.current) {
             fileInputRef.current.value = "";
         }
@@ -108,13 +93,10 @@ function AdminHeader() {
     const cleanupModalEffects = () => {
         setSelectedFile(null);
         setError("");
-
         if (previewUrl?.startsWith("blob:")) {
             URL.revokeObjectURL(previewUrl);
         }
-
         setPreviewUrl("");
-
         if (fileInputRef.current) {
             fileInputRef.current.value = "";
         }
@@ -122,11 +104,9 @@ function AdminHeader() {
 
     const handleFileChange = (e) => {
         const file = e.target.files?.[0];
-
         if (!file) return;
 
         const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
-
         if (!allowedTypes.includes(file.type)) {
             setError("Formato inválido. Usá JPG, PNG o WEBP.");
             e.target.value = "";
@@ -142,7 +122,6 @@ function AdminHeader() {
         if (previewUrl?.startsWith("blob:")) {
             URL.revokeObjectURL(previewUrl);
         }
-
         setSelectedFile(file);
         setPreviewUrl(URL.createObjectURL(file));
         setError("");
@@ -196,17 +175,6 @@ function AdminHeader() {
             <header className="ah-header">
                 <div className="ah-container">
                     <div className="ah-left">
-                        <button
-                            className="ah-menu"
-                            type="button"
-                            onClick={() => setDrawerOpen(true)}
-                            aria-label="Abrir menú"
-                        >
-                            <span />
-                            <span />
-                            <span />
-                        </button>
-
                         <Link to="/admin" className="ah-brand">
                             Smart<span>Pet</span>
                             <em>Admin</em>
@@ -234,9 +202,7 @@ function AdminHeader() {
                                         <span>{initials}</span>
                                     )}
                                 </div>
-
                                 <span className="ah-uname">{user?.nombre || "Admin"}</span>
-
                                 <svg
                                     className={`ah-chevron ${menuOpen ? "flip" : ""}`}
                                     viewBox="0 0 10 6"
@@ -257,7 +223,6 @@ function AdminHeader() {
                                 >
                                     <FaCamera /> Cambiar foto de perfil
                                 </button>
-
                                 <Link
                                     to="/admin/mis-mascotas"
                                     className="ah-drop-item"
@@ -265,7 +230,6 @@ function AdminHeader() {
                                 >
                                     <FaPaw /> Mis mascotas
                                 </Link>
-
                                 <Link
                                     to="/admin/productos"
                                     className="ah-drop-item"
@@ -273,7 +237,6 @@ function AdminHeader() {
                                 >
                                     <FaBoxOpen /> Productos
                                 </Link>
-
                                 <Link
                                     to="/admin"
                                     className="ah-drop-item"
@@ -281,7 +244,6 @@ function AdminHeader() {
                                 >
                                     <FaHome /> Dashboard
                                 </Link>
-
                                 <button
                                     className="ah-drop-item danger"
                                     onClick={handleLogout}
@@ -295,85 +257,6 @@ function AdminHeader() {
                 </div>
             </header>
 
-            <div className={`ah-drawer ${drawerOpen ? "open" : ""}`}>
-                <div className="ah-drawer-head">
-                    <div className="ah-drawer-avatar">
-                        {fotoPerfil ? (
-                            <img src={fotoPerfil} alt="Avatar" />
-                        ) : (
-                            <span>{initials}</span>
-                        )}
-                    </div>
-
-                    <div>
-                        <p className="ah-drawer-name">
-                            {user?.nombre} {user?.apellido}
-                        </p>
-                        <p className="ah-drawer-email">{user?.email}</p>
-                    </div>
-
-                    <button
-                        type="button"
-                        className="ah-drawer-close"
-                        onClick={() => setDrawerOpen(false)}
-                        aria-label="Cerrar menú"
-                    >
-                        <FaTimes />
-                    </button>
-                </div>
-
-                <nav className="ah-drawer-nav">
-                    <button
-                        className="ah-drawer-link"
-                        type="button"
-                        onClick={() => {
-                            setShowProfileModal(true);
-                            setDrawerOpen(false);
-                        }}
-                    >
-                        <FaCamera /> Cambiar foto de perfil
-                    </button>
-
-                    <Link
-                        to="/admin/mis-mascotas"
-                        className="ah-drawer-link"
-                        onClick={() => setDrawerOpen(false)}
-                    >
-                        <FaPaw /> Mis mascotas
-                    </Link>
-
-                    <Link
-                        to="/admin/productos"
-                        className="ah-drawer-link"
-                        onClick={() => setDrawerOpen(false)}
-                    >
-                        <FaBoxOpen /> Productos
-                    </Link>
-
-                    <Link
-                        to="/admin"
-                        className="ah-drawer-link"
-                        onClick={() => setDrawerOpen(false)}
-                    >
-                        <FaHome /> Dashboard
-                    </Link>
-                </nav>
-
-                <div className="ah-drawer-foot">
-                    <button className="ah-drawer-logout" onClick={handleLogout}>
-                        <FaSignOutAlt /> Cerrar sesión
-                    </button>
-                </div>
-            </div>
-
-            {drawerOpen && (
-                <div
-                    className="ah-overlay"
-                    onClick={() => setDrawerOpen(false)}
-                    role="presentation"
-                />
-            )}
-
             <Modal
                 show={showProfileModal}
                 onHide={closeProfileModal}
@@ -385,7 +268,6 @@ function AdminHeader() {
                 <Modal.Header closeButton={!uploading}>
                     <Modal.Title>Cambiar foto de perfil</Modal.Title>
                 </Modal.Header>
-
                 <Modal.Body>
                     <div className="ah-modal-preview">
                         {previewUrl ? (
@@ -400,9 +282,7 @@ function AdminHeader() {
                             </div>
                         )}
                     </div>
-
                     {error && <p className="ah-modal-error">{error}</p>}
-
                     <input
                         type="file"
                         accept="image/jpeg,image/png,image/webp"
@@ -410,7 +290,6 @@ function AdminHeader() {
                         ref={fileInputRef}
                         style={{ display: "none" }}
                     />
-
                     <button
                         className="ah-modal-btn secondary"
                         onClick={() => fileInputRef.current?.click()}
@@ -419,7 +298,6 @@ function AdminHeader() {
                     >
                         Seleccionar imagen
                     </button>
-
                     {selectedFile && (
                         <button
                             className="ah-modal-btn primary"
@@ -430,7 +308,6 @@ function AdminHeader() {
                             {uploading ? "Subiendo..." : "Guardar foto"}
                         </button>
                     )}
-
                     <button
                         className="ah-modal-btn ghost"
                         onClick={closeProfileModal}

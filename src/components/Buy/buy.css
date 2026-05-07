@@ -1,3 +1,5 @@
+/* src/components/Buy/Buy.css */
+
 :root {
     --buy-primary: #6c5c94;
     --buy-primary-dark: #51436f;
@@ -24,26 +26,36 @@
 .buy-page {
     min-height: 100vh;
     background:
-        radial-gradient(circle at top left, rgba(205, 127, 167, 0.2), transparent 28rem),
-        radial-gradient(circle at bottom right, rgba(108, 92, 148, 0.15), transparent 28rem),
+        radial-gradient(circle at top left, rgba(205, 127, 167, 0.2), transparent 30rem),
+        radial-gradient(circle at bottom right, rgba(108, 92, 148, 0.15), transparent 30rem),
         linear-gradient(180deg, #ffffff 0%, var(--buy-bg) 100%);
-    padding: clamp(1rem, 3vw, 2rem);
+    padding: clamp(1rem, 3vw, 2.25rem);
     color: var(--buy-text);
 }
 
+.buy-hero,
+.buy-content,
+.buy-offers-section,
+.buy-benefits-section,
+.buy-how-section {
+    width: min(1240px, 100%);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* HERO */
+
 .buy-hero {
-    width: min(1200px, 100%);
-    margin: 0 auto 1.4rem;
-    padding: clamp(1.25rem, 3vw, 2rem);
-    background: rgba(255, 255, 255, 0.92);
+    margin-bottom: 1.5rem;
+    padding: clamp(1.25rem, 3vw, 2.25rem);
+    background: rgba(255, 255, 255, 0.94);
     border: 1px solid var(--buy-border);
     border-radius: var(--buy-radius-xl);
     box-shadow: var(--buy-shadow);
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+    align-items: end;
+    gap: 1.5rem;
     backdrop-filter: blur(12px);
 }
 
@@ -83,7 +95,7 @@
 }
 
 .buy-search {
-    width: min(340px, 100%);
+    width: 100%;
 }
 
 .buy-search input {
@@ -104,15 +116,477 @@
     box-shadow: 0 0 0 4px rgba(108, 92, 148, 0.12);
 }
 
-.buy-content {
-    width: min(1200px, 100%);
+/* SECTION HEADINGS */
+
+.buy-section-heading {
+    margin-bottom: 1.1rem;
+    text-align: center;
+}
+
+.buy-section-kicker {
+    width: fit-content;
+    margin: 0 auto 0.6rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.5rem 0.85rem;
+    border-radius: var(--buy-pill);
+    background: rgba(205, 127, 167, 0.14);
+    color: #93446b;
+    border: 1px solid rgba(205, 127, 167, 0.24);
+    font-size: 0.88rem;
+    font-weight: 950;
+}
+
+.buy-section-heading h2 {
+    margin: 0 0 0.4rem;
+    color: var(--buy-text);
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    font-weight: 950;
+    letter-spacing: -0.045em;
+}
+
+.buy-section-heading p {
     margin: 0 auto;
+    max-width: 720px;
+    color: var(--buy-muted);
+    line-height: 1.55;
+}
+
+/* OFERTAS DESTACADAS */
+
+.buy-offers-section {
+    margin-bottom: 1.5rem;
+}
+
+.buy-offers-highlight-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.buy-offer-highlight-card {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 42% minmax(0, 1fr);
+    min-height: 280px;
+    background: #ffffff;
+    border: 1px solid var(--buy-border);
+    border-radius: var(--buy-radius-xl);
+    box-shadow: var(--buy-shadow);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.buy-offer-highlight-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(205, 127, 167, 0.42);
+    box-shadow: var(--buy-shadow-hover);
+}
+
+.buy-offer-highlight-img {
+    position: relative;
+    min-height: 100%;
+    background: #f7f2fa;
+    overflow: hidden;
+}
+
+.buy-offer-highlight-img img {
+    width: 100%;
+    height: 100%;
+    min-height: 280px;
+    object-fit: cover;
+    display: block;
+}
+
+.buy-offer-floating-badge {
+    position: absolute;
+    top: 0.85rem;
+    left: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.45rem 0.75rem;
+    border-radius: var(--buy-pill);
+    background: rgba(205, 127, 167, 0.95);
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 950;
+    box-shadow: 0 8px 18px rgba(47, 36, 61, 0.16);
+    backdrop-filter: blur(8px);
+}
+
+.buy-offer-highlight-body {
+    padding: 1.05rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    min-width: 0;
+}
+
+.buy-offer-highlight-body h3 {
+    margin: 0 0 0.4rem;
+    color: var(--buy-text);
+    font-size: clamp(1.15rem, 3vw, 1.4rem);
+    font-weight: 950;
+    line-height: 1.12;
+    letter-spacing: -0.035em;
+}
+
+.buy-offer-highlight-body p {
+    margin: 0;
+    color: var(--buy-muted);
+    font-size: 0.94rem;
+    line-height: 1.45;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.buy-offer-highlight-price {
+    margin-top: auto;
+    padding: 0.85rem;
+    border-radius: 18px;
+    background:
+        linear-gradient(135deg, rgba(108, 92, 148, 0.08), rgba(205, 127, 167, 0.12)),
+        #faf8fd;
+    border: 1px solid var(--buy-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.buy-offer-highlight-price span {
+    color: var(--buy-muted);
+    font-size: 0.82rem;
+    font-weight: 900;
+}
+
+.buy-offer-highlight-price strong {
+    color: var(--buy-secondary);
+    font-size: 1.35rem;
+    font-weight: 950;
+    line-height: 1;
+}
+
+.buy-offer-highlight-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+}
+
+.buy-offer-action {
+    width: 100%;
+    min-height: 46px;
+    border-radius: var(--buy-pill);
+    border: 0;
+    padding: 0.75rem 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    text-decoration: none;
+    font-size: 0.92rem;
+    font-weight: 950;
+    cursor: pointer;
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        background 0.18s ease,
+        color 0.18s ease,
+        border-color 0.18s ease;
+}
+
+.buy-offer-action:hover {
+    transform: translateY(-1px);
+}
+
+.buy-offer-action.primary {
+    background: var(--buy-primary);
+    color: #fff;
+    box-shadow: 0 8px 18px rgba(108, 92, 148, 0.24);
+}
+
+.buy-offer-action.primary:hover {
+    background: var(--buy-primary-dark);
+    color: #fff;
+    box-shadow: 0 10px 22px rgba(108, 92, 148, 0.3);
+}
+
+.buy-offer-action.secondary {
+    background: rgba(205, 127, 167, 0.13);
+    color: #93446b;
+    border: 1px solid rgba(205, 127, 167, 0.28);
+}
+
+.buy-offer-action.secondary:hover {
+    background: rgba(205, 127, 167, 0.22);
+    color: #783253;
+    border-color: rgba(205, 127, 167, 0.45);
+}
+
+/* OFERTAS COMPACTAS - fallback si usás versión vieja */
+
+.buy-offers-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 0.95rem;
+}
+
+.buy-offer-item {
+    display: grid;
+    grid-template-columns: 92px 1fr;
+    gap: 0.9rem;
+    align-items: center;
+    padding: 0.85rem;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid var(--buy-border);
+    border-radius: 22px;
+    box-shadow: 0 10px 26px rgba(54, 38, 79, 0.08);
+    text-decoration: none;
+    color: var(--buy-text);
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        border-color 0.18s ease;
+}
+
+.buy-offer-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--buy-shadow);
+    border-color: rgba(205, 127, 167, 0.36);
+}
+
+.buy-offer-img-wrap {
+    width: 92px;
+    height: 92px;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #f7f2fa;
+    border: 1px solid var(--buy-border);
+}
+
+.buy-offer-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.buy-offer-info {
+    display: grid;
+    gap: 0.25rem;
+    min-width: 0;
+}
+
+.buy-offer-label {
+    width: fit-content;
+    padding: 0.25rem 0.55rem;
+    border-radius: var(--buy-pill);
+    background: rgba(205, 127, 167, 0.14);
+    color: #93446b;
+    font-size: 0.72rem;
+    font-weight: 950;
+}
+
+.buy-offer-info strong {
+    color: var(--buy-text);
+    font-size: 1rem;
+    font-weight: 950;
+    line-height: 1.2;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.buy-offer-info small {
+    color: var(--buy-muted);
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.buy-offer-info b {
+    color: var(--buy-secondary);
+    font-size: 1.05rem;
+    font-weight: 950;
+}
+
+/* BENEFICIOS */
+
+.buy-benefits-section {
+    margin-bottom: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.95rem;
+}
+
+.buy-benefit-card {
+    padding: 1.05rem;
+    background: #ffffff;
+    border: 1px solid var(--buy-border);
+    border-radius: 22px;
+    box-shadow: 0 10px 26px rgba(54, 38, 79, 0.08);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+}
+
+.buy-benefit-icon {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 auto;
+    border-radius: 16px;
+    background: rgba(108, 92, 148, 0.1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+}
+
+.buy-benefit-card h3 {
+    margin: 0 0 0.25rem;
+    color: var(--buy-text);
+    font-size: 1rem;
+    font-weight: 950;
+}
+
+.buy-benefit-card p {
+    margin: 0;
+    color: var(--buy-muted);
+    font-size: 0.92rem;
+    line-height: 1.45;
+}
+
+/* CÓMO COMPRAR */
+
+.buy-how-section {
+    margin-bottom: 1.5rem;
+    padding: clamp(1.25rem, 3vw, 2rem);
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid var(--buy-border);
+    border-radius: var(--buy-radius-xl);
+    box-shadow: var(--buy-shadow);
+}
+
+.buy-steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.buy-step-card {
+    position: relative;
+    padding: 1.2rem;
+    background: #ffffff;
+    border: 1px solid var(--buy-border);
+    border-radius: 24px;
+    box-shadow: 0 10px 26px rgba(54, 38, 79, 0.08);
+    text-align: center;
+    overflow: hidden;
+}
+
+.buy-step-number {
+    position: absolute;
+    top: 0.85rem;
+    left: 0.85rem;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--buy-primary);
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 950;
+    box-shadow: 0 8px 18px rgba(108, 92, 148, 0.24);
+}
+
+.buy-step-icon {
+    width: 62px;
+    height: 62px;
+    margin: 0 auto 0.85rem;
+    border-radius: 22px;
+    background:
+        linear-gradient(135deg, rgba(108, 92, 148, 0.12), rgba(205, 127, 167, 0.16)),
+        #f8f5fc;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+}
+
+.buy-step-card h3 {
+    margin: 0 0 0.45rem;
+    color: var(--buy-text);
+    font-size: 1.15rem;
+    font-weight: 950;
+}
+
+.buy-step-card p {
+    margin: 0;
+    color: var(--buy-muted);
+    font-size: 0.94rem;
+    line-height: 1.5;
+}
+
+.buy-important-note {
+    margin-top: 1rem;
+    padding: 1rem;
+    display: flex;
+    gap: 0.85rem;
+    align-items: flex-start;
+    background: rgba(108, 92, 148, 0.08);
+    border: 1px solid rgba(108, 92, 148, 0.16);
+    border-radius: 20px;
+}
+
+.buy-important-icon {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 auto;
+    border-radius: 16px;
+    background: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    box-shadow: 0 8px 18px rgba(54, 38, 79, 0.08);
+}
+
+.buy-important-note strong {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--buy-text);
+    font-weight: 950;
+}
+
+.buy-important-note p {
+    margin: 0;
+    color: var(--buy-muted);
+    line-height: 1.55;
+}
+
+/* PRODUCTOS */
+
+.buy-content {
+    margin-top: 1.5rem;
 }
 
 .buy-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
     gap: clamp(1rem, 2.4vw, 1.35rem);
+    align-items: stretch;
 }
 
 .buy-card {
@@ -374,6 +848,8 @@
     box-shadow: 0 10px 22px rgba(108, 92, 148, 0.3);
 }
 
+/* STATES */
+
 .buy-state {
     min-height: 260px;
     background: #fff;
@@ -413,6 +889,8 @@
     border-top-color: var(--buy-primary);
     animation: buySpin 0.85s linear infinite;
 }
+
+/* MODAL IA */
 
 .buy-modal-overlay {
     position: fixed;
@@ -577,18 +1055,132 @@
     }
 }
 
+/* DESKTOP GRANDE */
+
+@media (min-width: 1280px) {
+    .buy-page {
+        padding-inline: 2.5rem;
+    }
+
+    .buy-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .buy-card-image-wrap {
+        aspect-ratio: 4 / 3;
+    }
+
+    .buy-offers-highlight-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .buy-offer-highlight-card {
+        min-height: 300px;
+    }
+
+    .buy-offer-highlight-img img {
+        min-height: 300px;
+    }
+}
+
+@media (min-width: 1536px) {
+
+    .buy-hero,
+    .buy-content,
+    .buy-offers-section,
+    .buy-benefits-section,
+    .buy-how-section {
+        width: min(1360px, 100%);
+    }
+
+    .buy-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1.45rem;
+    }
+
+    .buy-offers-highlight-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1.35rem;
+    }
+}
+
+@media (min-width: 1800px) {
+
+    .buy-hero,
+    .buy-content,
+    .buy-offers-section,
+    .buy-benefits-section,
+    .buy-how-section {
+        width: min(1480px, 100%);
+    }
+
+    .buy-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .buy-offer-highlight-card {
+        grid-template-columns: 38% minmax(0, 1fr);
+    }
+}
+
+/* TABLET */
+
+@media (max-width: 1100px) {
+    .buy-hero {
+        grid-template-columns: 1fr;
+        align-items: stretch;
+    }
+
+    .buy-search {
+        max-width: 100%;
+    }
+
+    .buy-offers-highlight-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .buy-offer-highlight-card {
+        grid-template-columns: 38% minmax(0, 1fr);
+    }
+
+    .buy-benefits-section {
+        grid-template-columns: 1fr;
+    }
+
+    .buy-steps-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .buy-benefit-card {
+        align-items: center;
+    }
+}
+
+@media (max-width: 860px) {
+    .buy-offer-highlight-card {
+        grid-template-columns: 1fr;
+    }
+
+    .buy-offer-highlight-img img {
+        min-height: auto;
+        aspect-ratio: 4 / 3;
+    }
+
+    .buy-offer-highlight-actions {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* MOBILE */
+
 @media (max-width: 768px) {
     .buy-page {
         padding: 0.85rem;
     }
 
     .buy-hero {
-        align-items: stretch;
         border-radius: 22px;
-    }
-
-    .buy-search {
-        width: 100%;
+        padding: 1rem;
     }
 
     .buy-grid {
@@ -631,7 +1223,7 @@
     }
 }
 
-@media (max-width: 420px) {
+@media (max-width: 520px) {
     .buy-card-image-wrap {
         aspect-ratio: 1 / 1;
     }
@@ -643,6 +1235,20 @@
 
     .buy-card-meta {
         align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .buy-offer-item {
+        grid-template-columns: 1fr;
+    }
+
+    .buy-offer-img-wrap {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 4 / 3;
+    }
+
+    .buy-important-note {
         flex-direction: column;
     }
 
@@ -665,319 +1271,5 @@
         animation-iteration-count: 1 !important;
         scroll-behavior: auto !important;
         transition-duration: 0.01ms !important;
-    }
-}
-
-.buy-offers-section,
-.buy-benefits-section,
-.buy-how-section {
-    width: min(1200px, 100%);
-    margin: 0 auto 1.4rem;
-}
-
-.buy-section-heading {
-    margin-bottom: 1rem;
-    text-align: center;
-}
-
-.buy-section-kicker {
-    width: fit-content;
-    margin: 0 auto 0.6rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    padding: 0.5rem 0.85rem;
-    border-radius: var(--buy-pill);
-    background: rgba(205, 127, 167, 0.14);
-    color: #93446b;
-    border: 1px solid rgba(205, 127, 167, 0.24);
-    font-size: 0.88rem;
-    font-weight: 950;
-}
-
-.buy-section-heading h2 {
-    margin: 0 0 0.4rem;
-    color: var(--buy-text);
-    font-size: clamp(1.5rem, 4vw, 2.25rem);
-    font-weight: 950;
-    letter-spacing: -0.045em;
-}
-
-.buy-section-heading p {
-    margin: 0 auto;
-    max-width: 720px;
-    color: var(--buy-muted);
-    line-height: 1.55;
-}
-
-/* OFERTAS */
-
-.buy-offers-strip {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 0.95rem;
-}
-
-.buy-offer-item {
-    display: grid;
-    grid-template-columns: 92px 1fr;
-    gap: 0.9rem;
-    align-items: center;
-    padding: 0.85rem;
-    background: rgba(255, 255, 255, 0.94);
-    border: 1px solid var(--buy-border);
-    border-radius: 22px;
-    box-shadow: 0 10px 26px rgba(54, 38, 79, 0.08);
-    text-decoration: none;
-    color: var(--buy-text);
-    transition:
-        transform 0.18s ease,
-        box-shadow 0.18s ease,
-        border-color 0.18s ease;
-}
-
-.buy-offer-item:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--buy-shadow);
-    border-color: rgba(205, 127, 167, 0.36);
-}
-
-.buy-offer-img-wrap {
-    width: 92px;
-    height: 92px;
-    border-radius: 18px;
-    overflow: hidden;
-    background: #f7f2fa;
-    border: 1px solid var(--buy-border);
-}
-
-.buy-offer-img-wrap img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-.buy-offer-info {
-    display: grid;
-    gap: 0.25rem;
-    min-width: 0;
-}
-
-.buy-offer-label {
-    width: fit-content;
-    padding: 0.25rem 0.55rem;
-    border-radius: var(--buy-pill);
-    background: rgba(205, 127, 167, 0.14);
-    color: #93446b;
-    font-size: 0.72rem;
-    font-weight: 950;
-}
-
-.buy-offer-info strong {
-    color: var(--buy-text);
-    font-size: 1rem;
-    font-weight: 950;
-    line-height: 1.2;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.buy-offer-info small {
-    color: var(--buy-muted);
-    line-height: 1.35;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.buy-offer-info b {
-    color: var(--buy-secondary);
-    font-size: 1.05rem;
-    font-weight: 950;
-}
-
-/* BENEFICIOS */
-
-.buy-benefits-section {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.95rem;
-}
-
-.buy-benefit-card {
-    padding: 1rem;
-    background: #ffffff;
-    border: 1px solid var(--buy-border);
-    border-radius: 22px;
-    box-shadow: 0 10px 26px rgba(54, 38, 79, 0.08);
-    display: flex;
-    align-items: flex-start;
-    gap: 0.85rem;
-}
-
-.buy-benefit-icon {
-    width: 44px;
-    height: 44px;
-    flex: 0 0 auto;
-    border-radius: 16px;
-    background: rgba(108, 92, 148, 0.1);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.35rem;
-}
-
-.buy-benefit-card h3 {
-    margin: 0 0 0.25rem;
-    color: var(--buy-text);
-    font-size: 1rem;
-    font-weight: 950;
-}
-
-.buy-benefit-card p {
-    margin: 0;
-    color: var(--buy-muted);
-    font-size: 0.92rem;
-    line-height: 1.45;
-}
-
-/* CÓMO COMPRAR */
-
-.buy-how-section {
-    padding: clamp(1.25rem, 3vw, 2rem);
-    background: rgba(255, 255, 255, 0.92);
-    border: 1px solid var(--buy-border);
-    border-radius: var(--buy-radius-xl);
-    box-shadow: var(--buy-shadow);
-}
-
-.buy-steps-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.buy-step-card {
-    position: relative;
-    padding: 1.2rem;
-    background: #ffffff;
-    border: 1px solid var(--buy-border);
-    border-radius: 24px;
-    box-shadow: 0 10px 26px rgba(54, 38, 79, 0.08);
-    text-align: center;
-    overflow: hidden;
-}
-
-.buy-step-number {
-    position: absolute;
-    top: 0.85rem;
-    left: 0.85rem;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    background: var(--buy-primary);
-    color: #ffffff;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 950;
-    box-shadow: 0 8px 18px rgba(108, 92, 148, 0.24);
-}
-
-.buy-step-icon {
-    width: 62px;
-    height: 62px;
-    margin: 0 auto 0.85rem;
-    border-radius: 22px;
-    background:
-        linear-gradient(135deg, rgba(108, 92, 148, 0.12), rgba(205, 127, 167, 0.16)),
-        #f8f5fc;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.8rem;
-}
-
-.buy-step-card h3 {
-    margin: 0 0 0.45rem;
-    color: var(--buy-text);
-    font-size: 1.15rem;
-    font-weight: 950;
-}
-
-.buy-step-card p {
-    margin: 0;
-    color: var(--buy-muted);
-    font-size: 0.94rem;
-    line-height: 1.5;
-}
-
-.buy-important-note {
-    margin-top: 1rem;
-    padding: 1rem;
-    display: flex;
-    gap: 0.85rem;
-    align-items: flex-start;
-    background: rgba(108, 92, 148, 0.08);
-    border: 1px solid rgba(108, 92, 148, 0.16);
-    border-radius: 20px;
-}
-
-.buy-important-icon {
-    width: 42px;
-    height: 42px;
-    flex: 0 0 auto;
-    border-radius: 16px;
-    background: #ffffff;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.25rem;
-    box-shadow: 0 8px 18px rgba(54, 38, 79, 0.08);
-}
-
-.buy-important-note strong {
-    display: block;
-    margin-bottom: 0.25rem;
-    color: var(--buy-text);
-    font-weight: 950;
-}
-
-.buy-important-note p {
-    margin: 0;
-    color: var(--buy-muted);
-    line-height: 1.55;
-}
-
-@media (max-width: 900px) {
-
-    .buy-benefits-section,
-    .buy-steps-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .buy-benefit-card {
-        align-items: center;
-    }
-}
-
-@media (max-width: 520px) {
-    .buy-offer-item {
-        grid-template-columns: 1fr;
-    }
-
-    .buy-offer-img-wrap {
-        width: 100%;
-        height: auto;
-        aspect-ratio: 4 / 3;
-    }
-
-    .buy-important-note {
-        flex-direction: column;
     }
 }

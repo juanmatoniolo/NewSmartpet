@@ -1,10 +1,10 @@
 // src/components/Buy/components/OfertasDestacadas.jsx
 
 import React from "react";
-import { BadgePercent } from "lucide-react";
+import { BadgePercent, ShoppingBag, Sparkles } from "lucide-react";
 import { FALLBACK_IMG, formatPrice } from "../helpers/buyHelpers";
 
-function OfertasDestacadas({ productosEnOferta = [], getWhatsappCompraUrl }) {
+function OfertasDestacadas({ productosEnOferta = [], getWhatsappCompraUrl, onCrearIA }) {
     if (!productosEnOferta.length) return null;
 
     return (
@@ -18,21 +18,15 @@ function OfertasDestacadas({ productosEnOferta = [], getWhatsappCompraUrl }) {
                 <h2>Productos con precio especial</h2>
 
                 <p>
-                    Aprovechá productos seleccionados para identificar, proteger y
-                    personalizar a tu mascota con diseño profesional.
+                    Promos seleccionadas para personalizar la identificación de tu mascota
+                    con diseño profesional y compra rápida por WhatsApp.
                 </p>
             </div>
 
-            <div className="buy-offers-strip">
+            <div className="buy-offers-highlight-grid">
                 {productosEnOferta.map((producto) => (
-                    <a
-                        key={producto.id}
-                        href={getWhatsappCompraUrl(producto)}
-                        className="buy-offer-item"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <div className="buy-offer-img-wrap">
+                    <article className="buy-offer-highlight-card" key={producto.id}>
+                        <div className="buy-offer-highlight-img">
                             <img
                                 src={producto.imagenes?.[0] || FALLBACK_IMG}
                                 alt={producto.titulo}
@@ -42,21 +36,52 @@ function OfertasDestacadas({ productosEnOferta = [], getWhatsappCompraUrl }) {
                                     e.currentTarget.src = FALLBACK_IMG;
                                 }}
                             />
+
+                            <span className="buy-offer-floating-badge">
+                                <BadgePercent size={14} />
+                                Precio especial
+                            </span>
                         </div>
 
-                        <div className="buy-offer-info">
-                            <span className="buy-offer-label">Oferta</span>
+                        <div className="buy-offer-highlight-body">
+                            <div>
+                                <h3>{producto.titulo}</h3>
 
-                            <strong>{producto.titulo}</strong>
+                                <p>
+                                    {producto.descripcion ||
+                                        "Producto SmartPet personalizado con diseño único."}
+                                </p>
+                            </div>
 
-                            <small>
-                                {producto.descripcion ||
-                                    "Producto SmartPet personalizado."}
-                            </small>
+                            <div className="buy-offer-highlight-price">
+                                <span>Promo</span>
+                                <strong>{formatPrice(producto.precio)}</strong>
+                            </div>
 
-                            <b>{formatPrice(producto.precio)}</b>
+                            <div className="buy-offer-highlight-actions">
+                                <a
+                                    href={getWhatsappCompraUrl(producto)}
+                                    className="buy-offer-action primary"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    <ShoppingBag size={17} />
+                                    Comprar
+                                </a>
+
+                                {onCrearIA && (
+                                    <button
+                                        type="button"
+                                        className="buy-offer-action secondary"
+                                        onClick={() => onCrearIA(producto)}
+                                    >
+                                        <Sparkles size={17} />
+                                        Crear con IA
+                                    </button>
+                                )}
+                            </div>
                         </div>
-                    </a>
+                    </article>
                 ))}
             </div>
         </section>

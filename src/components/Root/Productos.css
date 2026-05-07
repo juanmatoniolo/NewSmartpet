@@ -1,3 +1,4 @@
+/* ── BASE (igual al original) ── */
 .productos-page {
     min-height: 100vh;
     padding: clamp(1rem, 3vw, 2rem);
@@ -27,6 +28,12 @@
     gap: 0.45rem;
     font-weight: 800;
     margin-bottom: 0.85rem;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.productos-back:hover {
+    background: #f8f5fc;
 }
 
 .productos-kicker {
@@ -138,6 +145,7 @@
     border-radius: 999px;
     padding: 0.65rem 0.9rem;
     font-weight: 900;
+    white-space: nowrap;
 }
 
 .productos-alert {
@@ -229,7 +237,7 @@
 
 .producto-card-body h2 {
     margin: 0;
-    font-size: 1.22rem;
+    font-size: 1.1rem;
     font-weight: 900;
     color: #33233f;
 }
@@ -250,6 +258,7 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     min-height: 4.1em;
+    font-size: 0.9rem;
 }
 
 .producto-actions {
@@ -269,6 +278,8 @@
     gap: 0.45rem;
     font-weight: 900;
     cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.15s;
 }
 
 .producto-action.edit {
@@ -276,9 +287,17 @@
     color: #51436f;
 }
 
+.producto-action.edit:hover {
+    background: rgba(108, 92, 148, 0.18);
+}
+
 .producto-action.delete {
     background: rgba(217, 79, 112, 0.1);
     color: #9f2441;
+}
+
+.producto-action.delete:hover {
+    background: rgba(217, 79, 112, 0.18);
 }
 
 .productos-empty {
@@ -298,6 +317,7 @@
     font-weight: 900;
 }
 
+/* ── SKELETON ── */
 .producto-skeleton {
     background: #fff;
     border: 1px solid #eadff3;
@@ -333,6 +353,7 @@
     width: 45%;
 }
 
+/* ── FORM GRID ── */
 .productos-form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -351,47 +372,179 @@
     padding-top: 1.95rem;
 }
 
-.productos-images-grid {
+/* ── IMAGE UPLOADER ── */
+.img-uploader {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.img-dropzone {
+    border: 2px dashed #d4c8f0;
+    border-radius: 1rem;
+    padding: 1rem;
+    background: #faf8fd;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.img-dropzone--active {
+    cursor: pointer;
+}
+
+.img-dropzone--active:hover {
+    border-color: #6c5c94;
+    background: #f5f0fc;
+}
+
+.img-dropzone-hint {
+    text-align: center;
+    color: #9a8ab0;
+    font-size: 0.82rem;
+    font-weight: 700;
+    margin: 0.75rem 0 0;
+}
+
+/* grid de slots */
+.img-slots-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
+    gap: 0.75rem;
 }
 
-.producto-img-box {
-    border: 1px solid #eadff3;
-    background: #fff;
-    border-radius: 1rem;
-    padding: 0.85rem;
-    display: grid;
-    gap: 0.65rem;
-}
-
-.producto-img-label {
-    font-weight: 900;
-    color: #3c2a4d;
-    font-size: 0.9rem;
-}
-
-.producto-img-preview,
-.producto-img-placeholder {
-    width: 100%;
+/* slot individual */
+.img-slot {
+    position: relative;
     aspect-ratio: 4 / 3;
-    border-radius: 0.85rem;
-    object-fit: cover;
-    background: #f8f5fc;
-    border: 1px solid #eadff3;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border: 1.5px solid #e0d4f5;
+    background: #fff;
+    transition: border-color 0.2s, transform 0.15s;
+    cursor: grab;
 }
 
-.producto-img-placeholder {
+.img-slot--dragging {
+    border-color: #6c5c94;
+    transform: scale(0.97);
+    box-shadow: 0 0 0 3px rgba(108, 92, 148, 0.25);
+}
+
+.img-slot-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+}
+
+/* badge "Portada" */
+.img-slot-badge {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background: #6c5c94;
+    color: #fff;
+    font-size: 0.62rem;
+    font-weight: 900;
+    padding: 2px 7px;
+    border-radius: 6px;
+    z-index: 2;
+    letter-spacing: 0.3px;
+    pointer-events: none;
+}
+
+/* número de orden */
+.img-slot-num {
+    position: absolute;
+    bottom: 5px;
+    right: 7px;
+    font-size: 0.7rem;
+    font-weight: 900;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.45);
+    border-radius: 6px;
+    padding: 1px 6px;
+    pointer-events: none;
+}
+
+/* grip icon */
+.img-slot-grip {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: rgba(255, 255, 255, 0.85);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.img-slot:hover .img-slot-grip {
+    opacity: 1;
+}
+
+/* botón quitar */
+.img-slot-remove {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.55);
+    border: none;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 3;
+    transition: background 0.15s;
+}
+
+.img-slot-remove:hover {
+    background: rgba(180, 40, 70, 0.85);
+}
+
+/* slot vacío */
+.img-slot-empty {
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: #8a7a9c;
-    font-weight: 800;
-    gap: 0.35rem;
+    gap: 0.3rem;
+    color: #b0a0c8;
+    font-size: 0.75rem;
+    font-weight: 700;
 }
 
+.img-slot-empty-icon {
+    font-size: 1.6rem;
+    font-weight: 300;
+    line-height: 1;
+    color: #c8b8e0;
+}
+
+/* hints debajo del uploader */
+.img-order-hint {
+    font-size: 0.78rem;
+    color: #9a8ab0;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.img-hint-small {
+    font-size: 0.75rem;
+    color: #b0a0c8;
+    font-weight: 600;
+}
+
+/* ── ANIMACIONES ── */
 .productos-spin {
     animation: productosSpin 0.85s linear infinite;
 }
@@ -412,6 +565,7 @@
     }
 }
 
+/* ── RESPONSIVE ── */
 @media (max-width: 768px) {
     .productos-header {
         flex-direction: column;
@@ -436,12 +590,18 @@
         text-align: center;
     }
 
-    .productos-form-grid,
-    .productos-images-grid {
+    .productos-form-grid {
         grid-template-columns: 1fr;
     }
 
     .producto-actions {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .img-slots-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
     }
 }

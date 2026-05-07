@@ -6,12 +6,12 @@ const featuresData = [
     {
         icon: "🏷️",
         step: "01 — Qué es",
-        title: <>Más que una chapita, <em>tecnología real</em></>,
+        title: <>Mucho más que una chapita, <em>es tu tranquilidad</em></>,
         color: "c1",
         items: [
-            "Un collar con QR y/o chip NFC que almacena toda la info vital de tu mascota.",
-            "Al escanearlo, cualquier persona puede ver los datos y contactarte al instante.",
-            "Muestra la última ubicación donde fue escaneado — sin apps ni complicaciones.",
+            "Collar con QR y/o chip NFC que guarda toda la información importante de tu mascota.",
+            "Si se pierde, quien lo escanea ve tus contactos y vos recibís un mail al instante con la ubicación exacta.",
+            "Sin aplicaciones: todo funciona desde el navegador del teléfono.",
         ],
     },
     {

@@ -1,130 +1,313 @@
-/* about.css */
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 
-.about-page {
+/* ── BASE ── */
+.ab-main {
+  background: #f4f1f9;
   font-family: 'Nunito', sans-serif;
-  background-color: #f9f9fc;
-  padding: 2rem 1rem;
-  min-height: calc(100vh - 200px);
+  color: #2a1f3d;
+  min-height: 100vh;
 }
 
-.about-container {
-  max-width: 1100px;
-  margin: 0 auto;
-}
-
-.about-heading {
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: #2d2a4a;
-  margin-bottom: 2rem;
+/* ── HERO ── */
+.ab-hero {
+  background-color: #4a3b7a;
+  padding: 4rem 1.5rem 5.5rem;
   text-align: center;
-  letter-spacing: -0.5px;
+  position: relative;
+  overflow: hidden;
 }
 
-.about-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+.ab-hero::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 52px;
+  background: #f4f1f9;
+  clip-path: ellipse(55% 100% at 50% 100%);
+}
+
+.ab-eyebrow {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.ab-hero-title {
+  color: #fff;
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  font-weight: 900;
+  line-height: 1.2;
+  max-width: 600px;
+  margin: 0 auto 1rem;
+}
+
+.ab-highlight {
+  color: #f7c3dc;
+}
+
+.ab-hero-sub {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
+  max-width: 500px;
+  margin: 0 auto;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+/* ── CONTENT WRAPPER ── */
+.ab-content {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+/* ── SECTIONS ── */
+.ab-section {
+  padding: 3rem 0;
+}
+
+.ab-section--alt {
+  background: #fff;
+  border-radius: 20px;
+  padding: 2.5rem 1.75rem;
+  margin: 0 -1.25rem;
+  box-shadow: 0 4px 20px rgba(108, 92, 148, 0.07);
+}
+
+.ab-section-title {
+  font-size: clamp(1.2rem, 3vw, 1.6rem);
+  font-weight: 900;
+  color: #4a3b7a;
+  margin: 0.4rem 0 1.2rem;
+  line-height: 1.2;
+}
+
+/* ── HISTORIA — layout con imagen ── */
+.ab-section-inner {
+  display: flex;
+  flex-direction: column;
   gap: 2rem;
 }
 
-.about-card {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
-  border: 1px solid #f0eef7;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.about-card:hover {
-  box-shadow: 0 20px 30px -10px rgba(108, 92, 148, 0.1);
-}
-
-.about-card h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #4a3b7a;
-  margin-bottom: 1.5rem;
-  border-bottom: 2px solid #f0eef7;
-  padding-bottom: 0.75rem;
-}
-
-.about-card p {
-  font-size: 1rem;
-  line-height: 1.6;
+.ab-text p {
+  font-size: 0.95rem;
+  font-weight: 600;
   color: #3f3d56;
-  margin-bottom: 1rem;
+  line-height: 1.7;
+  margin-bottom: 0.85rem;
 }
 
-.about-card p:last-child {
+.ab-text p:last-child {
   margin-bottom: 0;
 }
 
-.about-card--full {
-  grid-column: 1 / -1;
+.ab-image-wrap {
+  text-align: center;
 }
 
-.team-content {
-  display: flex;
-  gap: 2rem;
-  align-items: flex-start;
-}
-
-.team-text {
-  flex: 1;
-}
-
-.team-image {
-  flex-shrink: 0;
-  width: 180px;
-}
-
-.team-image img {
+.ab-image {
   width: 100%;
-  height: auto;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  max-width: 380px;
+  border-radius: 18px;
   object-fit: cover;
-  aspect-ratio: 1 / 1;
+  display: block;
+  margin: 0 auto;
+  box-shadow: 0 8px 28px rgba(108, 92, 148, 0.18);
 }
 
-@media (max-width: 768px) {
-  .about-grid {
+.ab-image-caption {
+  font-size: 0.8rem;
+  color: #888;
+  font-weight: 700;
+  margin-top: 0.6rem;
+}
+
+/* ── CARDS (misión / visión / productos) ── */
+.ab-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.ab-card {
+  background: #f4f1f9;
+  border-radius: 16px;
+  padding: 1.5rem;
+  border-top: 4px solid #cd7fa7;
+}
+
+.ab-card-icon {
+  font-size: 1.6rem;
+  margin-bottom: 0.6rem;
+}
+
+.ab-card-title {
+  font-size: 1rem;
+  font-weight: 900;
+  color: #6c5c94;
+  margin-bottom: 0.6rem;
+}
+
+.ab-card p {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #3f3d56;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── FOUNDER ── */
+.ab-founder-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  background: #fff;
+  border-radius: 18px;
+  padding: 1.75rem;
+  box-shadow: 0 6px 24px rgba(108, 92, 148, 0.12);
+  border-left: 5px solid #6c5c94;
+  margin-top: 1.25rem;
+}
+
+.ab-founder-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #6c5c94;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ab-founder-name {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #2a1f3d;
+  margin-bottom: 0.15rem;
+}
+
+.ab-founder-role {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #cd7fa7;
+  margin-bottom: 0.75rem;
+}
+
+.ab-founder-info p {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #3f3d56;
+  line-height: 1.65;
+  margin-bottom: 1rem;
+}
+
+/* CTA del founder */
+.ab-cta {
+  display: inline-block;
+  background: #25D366;
+  color: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 0.95rem;
+  padding: 0.65rem 1.5rem;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.ab-cta:hover {
+  background: #1eb858;
+  transform: translateY(-2px);
+}
+
+/* ── VALORES ── */
+.ab-valores-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.ab-valor {
+  background: #f4f1f9;
+  border-radius: 14px;
+  padding: 1.25rem;
+}
+
+.ab-valor-icon {
+  font-size: 1.4rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.ab-valor h3 {
+  font-size: 0.9rem;
+  font-weight: 900;
+  color: #6c5c94;
+  margin-bottom: 0.4rem;
+}
+
+.ab-valor p {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #555;
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* ── RESPONSIVE — tablet/desktop ── */
+@media (min-width: 640px) {
+  .ab-section--alt {
+    margin: 0;
+    padding: 3rem 2.5rem;
+  }
+
+  .ab-cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .ab-founder-card {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .ab-section-inner.ab-section-inner--reverse {
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 3rem;
+  }
+
+  .ab-text {
+    flex: 1;
+  }
+
+  .ab-image-wrap {
+    flex: 0 0 300px;
+  }
+}
+
+@media (min-width: 900px) {
+  .ab-image-wrap {
+    flex: 0 0 360px;
+  }
+}
+
+@media (max-width: 420px) {
+  .ab-valores-grid {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
   }
 
-  .about-heading {
-    font-size: 1.8rem;
-  }
-
-  .team-content {
-    flex-direction: column;
-  }
-
-  .team-image {
-    width: 100%;
-    max-width: 250px;
-    margin: 0 auto;
-  }
-}
-
-@media (max-width: 480px) {
-  .about-page {
-    padding: 1rem 0.75rem;
-  }
-
-  .about-card {
-    padding: 1.5rem;
-  }
-
-  .about-card h2 {
-    font-size: 1.3rem;
-  }
-
-  .about-heading {
-    font-size: 1.6rem;
-    margin-bottom: 1.5rem;
+  .ab-hero {
+    padding: 3rem 1rem 4.5rem;
   }
 }
