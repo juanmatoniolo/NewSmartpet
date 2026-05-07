@@ -56,7 +56,6 @@ const esCoordenada = (valor = "") => {
 
 const getGoogleMapsUrl = (coordenadas) => {
     if (!coordenadas) return "#";
-
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
         coordenadas
     )}`;
@@ -64,11 +63,9 @@ const getGoogleMapsUrl = (coordenadas) => {
 
 const getTextoUbicacion = (ubic) => {
     if (ubic.cargandoDireccion) return "Buscando dirección aproximada...";
-
     if (ubic.direccionLegible && !esCoordenada(ubic.direccionLegible)) {
         return ubic.direccionLegible;
     }
-
     return "Ubicación registrada en Google Maps";
 };
 
@@ -79,7 +76,6 @@ const fetchConTimeout = async (
 ) => {
     const controller = new AbortController();
     const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
-
     try {
         return await fetch(url, {
             ...options,
@@ -100,7 +96,6 @@ const obtenerDireccionDesdeCoordenadas = async (coordenadas) => {
     }
 
     const partes = coordenadas.split(",");
-
     if (partes.length !== 2) {
         direccionCache.set(coordenadas, coordenadas);
         return coordenadas;
@@ -108,7 +103,6 @@ const obtenerDireccionDesdeCoordenadas = async (coordenadas) => {
 
     const lat = parseFloat(partes[0].trim());
     const lon = parseFloat(partes[1].trim());
-
     if (Number.isNaN(lat) || Number.isNaN(lon)) {
         direccionCache.set(coordenadas, coordenadas);
         return coordenadas;
@@ -130,7 +124,6 @@ const obtenerDireccionDesdeCoordenadas = async (coordenadas) => {
         }
 
         const data = await response.json();
-
         let direccion = coordenadas;
 
         if (data?.display_name) {
@@ -162,33 +155,24 @@ const obtenerDireccionDesdeCoordenadas = async (coordenadas) => {
 
 const calcularEdad = (fechaNacimiento) => {
     if (!fechaNacimiento) return "Desconocida";
-
     const nacimiento = new Date(fechaNacimiento);
-
     if (Number.isNaN(nacimiento.getTime())) return "Desconocida";
-
     const hoy = new Date();
     let edad = hoy.getFullYear() - nacimiento.getFullYear();
     const mesDiff = hoy.getMonth() - nacimiento.getMonth();
-
     if (
         mesDiff < 0 ||
         (mesDiff === 0 && hoy.getDate() < nacimiento.getDate())
     ) {
         edad--;
     }
-
     if (edad < 0) return "Desconocida";
-
     if (edad === 0) {
         let meses = mesDiff;
-
         if (meses < 0) meses += 12;
         if (meses <= 0) return "Menos de 1 mes";
-
         return `${meses} mes${meses !== 1 ? "es" : ""}`;
     }
-
     return `${edad} año${edad !== 1 ? "s" : ""}`;
 };
 
@@ -204,16 +188,26 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
 
     const requestIdRef = useRef(0);
 
-    const edad = useMemo(() => {
-        return calcularEdad(mascota?.fecha_nacimiento);
-    }, [mascota?.fecha_nacimiento]);
+    const edad = useMemo(() => calcularEdad(mascota?.fecha_nacimiento), [mascota?.fecha_nacimiento]);
 
     const imagen = useMemo(() => {
         const baseUrl = getImageUrl(mascota?.urlImg, PLACEHOLDER_IMG);
         const version = mascota?.updated_at || mascota?.urlImg || imageVersion;
-
         return withCacheBust(baseUrl, version);
     }, [mascota?.urlImg, mascota?.updated_at, imageVersion]);
+
+    // Guarda la dirección obtenida en la BD
+    const guardarLugarEnBackend = useCallback(async (idHistorial, lugar) => {
+        if (!idHistorial || !lugar) return;
+        try {
+            await axios.post(`${API_URL}/actualizar-lugar`, {
+                id: idHistorial,
+                lugar: lugar,
+            });
+        } catch (error) {
+            console.warn("No se pudo guardar el lugar en BD:", error);
+        }
+    }, []);
 
     const actualizarDireccionEnLista = useCallback((ubicacionKey, direccionLegible) => {
         setUbicaciones((prev) =>
@@ -236,18 +230,25 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
             for (const ubic of scaners) {
                 if (requestIdRef.current !== currentRequestId) return;
 
-                if (!ubic.ubicacion) {
-                    actualizarDireccionEnLista(ubic.__key, "Ubicación no disponible");
+                // Si ya tiene dirección legible (porque vino de BD o ya se guardó) y no es coordenada, saltar
+                const yaTieneDireccion = ubic.direccionLegible &&
+                    ubic.direccionLegible !== ubic.ubicacion &&
+                    !esCoordenada(ubic.direccionLegible);
+
+                if (!ubic.ubicacion || yaTieneDireccion) {
                     continue;
                 }
 
-                const direccionLegible = await obtenerDireccionDesdeCoordenadas(
-                    ubic.ubicacion
-                );
+                const direccionLegible = await obtenerDireccionDesdeCoordenadas(ubic.ubicacion);
 
                 if (requestIdRef.current !== currentRequestId) return;
 
                 actualizarDireccionEnLista(ubic.__key, direccionLegible);
+
+                // Guardar en la base de datos si el registro tiene ID y el lugar no estaba ya guardado
+                if (ubic.id && (!ubic.lugar || ubic.lugar !== direccionLegible)) {
+                    await guardarLugarEnBackend(ubic.id, direccionLegible);
+                }
 
                 await delay(DIRECCION_DELAY_MS);
             }
@@ -256,7 +257,7 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
                 setCargandoDirecciones(false);
             }
         },
-        [actualizarDireccionEnLista]
+        [actualizarDireccionEnLista, guardarLugarEnBackend]
     );
 
     const cargarScaners = useCallback(async () => {
@@ -279,16 +280,12 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
 
             try {
                 res = await axios.get(`${API_URL}/ubicaciones-todas`, {
-                    params: {
-                        mascota_id: mascota.id,
-                    },
+                    params: { mascota_id: mascota.id },
                     timeout: 5000,
                 });
             } catch {
                 res = await axios.get(`${API_URL}/ubicaciones`, {
-                    params: {
-                        mascota_id: mascota.id,
-                    },
+                    params: { mascota_id: mascota.id },
                     timeout: 5000,
                 });
             }
@@ -301,20 +298,21 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
                 .sort((a, b) => {
                     const fechaA = new Date(a.fecha_hora || a.created_at || 0).getTime();
                     const fechaB = new Date(b.fecha_hora || b.created_at || 0).getTime();
-
                     return fechaB - fechaA;
                 })
                 .slice(0, MAX_SCANERS)
                 .map((ubic, index) => {
                     const coordenadas = normalizarCoordenadas(ubic);
                     const key = crearScannerKey(ubic, index);
+                    const lugarExistente = ubic.lugar && typeof ubic.lugar === 'string' && ubic.lugar.trim() !== '';
 
                     return {
                         ...ubic,
                         __key: key,
                         ubicacion: coordenadas,
-                        direccionLegible: coordenadas || "Ubicación no disponible",
-                        cargandoDireccion: Boolean(coordenadas),
+                        // Usar el campo 'lugar' de la BD si existe, de lo contrario mostrar coordenadas
+                        direccionLegible: lugarExistente ? ubic.lugar : (coordenadas || "Ubicación no disponible"),
+                        cargandoDireccion: !lugarExistente && Boolean(coordenadas),
                     };
                 });
 
@@ -328,15 +326,12 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
             }
         } catch (err) {
             if (requestIdRef.current !== currentRequestId) return;
-
             console.error("Error al cargar scaners:", err);
-
             setErrorUbicaciones(
                 err.response?.data?.error ||
                 err.response?.data?.message ||
                 "No se pudieron cargar las ubicaciones"
             );
-
             setUbicaciones([]);
             setCargandoUbic(false);
             setCargandoDirecciones(false);
@@ -357,18 +352,12 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
         setCargandoDirecciones(false);
     }, []);
 
-    const handleAbrirEditar = useCallback(() => {
-        setShowModalEditar(true);
-    }, []);
-
-    const handleCerrarEditar = useCallback(() => {
-        setShowModalEditar(false);
-    }, []);
+    const handleAbrirEditar = useCallback(() => setShowModalEditar(true), []);
+    const handleCerrarEditar = useCallback(() => setShowModalEditar(false), []);
 
     const handleMascotaActualizada = useCallback(
         async (mascotaActualizada) => {
             setImageVersion(Date.now());
-
             if (onActualizar) {
                 await onActualizar(mascotaActualizada);
             }
@@ -378,7 +367,6 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
 
     const copiarCodigo = useCallback(async () => {
         if (!codigoUnico) return;
-
         try {
             await navigator.clipboard.writeText(codigoUnico);
             setCopiado(true);
@@ -389,11 +377,9 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
 
     useEffect(() => {
         let timeoutId;
-
         if (copiado) {
             timeoutId = setTimeout(() => setCopiado(false), 2000);
         }
-
         return () => clearTimeout(timeoutId);
     }, [copiado]);
 
@@ -432,11 +418,9 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
 
                 <Card.Body>
                     <Card.Title>{mascota?.nombre || "Sin nombre"}</Card.Title>
-
                     <Card.Text>
                         <strong>Edad:</strong> {edad}
                     </Card.Text>
-
                     <div className="botones-acciones">
                         <button
                             type="button"
@@ -446,7 +430,6 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
                             <MapPin size={17} />
                             Ver ubicaciones
                         </button>
-
                         <button
                             type="button"
                             className="mascota-action-btn ghost"
@@ -471,9 +454,9 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
                 <Modal.Header closeButton>
                     <Modal.Title>
                         Últimos {MAX_SCANERS} scaners de {mascota?.nombre || "mascota"}
-                        {!cargandoUbic && cantidadScaners > 0 ? (
+                        {!cargandoUbic && cantidadScaners > 0 && (
                             <span className="scaners-count"> {cantidadScaners}</span>
-                        ) : null}
+                        )}
                     </Modal.Title>
                 </Modal.Header>
 
@@ -486,7 +469,6 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
                     ) : errorUbicaciones ? (
                         <div className="scaners-empty error">
                             <p>{errorUbicaciones}</p>
-
                             <Button variant="outline-primary" size="sm" onClick={cargarScaners}>
                                 Reintentar
                             </Button>
@@ -500,33 +482,25 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
                             {cargandoDirecciones && (
                                 <div className="scaners-loading small">
                                     <Spinner animation="border" size="sm" />
-                                    <span>Buscando direcciones aproximadas...</span>
+                                    <span>Obteniendo direcciones aproximadas...</span>
                                 </div>
                             )}
-
                             <div className="scaners-list">
                                 {ubicaciones.map((ubic, idx) => {
                                     const fecha = ubic.fecha_hora || ubic.created_at || null;
                                     const fechaTexto = fecha
                                         ? new Date(fecha).toLocaleString("es-AR")
                                         : "Fecha no disponible";
-
                                     return (
-                                        <article
-                                            key={ubic.__key || ubic.id || idx}
-                                            className="scanner-item"
-                                        >
+                                        <article key={ubic.__key || ubic.id || idx} className="scanner-item">
                                             <div className="scanner-info">
                                                 <strong>📍 Calle: {getTextoUbicacion(ubic)}</strong>
-
                                                 <span>🕒 {fechaTexto}</span>
-
-                                                {ubic.ubicacion ? (
+                                                {ubic.ubicacion && (
                                                     <small>Abrir ubicación exacta en Google Maps</small>
-                                                ) : null}
+                                                )}
                                             </div>
-
-                                            {ubic.ubicacion ? (
+                                            {ubic.ubicacion && (
                                                 <Button
                                                     variant="outline-primary"
                                                     size="sm"
@@ -536,7 +510,7 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
                                                 >
                                                     Ver en Google Maps
                                                 </Button>
-                                            ) : null}
+                                            )}
                                         </article>
                                     );
                                 })}
@@ -546,14 +520,9 @@ const TarjetaMascota = memo(({ mascota, codigoUnico, onActualizar }) => {
                 </Modal.Body>
 
                 <Modal.Footer>
-                    <Button
-                        variant="outline-primary"
-                        onClick={cargarScaners}
-                        disabled={cargandoUbic}
-                    >
+                    <Button variant="outline-primary" onClick={cargarScaners} disabled={cargandoUbic}>
                         Actualizar
                     </Button>
-
                     <Button variant="secondary" onClick={handleCerrarScaners}>
                         Cerrar
                     </Button>
