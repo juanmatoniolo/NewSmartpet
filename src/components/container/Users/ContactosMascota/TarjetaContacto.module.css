@@ -412,3 +412,11 @@
         transform: none;
     }
 }
+
+
+.modal-footer {
+    position: sticky;
+    bottom: 0;
+    background: #fff;
+    z-index: 10;
+}

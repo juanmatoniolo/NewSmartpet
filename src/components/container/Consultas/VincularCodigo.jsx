@@ -12,13 +12,14 @@ function VincularCodigo({ usuarioId, onCodigoVinculado }) {
 
     const API_URL = `${API_BASE}/index.php`;
 
-    const validarFormato = (valor) => /^[A-Z]{4}[0-9]{4}$/.test(valor);
+    const validarFormato = (valor) => /^[A-Z0-9]{8}$/.test(valor);
 
     const limpiarCodigo = (valor) =>
         valor
             .toUpperCase()
             .replace(/[^A-Z0-9]/g, "")
             .slice(0, 8);
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -98,7 +99,7 @@ function VincularCodigo({ usuarioId, onCodigoVinculado }) {
                         type="text"
                         inputMode="text"
                         autoComplete="off"
-                        placeholder="Ej: ABCD1234"
+                        placeholder="Ej: AB12CD34"
                         value={codigo}
                         onChange={handleChange}
                         disabled={cargando}
@@ -106,7 +107,7 @@ function VincularCodigo({ usuarioId, onCodigoVinculado }) {
                         maxLength={8}
                         aria-describedby="codigo-help"
                     />
-                    <small id="codigo-help">Formato: 4 letras + 4 números.</small>
+                    <small id="codigo-help">8 caracteres: letras y números.</small>
                 </div>
 
                 <button type="submit" disabled={cargando} className="vincular-btn">

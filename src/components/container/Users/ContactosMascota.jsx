@@ -28,7 +28,8 @@ import {
   Star,
   MapPin,
   Clock,
-  ExternalLink
+  ExternalLink,
+  CheckCircle
 } from "lucide-react";
 
 import API_BASE from "../../../config/api";
@@ -64,7 +65,6 @@ const isComplete = (value) => {
   return value === true || value === 1 || value === "1";
 };
 
-// Reemplazá la función formatDate por esta:
 const formatDate = (dateStr) => {
   if (!dateStr) return "Sin fecha";
   const [year, month, day] = String(dateStr).split("T")[0].split("-");
@@ -187,7 +187,6 @@ export default function ContactosMascota() {
     setVacunas(lista.filter((item) => item.tipo_evento === "vacuna"));
   }, []);
 
-
   const [contactos, setContactos] = useState([]);
   const [historial, setHistorial] = useState([]);
   const [vacunas, setVacunas] = useState([]);
@@ -216,6 +215,8 @@ export default function ContactosMascota() {
 
   const [mascotaIdParaContacto, setMascotaIdParaContacto] = useState("");
   const [volverACitaDespuesContacto, setVolverACitaDespuesContacto] = useState(false);
+
+  const [filtroEstadoCita, setFiltroEstadoCita] = useState("pendientes"); // pendientes, realizadas, todas
 
   const showSuccess = (msg) => {
     setSuccessMsg(msg);
@@ -444,6 +445,7 @@ export default function ContactosMascota() {
       setLoading(false);
     }
   }, [userId, mascotaIdParam, cargarMascotasVinculadas]);
+
   useEffect(() => {
     if (!userId) {
       setLoading(false);
@@ -516,14 +518,28 @@ export default function ContactosMascota() {
     return filtrarPorMascota(citas, mascotaSeleccionadaId);
   }, [citas, mascotaSeleccionadaId, filtrarPorMascota]);
 
+  // Citas próximas (solo pendientes y con fecha >= hoy)
   const citasProximas = useMemo(() => {
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
-
     return citasFiltradas.filter(
-      (c) => c.fecha_evento && normalizarFecha(c.fecha_evento) >= hoy
+      (c) =>
+        c.fecha_evento &&
+        normalizarFecha(c.fecha_evento) >= hoy &&
+        !isComplete(c.completada)
     );
   }, [citasFiltradas]);
+
+  // Filtrar citas según estado seleccionado en la pestaña
+  const citasSegunEstado = useMemo(() => {
+    if (filtroEstadoCita === "pendientes") {
+      return citasFiltradas.filter(c => !isComplete(c.completada));
+    }
+    if (filtroEstadoCita === "realizadas") {
+      return citasFiltradas.filter(c => isComplete(c.completada));
+    }
+    return citasFiltradas;
+  }, [citasFiltradas, filtroEstadoCita]);
 
   const vacunasFiltradas = useMemo(() => {
     return filtrarPorMascota(vacunas, mascotaSeleccionadaId);
@@ -670,22 +686,28 @@ export default function ContactosMascota() {
     };
   };
 
+
   const handleGuardarContacto = async (formData) => {
     try {
-      const payload = { ...payloadConMascota(formData), usuario_id: Number(userId) };
+      const payload = {
+        ...formData,
+        usuario_id: Number(userId),
+        id_mascota: toNumberOrNull(currentMascotaId) || toNumberOrNull(mascotaIdParaContacto) || null,
 
-      if (!payload.mascota_id) {
-        setError("Seleccioná una mascota para guardar el contacto.");
-        return false;
-      }
+        // sin mascota_id
+      };
 
       if (editandoContactoId) {
         await axios.put(`${API_URL}/contactos-mascota/${editandoContactoId}`, payload);
         showSuccess("Contacto actualizado correctamente.");
-      } else {
-        await axios.post(`${API_URL}/contactos-mascota`, payload);
-        showSuccess("Contacto creado correctamente.");
+        await recargarContactos(mascotas);
+        clearEditingStates();
+        return true;
       }
+
+      const res = await axios.post(`${API_URL}/contactos-mascota`, payload);
+      showSuccess("Contacto creado correctamente.");
+      const nuevoId = res.data?.id || null;
 
       await recargarContactos(mascotas);
 
@@ -693,7 +715,8 @@ export default function ContactosMascota() {
         setShowModalContacto(false);
         setVolverACitaDespuesContacto(false);
         clearEditingStates();
-        setShowModalCita(true); // sin setTimeout
+        if (nuevoId) setCitaEdit((prev) => ({ ...prev, id_contacto: nuevoId }));
+        setShowModalCita(true);
         return true;
       }
 
@@ -705,12 +728,14 @@ export default function ContactosMascota() {
       return false;
     }
   };
+
   const handleGuardarCita = async (data) => {
     try {
       const payload = {
         ...payloadConMascota(data),
         tipo_evento: "cita",
-        recordatorio: data.recordatorio ? 1 : 0
+        recordatorio: data.recordatorio ? 1 : 0,
+        completada: data.completada ? 1 : 0   // ← agregado
       };
 
       if (!payload.mascota_id) {
@@ -804,6 +829,23 @@ export default function ContactosMascota() {
     }
   };
 
+  const toggleCompletadaCita = async (cita) => {
+    try {
+      const nuevoEstado = isComplete(cita.completada) ? 0 : 1;
+      const payload = {
+        ...cita,
+        completada: nuevoEstado,
+        mascota_id: cita.mascota_id || cita.id_mascota,
+        id_mascota: cita.id_mascota || cita.mascota_id
+      };
+      await axios.put(`${API_URL}/historial-mascota/${cita.id}`, payload);
+      showSuccess(cita.completada ? "Cita marcada como pendiente" : "Cita marcada como realizada");
+      await recargarHistorial(mascotas);
+    } catch (err) {
+      setError("No se pudo actualizar el estado de la cita.");
+    }
+  };
+
   const abrirNuevoContacto = () => {
     clearEditingStates();
     setMascotaIdParaContacto(mascotaIdParaModal);
@@ -867,7 +909,6 @@ export default function ContactosMascota() {
     return (
       <>
         <HeaderLogout />
-
         <Container className="py-5 text-center">
           <Spinner animation="border" variant="primary" />
           <div className="mt-3">Cargando tu agenda...</div>
@@ -879,7 +920,6 @@ export default function ContactosMascota() {
   return (
     <>
       <HeaderLogout />
-
       <Container fluid className={styles.container}>
         <Row className="mb-3">
           <Col>
@@ -889,12 +929,10 @@ export default function ContactosMascota() {
                   <Calendar size={24} className="me-1" />
                   Agenda de mascotas
                 </h2>
-
                 <small>
                   Gestioná contactos, citas, vacunas y servicios recomendados.
                 </small>
               </div>
-
               <Link
                 to={`/Consultas/${userId}`}
                 className={`btn btn-outline-secondary ${styles.backButton}`}
@@ -926,13 +964,10 @@ export default function ContactosMascota() {
           <Card className={styles.emptyCard}>
             <Card.Body>
               <Heart size={36} />
-
               <h5>No tenés mascotas vinculadas</h5>
-
               <p>
                 Para usar la agenda, primero vinculá un código desde tu panel.
               </p>
-
               <Link to={`/Consultas/${userId}`} className="btn btn-primary">
                 Ir al panel
               </Link>
@@ -940,13 +975,12 @@ export default function ContactosMascota() {
           </Card>
         ) : (
           <>
-
-
             <Tabs
               activeKey={tabActivo}
               onSelect={(key) => setTabActivo(key || "resumen")}
               className={`${styles.tabs} mb-3`}
             >
+              {/* Pestaña Resumen (sin cambios funcionales, solo muestra pendientes) */}
               <Tab eventKey="resumen" title="Resumen">
                 <Row className="g-3 mb-4">
                   <Col xs={12} sm={6} lg={3}>
@@ -956,13 +990,11 @@ export default function ContactosMascota() {
                           <div className={`${styles.iconCircle} ${styles.bgPrimaryLight}`}>
                             <Calendar size={22} />
                           </div>
-
                           <div>
                             <div className={styles.cardLabel}>Próximas citas</div>
                             <div className={styles.cardValue}>{citasProximas.length}</div>
                           </div>
                         </div>
-
                         {citasProximas[0] ? (
                           <div className={styles.cardPreview}>
                             <strong>{citasProximas[0].titulo}</strong>
@@ -979,7 +1011,6 @@ export default function ContactosMascota() {
                       </Card.Body>
                     </Card>
                   </Col>
-
                   <Col xs={12} sm={6} lg={3}>
                     <Card className={styles.summaryCard} onClick={abrirNuevaVacuna}>
                       <Card.Body>
@@ -987,27 +1018,22 @@ export default function ContactosMascota() {
                           <div className={`${styles.iconCircle} ${styles.bgSuccessLight}`}>
                             <Syringe size={22} />
                           </div>
-
                           <div>
                             <div className={styles.cardLabel}>Vacunas</div>
-
                             <div className={styles.cardValue}>
                               {vacunasFiltradas.filter((v) => isComplete(v.completada)).length}/
                               {vacunasFiltradas.length}
                             </div>
                           </div>
                         </div>
-
                         <div className={styles.cardPreview}>
                           <ProgressBar
                             now={calcularSaludVacunas()}
                             className={styles.progressBar}
                             variant="success"
                           />
-
                           <div className="d-flex justify-content-between mt-2 small">
                             <span>{calcularSaludVacunas()}% completado</span>
-
                             {vacunasPendientes.length > 0 && (
                               <Badge bg="warning" text="dark">
                                 {vacunasPendientes.length} pendientes
@@ -1018,7 +1044,6 @@ export default function ContactosMascota() {
                       </Card.Body>
                     </Card>
                   </Col>
-
                   <Col xs={12} sm={6} lg={3}>
                     <Card className={styles.summaryCard} onClick={abrirNuevoContacto}>
                       <Card.Body>
@@ -1026,7 +1051,6 @@ export default function ContactosMascota() {
                           <div className={`${styles.iconCircle} ${styles.bgInfoLight}`}>
                             <Users size={22} />
                           </div>
-
                           <div>
                             <div className={styles.cardLabel}>Contactos</div>
                             <div className={styles.cardValue}>
@@ -1034,7 +1058,6 @@ export default function ContactosMascota() {
                             </div>
                           </div>
                         </div>
-
                         <div className={styles.cardPreview}>
                           <Star size={14} /> Favoritos:{" "}
                           <strong>
@@ -1044,7 +1067,6 @@ export default function ContactosMascota() {
                       </Card.Body>
                     </Card>
                   </Col>
-
                   <Col xs={12} sm={6} lg={3}>
                     <Card className={styles.summaryCard} onClick={() => setTabActivo("socios")}>
                       <Card.Body>
@@ -1052,13 +1074,11 @@ export default function ContactosMascota() {
                           <div className={`${styles.iconCircle} ${styles.bgDarkLight}`}>
                             <Heart size={22} />
                           </div>
-
                           <div>
                             <div className={styles.cardLabel}>Amigos SP</div>
                             <div className={styles.cardValue}>{socios.length}</div>
                           </div>
                         </div>
-
                         <div className={styles.cardPreview}>
                           Servicios y comercios recomendados
                         </div>
@@ -1075,7 +1095,6 @@ export default function ContactosMascota() {
                           <strong>Próximas citas</strong>
                           <span>Actividades agendadas más cercanas</span>
                         </div>
-
                         <Button
                           type="button"
                           className={styles.homePanelAddBtn}
@@ -1085,17 +1104,14 @@ export default function ContactosMascota() {
                           Nueva
                         </Button>
                       </Card.Header>
-
                       <Card.Body className={styles.homePanelBody}>
                         {citasProximas.length === 0 ? (
                           <div className={styles.homeEmptyState}>
                             <div className={styles.homeEmptyIcon}>
                               <Calendar size={24} />
                             </div>
-
                             <strong>No hay citas próximas</strong>
                             <p>Agendá controles, turnos o recordatorios importantes.</p>
-
                             <Button type="button" onClick={abrirNuevaCita}>
                               <Plus size={15} />
                               Crear cita
@@ -1104,46 +1120,39 @@ export default function ContactosMascota() {
                         ) : (
                           <div className={styles.homeCitasList}>
                             {citasProximas.slice(0, 4).map((cita) => {
-                              const fecha = cita.fecha_evento || cita.fecha || "";
+                              const fecha = cita.fecha_evento || "";
                               const partes = fecha ? String(fecha).split("T")[0].split("-") : [];
                               const dia = partes.length === 3 ? partes[2] : "--";
                               const mes = partes.length === 3
                                 ? new Date(Number(partes[0]), Number(partes[1]) - 1, 1).toLocaleDateString("es-AR", { month: "short" })
                                 : "Sin fecha";
-
                               return (
                                 <article key={cita.id} className={styles.homeCitaItem}>
                                   <div className={styles.homeCitaDate}>
                                     <span>{dia}</span>
                                     <small>{mes}</small>
                                   </div>
-
                                   <div className={styles.homeCitaContent}>
                                     <div className={styles.homeCitaTop}>
                                       <h4>{cita.titulo || "Cita sin título"}</h4>
-
                                       <span className={styles.homeCitaBadge}>
                                         Próxima
                                       </span>
                                     </div>
-
                                     <div className={styles.homeCitaMeta}>
                                       <span>
                                         <Calendar size={14} />
                                         {formatDate(cita.fecha_evento)}
                                       </span>
-
                                       <span>
                                         <Heart size={14} />
                                         {cita.nombreMascota || "Mascota"}
                                       </span>
                                     </div>
-
                                     {cita.nota && (
                                       <p className={styles.homeCitaNote}>{cita.nota}</p>
                                     )}
                                   </div>
-
                                   <div className={styles.homeCitaActions}>
                                     <Button
                                       type="button"
@@ -1162,13 +1171,11 @@ export default function ContactosMascota() {
                       </Card.Body>
                     </Card>
                   </Col>
-
                   <Col xs={12} lg={6}>
                     <Card className={styles.panelCard}>
                       <Card.Header>
                         <strong>Vacunas pendientes</strong>
                       </Card.Header>
-
                       <Card.Body>
                         {vacunasPendientes.length === 0 ? (
                           <div className="text-muted">No hay vacunas pendientes.</div>
@@ -1177,13 +1184,11 @@ export default function ContactosMascota() {
                             <div key={vacuna.id} className={styles.listItem}>
                               <div>
                                 <strong>{vacuna.titulo}</strong>
-
                                 <div className="small text-muted">
                                   {formatDate(vacuna.proxima_fecha || vacuna.fecha_evento)} ·
                                   🐾 {vacuna.nombreMascota}
                                 </div>
                               </div>
-
                               <Button
                                 size="sm"
                                 variant="outline-success"
@@ -1200,6 +1205,7 @@ export default function ContactosMascota() {
                 </Row>
               </Tab>
 
+              {/* Pestaña Contactos (sin cambios) */}
               <Tab
                 eventKey="contactos"
                 title={`Contactos (${contactosFiltradosPorMascota.length})`}
@@ -1212,7 +1218,6 @@ export default function ContactosMascota() {
                         Veterinarios, peluquerías, paseadores y servicios de confianza.
                       </p>
                     </div>
-
                     <div className={styles.contactosToolbarActions}>
                       <Form.Select
                         value={filtroTipo}
@@ -1227,14 +1232,12 @@ export default function ContactosMascota() {
                         <option value="guarderia">Guardería</option>
                         <option value="otro">Otro</option>
                       </Form.Select>
-
                       <Button className={styles.createContactoBtn} onClick={abrirNuevoContacto}>
                         <Plus size={16} />
                         Nuevo contacto
                       </Button>
                     </div>
                   </div>
-
                   {contactosFiltradosPorMascota.length === 0 ? (
                     <div className={styles.emptyInline}>
                       <Users size={32} />
@@ -1249,7 +1252,6 @@ export default function ContactosMascota() {
                         const tipoVisible = renderTipo(contacto);
                         const iconoVisible = getIconoTipo(contacto.tipo);
                         const favorito = contacto.favorito === true || contacto.favorito === 1 || contacto.favorito === "1";
-
                         return (
                           <Col key={contacto.id} xs={12} md={6} xl={4}>
                             <Card className={styles.contactoCard}>
@@ -1257,7 +1259,6 @@ export default function ContactosMascota() {
                                 <div className={styles.contactoAvatar}>
                                   <span>{iconoVisible}</span>
                                 </div>
-
                                 <button
                                   type="button"
                                   className={`${styles.contactoFavBtn} ${favorito ? styles.contactoFavActive : ""}`}
@@ -1267,15 +1268,12 @@ export default function ContactosMascota() {
                                   <Star size={18} fill={favorito ? "currentColor" : "none"} />
                                 </button>
                               </div>
-
                               <Card.Body className={styles.contactoCardBody}>
                                 <div className={styles.contactoHeader}>
                                   <Badge className={styles.contactoTypeBadge}>
                                     {iconoVisible} {tipoVisible}
                                   </Badge>
-
                                   <h4 className={styles.contactoName}>{nombreVisible}</h4>
-
                                   {contacto.nombreMascota && (
                                     <p className={styles.contactoPet}>
                                       <Heart size={14} />
@@ -1283,7 +1281,6 @@ export default function ContactosMascota() {
                                     </p>
                                   )}
                                 </div>
-
                                 <div className={styles.contactoInfoBox}>
                                   {contacto.celular && (
                                     <div className={styles.contactoInfoRow}>
@@ -1291,21 +1288,18 @@ export default function ContactosMascota() {
                                       <span>{contacto.celular}</span>
                                     </div>
                                   )}
-
                                   {contacto.email && (
                                     <div className={styles.contactoInfoRow}>
                                       <span className={styles.contactoMiniIcon}>@</span>
                                       <span>{contacto.email}</span>
                                     </div>
                                   )}
-
                                   {contacto.direccion && (
                                     <div className={styles.contactoInfoRow}>
                                       <MapPin size={16} />
                                       <span>{contacto.direccion}</span>
                                     </div>
                                   )}
-
                                   {(contacto.horarios || contacto.dias_atencion) && (
                                     <div className={styles.contactoInfoRow}>
                                       <Clock size={16} />
@@ -1317,7 +1311,6 @@ export default function ContactosMascota() {
                                     </div>
                                   )}
                                 </div>
-
                                 <div className={styles.contactoActions}>
                                   {contacto.celular && (
                                     <Button
@@ -1329,7 +1322,6 @@ export default function ContactosMascota() {
                                       WhatsApp
                                     </Button>
                                   )}
-
                                   <Button
                                     type="button"
                                     variant="outline-secondary"
@@ -1339,7 +1331,6 @@ export default function ContactosMascota() {
                                     <Edit2 size={15} />
                                     Editar
                                   </Button>
-
                                   <Button
                                     type="button"
                                     variant="outline-danger"
@@ -1360,7 +1351,8 @@ export default function ContactosMascota() {
                 </div>
               </Tab>
 
-              <Tab eventKey="citas" title={`Citas (${citasFiltradas.length})`}>
+              {/* Pestaña Citas con filtro y toggle */}
+              <Tab eventKey="citas" title={`Citas (${citasSegunEstado.length})`}>
                 <div className={styles.citasSection}>
                   <div className={styles.citasToolbar}>
                     <div>
@@ -1369,35 +1361,37 @@ export default function ContactosMascota() {
                         Turnos, controles y actividades importantes de tus mascotas.
                       </p>
                     </div>
-
-                    <Button className={styles.createCitaBtn} onClick={abrirNuevaCita}>
-                      <Plus size={16} />
-                      Nueva cita
-                    </Button>
+                    <div className="d-flex gap-2">
+                      <Form.Select
+                        value={filtroEstadoCita}
+                        onChange={(e) => setFiltroEstadoCita(e.target.value)}
+                        style={{ width: "160px" }}
+                      >
+                        <option value="pendientes">Pendientes</option>
+                        <option value="realizadas">Realizadas</option>
+                        <option value="todas">Todas</option>
+                      </Form.Select>
+                      <Button className={styles.createCitaBtn} onClick={abrirNuevaCita}>
+                        <Plus size={16} />
+                        Nueva cita
+                      </Button>
+                    </div>
                   </div>
-
-                  {citasFiltradas.length === 0 ? (
+                  {citasSegunEstado.length === 0 ? (
                     <div className={styles.emptyInline}>
                       <Calendar size={32} />
-                      <p>No hay citas registradas.</p>
+                      <p>No hay citas en esta categoría.</p>
                       <Button onClick={abrirNuevaCita}>Crear cita</Button>
                     </div>
                   ) : (
                     <Row className="g-3">
-                      {citasFiltradas.map((cita) => {
-                        const fecha = cita.fecha_evento || cita.fecha || "";
-
+                      {citasSegunEstado.map((cita) => {
+                        const fecha = cita.fecha_evento || "";
                         const partes = fecha ? String(fecha).split("T")[0].split("-") : [];
                         const dia = partes.length === 3 ? partes[2] : "--";
                         const mes = partes.length === 3
                           ? new Date(Number(partes[0]), Number(partes[1]) - 1, 1).toLocaleDateString("es-AR", { month: "short" })
                           : "Sin fecha";
-
-                        const hoy = new Date();
-                        hoy.setHours(0, 0, 0, 0);
-
-
-
                         return (
                           <Col key={cita.id} xs={12} md={6} xl={4}>
                             <Card className={styles.citaCard}>
@@ -1407,27 +1401,24 @@ export default function ContactosMascota() {
                                     <span className={styles.citaDay}>{dia}</span>
                                     <span className={styles.citaMonth}>{mes}</span>
                                   </div>
-
-
+                                  <Badge bg={isComplete(cita.completada) ? "success" : "warning"} text={isComplete(cita.completada) ? "white" : "dark"}>
+                                    {isComplete(cita.completada) ? "Realizada" : "Pendiente"}
+                                  </Badge>
                                 </div>
-
                                 <div className={styles.citaContent}>
                                   <h4 className={styles.citaTitle}>
                                     {cita.titulo || "Cita sin título"}
                                   </h4>
-
                                   <div className={styles.citaMeta}>
                                     <span>
                                       <Calendar size={14} />
                                       {formatDate(cita.fecha_evento)}
                                     </span>
-
                                     <span>
                                       <Heart size={14} />
                                       {cita.nombreMascota || "Mascota"}
                                     </span>
                                   </div>
-
                                   {cita.nota ? (
                                     <p className={styles.citaNote}>{cita.nota}</p>
                                   ) : (
@@ -1435,15 +1426,8 @@ export default function ContactosMascota() {
                                       Sin observaciones cargadas.
                                     </p>
                                   )}
-
-                                  {cita.proxima_fecha && (
-                                    <div className={styles.citaNextDate}>
-                                      <Clock size={15} />
-                                      Próxima fecha: {formatDate(cita.proxima_fecha)}
-                                    </div>
-                                  )}
+                                  {/* Eliminado bloque de próxima_fecha */}
                                 </div>
-
                                 <div className={styles.citaActions}>
                                   <Button
                                     type="button"
@@ -1454,14 +1438,20 @@ export default function ContactosMascota() {
                                     <Edit2 size={15} />
                                     Editar
                                   </Button>
-
+                                  <Button
+                                    type="button"
+                                    variant={isComplete(cita.completada) ? "outline-success" : "outline-secondary"}
+                                    className={styles.citaActionBtn}
+                                    onClick={() => toggleCompletadaCita(cita)}
+                                  >
+                                    <CheckCircle size={15} />
+                                    {isComplete(cita.completada) ? "Realizada" : "Marcar realizada"}
+                                  </Button>
                                   <Button
                                     type="button"
                                     variant="outline-danger"
                                     className={`${styles.citaActionBtn} ${styles.citaDeleteBtn}`}
-                                    onClick={() =>
-                                      eliminarHistorialItem(cita.id, cita.titulo, "cita")
-                                    }
+                                    onClick={() => eliminarHistorialItem(cita.id, cita.titulo, "cita")}
                                   >
                                     <Trash2 size={15} />
                                     Eliminar
@@ -1477,15 +1467,14 @@ export default function ContactosMascota() {
                 </div>
               </Tab>
 
+              {/* Pestaña Vacunas (sin cambios) */}
               <Tab eventKey="vacunas" title={`Vacunas (${vacunasFiltradas.length})`}>
                 <Card className={styles.panelCard}>
                   <Card.Body>
                     {vacunasFiltradas.length === 0 ? (
                       <div className={styles.emptyInline}>
                         <Syringe size={32} />
-
                         <p>No hay vacunas registradas.</p>
-
                         <Button onClick={abrirNuevaVacuna}>Crear vacuna</Button>
                       </div>
                     ) : (
@@ -1493,42 +1482,25 @@ export default function ContactosMascota() {
                         <div key={vacuna.id} className={styles.listItem}>
                           <div>
                             <strong>{vacuna.titulo}</strong>{" "}
-
                             {isComplete(vacuna.completada) ? (
                               <Badge bg="success">Aplicada</Badge>
                             ) : (
-                              <Badge bg="warning" text="dark">
-                                Pendiente
-                              </Badge>
+                              <Badge bg="warning" text="dark">Pendiente</Badge>
                             )}
-
                             <div className="small text-muted">
                               {formatDate(vacuna.fecha_evento)} · 🐾 {vacuna.nombreMascota}
                             </div>
-
                             {vacuna.proxima_fecha && (
                               <div className="small text-muted">
                                 Próxima dosis: {formatDate(vacuna.proxima_fecha)}
                               </div>
                             )}
                           </div>
-
                           <div className={styles.itemActions}>
-                            <Button
-                              size="sm"
-                              variant="outline-success"
-                              onClick={() => abrirEditarVacuna(vacuna)}
-                            >
+                            <Button size="sm" variant="outline-success" onClick={() => abrirEditarVacuna(vacuna)}>
                               <Edit2 size={14} /> Editar
                             </Button>
-
-                            <Button
-                              size="sm"
-                              variant="outline-danger"
-                              onClick={() =>
-                                eliminarHistorialItem(vacuna.id, vacuna.titulo, "vacuna")
-                              }
-                            >
+                            <Button size="sm" variant="outline-danger" onClick={() => eliminarHistorialItem(vacuna.id, vacuna.titulo, "vacuna")}>
                               <Trash2 size={14} /> Eliminar
                             </Button>
                           </div>
@@ -1539,6 +1511,7 @@ export default function ContactosMascota() {
                 </Card>
               </Tab>
 
+              {/* Pestaña Socios (sin cambios) */}
               <Tab eventKey="socios" title={`Amigos SP (${sociosFiltrados.length})`}>
                 <div className={styles.sociosSection}>
                   <div className={styles.sociosToolbar}>
@@ -1549,7 +1522,6 @@ export default function ContactosMascota() {
                       </p>
                     </div>
                   </div>
-
                   {cargandoSocios ? (
                     <div className="py-4 text-center">
                       <Spinner animation="border" />
@@ -1567,7 +1539,6 @@ export default function ContactosMascota() {
                         const tipoSocio = getSocioTipo(socio);
                         const telefonoSocio = getSocioTelefono(socio);
                         const tieneWeb = socio.web || socio.website || socio.instagram || socio.url;
-
                         return (
                           <Col key={socio.id} xs={12} md={6} xl={4}>
                             <Card className={styles.socioCard}>
@@ -1578,45 +1549,36 @@ export default function ContactosMascota() {
                                     alt={nombreSocio}
                                     className={styles.socioImage}
                                     loading="lazy"
-                                    onError={(e) => {
-                                      e.currentTarget.style.display = "none";
-                                    }}
+                                    onError={(e) => { e.currentTarget.style.display = "none"; }}
                                   />
                                 ) : (
                                   <div className={styles.socioPlaceholder}>
                                     <span>{getSocioIcon(socio)}</span>
                                   </div>
                                 )}
-
                                 <div className={styles.socioMediaOverlay} />
-
                                 <div className={styles.socioTopBadges}>
                                   <span className={styles.socioMainBadge}>
                                     {getSocioIcon(socio)} {tipoSocio}
                                   </span>
-
                                   {Number(socio.servicio_24h) === 1 && (
                                     <span className={styles.badgeInfo}>24 hs</span>
                                   )}
-
                                   {Number(socio.emergencias) === 1 && (
                                     <span className={styles.badgeDanger}>Emergencias</span>
                                   )}
                                 </div>
                               </div>
-
                               <Card.Body className={styles.socioBody}>
                                 <div className={styles.socioHeader}>
                                   <div>
                                     <h5 className={styles.socioName}>{nombreSocio}</h5>
                                     <p className={styles.socioSubtitle}>{tipoSocio}</p>
                                   </div>
-
                                   <div className={styles.socioHeart}>
                                     <Heart size={18} />
                                   </div>
                                 </div>
-
                                 <div className={styles.socioInfoBox}>
                                   {socio.direccion && (
                                     <div className={styles.socioInfoRow}>
@@ -1624,14 +1586,12 @@ export default function ContactosMascota() {
                                       <span>{socio.direccion}</span>
                                     </div>
                                   )}
-
                                   {telefonoSocio && (
                                     <div className={styles.socioInfoRow}>
                                       <Phone size={16} />
                                       <span>{telefonoSocio}</span>
                                     </div>
                                   )}
-
                                   {(socio.horarios || socio.horarios_atencion || socio.dias_atencion) && (
                                     <div className={styles.socioInfoRow}>
                                       <Clock size={16} />
@@ -1641,13 +1601,11 @@ export default function ContactosMascota() {
                                     </div>
                                   )}
                                 </div>
-
                                 {(socio.descripcion || socio.detalle || socio.observaciones) && (
                                   <p className={styles.socioDescription}>
                                     {socio.descripcion || socio.detalle || socio.observaciones}
                                   </p>
                                 )}
-
                                 <div className={styles.socioActions}>
                                   {telefonoSocio && (
                                     <Button
@@ -1659,7 +1617,6 @@ export default function ContactosMascota() {
                                       Contactar
                                     </Button>
                                   )}
-
                                   {tieneWeb && (
                                     <Button
                                       type="button"
@@ -1685,6 +1642,7 @@ export default function ContactosMascota() {
           </>
         )}
 
+        {/* Modales */}
         <ModalContacto
           show={showModalContacto}
           onHide={() => {
@@ -1698,6 +1656,7 @@ export default function ContactosMascota() {
           onSave={handleGuardarContacto}
           mascotas={mascotas}
           mascotaId={mascotaIdParaContacto || mascotaIdParaModal}
+          usuarioId={Number(userId)}
         />
 
         <ModalCita

@@ -176,3 +176,10 @@
         padding: 1.15rem 1.35rem;
     }
 }
+
+.modal-footer {
+    position: sticky;
+    bottom: 0;
+    background: #fff;
+    z-index: 10;
+}

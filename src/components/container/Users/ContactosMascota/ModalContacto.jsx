@@ -27,6 +27,7 @@ export default function ModalContacto({
     onHide,
     contactoEdit,
     onSave,
+    usuarioId,          // ← ID del usuario dueño del contacto
 }) {
     const [form, setForm] = useState({
         tipo: "veterinario",
@@ -139,6 +140,7 @@ export default function ModalContacto({
                 apellido: form.apellido.trim(),
                 email: form.email.trim(),
                 categoria_personalizada: form.categoria_personalizada.trim(),
+                usuario_id: usuarioId,   // ← Enviamos el ID del usuario dueño
             };
 
             const ok = await onSave(payload);

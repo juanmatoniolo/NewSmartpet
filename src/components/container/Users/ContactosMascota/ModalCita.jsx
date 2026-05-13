@@ -12,7 +12,6 @@ import {
 } from "react-bootstrap";
 import {
     Calendar,
-    Clock,
     FileText,
     User,
     Bell,
@@ -53,7 +52,8 @@ export default function ModalCita({
         fecha_evento: "",
         titulo: "",
         nota: "",
-        recordatorio: true
+        recordatorio: true,
+        completada: false
     });
 
     const [guardando, setGuardando] = useState(false);
@@ -75,7 +75,8 @@ export default function ModalCita({
                 fecha_evento: toDateInput(citaEdit.fecha_evento),
                 titulo: citaEdit.titulo || "",
                 nota: citaEdit.nota || "",
-                recordatorio: isTrue(citaEdit.recordatorio)
+                recordatorio: isTrue(citaEdit.recordatorio),
+                completada: isTrue(citaEdit.completada)
             });
         } else {
             setForm({
@@ -84,7 +85,8 @@ export default function ModalCita({
                 fecha_evento: "",
                 titulo: "",
                 nota: "",
-                recordatorio: false
+                recordatorio: true,
+                completada: false
             });
         }
 
@@ -95,7 +97,6 @@ export default function ModalCita({
         return mascotas.find((m) => String(m.id) === String(form.mascota_id));
     }, [mascotas, form.mascota_id]);
 
-    // Ahora los contactos son del usuario, no se filtran por mascota
     const contactoSeleccionado = useMemo(() => {
         return contactos.find((c) => String(c.id) === String(form.id_contacto));
     }, [contactos, form.id_contacto]);
@@ -125,10 +126,7 @@ export default function ModalCita({
     };
 
     const setField = (field, value) => {
-        setForm((prev) => ({
-            ...prev,
-            [field]: value
-        }));
+        setForm((prev) => ({ ...prev, [field]: value }));
         setErrores((prev) => ({ ...prev, [field]: "" }));
     };
 
@@ -142,8 +140,7 @@ export default function ModalCita({
     };
 
     const handleCrearContacto = () => {
-        // Ya no es necesario tener una mascota seleccionada (el contacto es global)
-        if (onCrearContacto) onCrearContacto();
+        if (onCrearContacto) onCrearContacto(form.mascota_id);
     };
 
     const handleClose = () => {
@@ -165,6 +162,7 @@ export default function ModalCita({
                 id_mascota: Number(form.mascota_id),
                 id_contacto: form.id_contacto ? Number(form.id_contacto) : null,
                 recordatorio: form.recordatorio ? 1 : 0,
+                completada: form.completada ? 1 : 0,
                 titulo: form.titulo.trim(),
                 nota: form.nota.trim()
             };
@@ -202,12 +200,7 @@ export default function ModalCita({
 
                 <Modal.Body>
                     <Row className="g-3">
-                        <Col xs={12}>
-                            <Alert variant="light" className="border rounded-4 mb-0">
-                                <strong>📌 Recordá:</strong> los contactos son personales y sirven para todas tus mascotas.
-                                Si activás el recordatorio, recibirás un email recordatorio el día previo a la cita.
-                            </Alert>
-                        </Col>
+
 
                         <Col xs={12}>
                             <Form.Label className="fw-bold">🐾 Mascota *</Form.Label>
@@ -219,7 +212,8 @@ export default function ModalCita({
                                     value={form.mascota_id}
                                     onChange={(e) => setField("mascota_id", e.target.value)}
                                     isInvalid={!!errores.mascota_id}
-                                    disabled={guardando || (mascotaId && mascotaId !== "todas")}
+                                    disabled={guardando || (mascotaId && mascotaId !== "todas") || mascotas.length === 1}
+
                                 >
                                     <option value="">Seleccioná una mascota</option>
                                     {mascotas.map((m) => (
@@ -327,7 +321,6 @@ export default function ModalCita({
                             </InputGroup>
                         </Col>
 
-
                         <Col xs={12}>
                             <Form.Label className="fw-bold">Título *</Form.Label>
                             <Form.Control
@@ -380,10 +373,33 @@ export default function ModalCita({
                                     }
                                 />
                                 <small className="text-muted d-block mt-2 ms-4">
-                                    Recibirás un recordatorio el día anterior a la cita en tu correo electrónico.
+                                    Recibirás un recordatorio el <strong>mismo día de la cita</strong> (a las 8:00 y 15:00 hs).
                                 </small>
                             </div>
                         </Col>
+
+                        {isEdit && (
+                            <Col xs={12}>
+                                <div className="p-3 border rounded-4 bg-light">
+                                    <Form.Check
+                                        type="checkbox"
+                                        id="completada-cita"
+                                        checked={form.completada}
+                                        onChange={(e) => setField("completada", e.target.checked)}
+                                        disabled={guardando}
+                                        label={
+                                            <span className="d-inline-flex align-items-center gap-2">
+                                                <CheckCircle size={18} />
+                                                Marcar como realizada
+                                            </span>
+                                        }
+                                    />
+                                    <small className="text-muted d-block mt-2 ms-4">
+                                        Si ya asististe a esta cita, marcá esta opción.
+                                    </small>
+                                </div>
+                            </Col>
+                        )}
 
                         {mascotaSeleccionada && form.titulo && form.fecha_evento && (
                             <Col xs={12}>
