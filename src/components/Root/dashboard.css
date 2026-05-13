@@ -1199,3 +1199,20 @@
 .db-sidebar-overlay {
     z-index: 1039;
 }
+
+/* Fix visibilidad botones acción en codigos */
+.db-icon-btn {
+    color: #4e3f7f;
+}
+
+.db-icon-btn.info {
+    background: #e3f2fd;
+    color: #1976d2;
+
+}
+
+.db-icon-btn.primary {
+    background: #ede7f6;
+    color: #4e3f7f;
+
+}

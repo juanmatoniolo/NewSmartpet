@@ -24,7 +24,7 @@ import {
     getWhatsappCompraUrl,
 } from "./helpers/buyHelpers";
 
-import "./Buy.css";
+import "./buy.css";
 
 const normalizeList = (data) => {
     if (Array.isArray(data)) return data;

@@ -42,7 +42,7 @@ export const SECTIONS = {
 			},
 			{ name: "root", label: "Usuario root", type: "checkbox" },
 		],
-		columns: ["foto", "nombre", "apellido", "email", "root"],
+		columns: ["foto", "nombre", "apellido", "email", "fecha_nacimiento"],
 	},
 	mascotas: {
 		title: "Mascotas",
@@ -98,7 +98,14 @@ export const SECTIONS = {
 			{ name: "persona2tel", label: "Teléfono persona 2", type: "tel" },
 			{ name: "persona2ig", label: "Instagram persona 2", type: "text" },
 		],
-		columns: ["foto", "nombre", "id_usuario", "codigo_id", "sexo"],
+		columns: [
+			"foto",
+			"nombre",
+			"id_usuario",
+			"codigo_id",
+			"sexo",
+			"fecha_nacimiento",
+		],
 		fkColumns: {
 			id_usuario: {
 				endpoint: "usuarios",

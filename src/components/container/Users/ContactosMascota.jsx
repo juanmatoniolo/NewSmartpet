@@ -64,13 +64,12 @@ const isComplete = (value) => {
   return value === true || value === 1 || value === "1";
 };
 
+// Reemplazá la función formatDate por esta:
 const formatDate = (dateStr) => {
   if (!dateStr) return "Sin fecha";
-
-  const date = new Date(dateStr);
-
-  if (Number.isNaN(date.getTime())) return "Sin fecha";
-
+  const [year, month, day] = String(dateStr).split("T")[0].split("-");
+  if (!year || !month || !day) return "Sin fecha";
+  const date = new Date(Number(year), Number(month) - 1, Number(day));
   return date.toLocaleDateString("es-AR", {
     day: "2-digit",
     month: "short",
@@ -148,6 +147,46 @@ export default function ContactosMascota() {
   const [mascotaSeleccionadaId, setMascotaSeleccionadaId] = useState(
     mascotaIdParam || "todas"
   );
+  const recargarContactos = useCallback(async (mascotasData) => {
+    const res = await axios.get(`${API_URL}/contactos-mascota`, {
+      params: { usuario_id: userId }
+    }).catch(() => ({ data: [] }));
+
+    const lista = normalizarArray(res.data).map((c) => ({
+      ...c,
+      mascota_id: c.mascota_id || c.id_mascota,
+      id_mascota: c.id_mascota || c.mascota_id,
+      mascotaId: c.mascota_id || c.id_mascota,
+      nombreMascota: mascotasData.find(
+        (m) => String(m.id) === String(c.id_mascota || c.mascota_id)
+      )?.nombre || ""
+    }));
+    setContactos(lista);
+  }, [userId]);
+
+  const recargarHistorial = useCallback(async (mascotasData) => {
+    const promesas = mascotasData.map((m) =>
+      axios.get(`${API_URL}/historial-mascota`, {
+        params: { mascota_id: m.id }
+      }).catch(() => ({ data: [] }))
+    );
+    const resultados = await Promise.all(promesas);
+    const lista = [];
+    mascotasData.forEach((m, idx) => {
+      normalizarArray(resultados[idx].data).forEach((h) => {
+        lista.push({
+          ...h,
+          mascota_id: h.mascota_id || h.id_mascota || m.id,
+          id_mascota: h.id_mascota || h.mascota_id || m.id,
+          mascotaId: h.mascota_id || h.id_mascota || m.id,
+          nombreMascota: m.nombre
+        });
+      });
+    });
+    setHistorial(lista);
+    setVacunas(lista.filter((item) => item.tipo_evento === "vacuna"));
+  }, []);
+
 
   const [contactos, setContactos] = useState([]);
   const [historial, setHistorial] = useState([]);
@@ -346,47 +385,39 @@ export default function ContactosMascota() {
         return "todas";
       });
 
-      const promesasContactos = mascotasData.map((m) =>
-        axios
-          .get(`${API_URL}/contactos-mascota`, {
-            params: {
-              mascota_id: m.id
-            }
-          })
-          .catch(() => ({ data: [] }))
-      );
+      // Contactos: una sola llamada por usuario_id
+      const resContactos = await axios
+        .get(`${API_URL}/contactos-mascota`, {
+          params: { usuario_id: userId }
+        })
+        .catch(() => ({ data: [] }));
 
+      const todosContactos = normalizarArray(resContactos.data).map((c) => ({
+        ...c,
+        mascota_id: c.mascota_id || c.id_mascota,
+        id_mascota: c.id_mascota || c.mascota_id,
+        mascotaId: c.mascota_id || c.id_mascota,
+        nombreMascota:
+          mascotasData.find(
+            (m) => String(m.id) === String(c.id_mascota || c.mascota_id)
+          )?.nombre || ""
+      }));
+
+      // Historial: una llamada por mascota
       const promesasHistorial = mascotasData.map((m) =>
         axios
           .get(`${API_URL}/historial-mascota`, {
-            params: {
-              mascota_id: m.id
-            }
+            params: { mascota_id: m.id }
           })
           .catch(() => ({ data: [] }))
       );
 
-      const [resultadosContactos, resultadosHistorial] = await Promise.all([
-        Promise.all(promesasContactos),
-        Promise.all(promesasHistorial)
-      ]);
+      const resultadosHistorial = await Promise.all(promesasHistorial);
 
-      const todosContactos = [];
       const todoHistorial = [];
 
       mascotasData.forEach((m, idx) => {
-        const contactosMascota = normalizarArray(resultadosContactos[idx].data);
         const historialMascota = normalizarArray(resultadosHistorial[idx].data);
-
-        contactosMascota.forEach((c) => {
-          todosContactos.push({
-            ...c,
-            mascota_id: c.mascota_id || c.id_mascota || m.id,
-            id_mascota: c.id_mascota || c.mascota_id || m.id,
-            mascotaId: c.mascota_id || c.id_mascota || m.id,
-            nombreMascota: m.nombre
-          });
-        });
 
         historialMascota.forEach((h) => {
           todoHistorial.push({
@@ -413,7 +444,6 @@ export default function ContactosMascota() {
       setLoading(false);
     }
   }, [userId, mascotaIdParam, cargarMascotasVinculadas]);
-
   useEffect(() => {
     if (!userId) {
       setLoading(false);
@@ -429,9 +459,8 @@ export default function ContactosMascota() {
   }, [userId, cargarTodosLosDatos, cargarSocios]);
 
   const normalizarFecha = (fecha) => {
-    const d = new Date(fecha);
-    d.setHours(0, 0, 0, 0);
-    return d;
+    const partes = String(fecha).split("T")[0].split("-");
+    return new Date(Number(partes[0]), Number(partes[1]) - 1, Number(partes[2]));
   };
 
   const contactosFiltradosPorMascota = useMemo(() => {
@@ -643,7 +672,7 @@ export default function ContactosMascota() {
 
   const handleGuardarContacto = async (formData) => {
     try {
-      const payload = payloadConMascota(formData);
+      const payload = { ...payloadConMascota(formData), usuario_id: Number(userId) };
 
       if (!payload.mascota_id) {
         setError("Seleccioná una mascota para guardar el contacto.");
@@ -658,17 +687,13 @@ export default function ContactosMascota() {
         showSuccess("Contacto creado correctamente.");
       }
 
-      await cargarTodosLosDatos();
+      await recargarContactos(mascotas);
 
       if (volverACitaDespuesContacto) {
         setShowModalContacto(false);
         setVolverACitaDespuesContacto(false);
         clearEditingStates();
-
-        setTimeout(() => {
-          setShowModalCita(true);
-        }, 150);
-
+        setShowModalCita(true); // sin setTimeout
         return true;
       }
 
@@ -680,7 +705,6 @@ export default function ContactosMascota() {
       return false;
     }
   };
-
   const handleGuardarCita = async (data) => {
     try {
       const payload = {
@@ -702,7 +726,7 @@ export default function ContactosMascota() {
         showSuccess("Cita creada correctamente.");
       }
 
-      await cargarTodosLosDatos();
+      await recargarHistorial(mascotas);
       clearEditingStates();
       return true;
     } catch (err) {
@@ -733,7 +757,7 @@ export default function ContactosMascota() {
         showSuccess("Vacuna creada correctamente.");
       }
 
-      await cargarTodosLosDatos();
+      await recargarHistorial(mascotas);
       clearEditingStates();
       return true;
     } catch (err) {
@@ -745,26 +769,22 @@ export default function ContactosMascota() {
 
   const eliminarContacto = async (id, nombre) => {
     if (!window.confirm(`¿Eliminar "${nombre}"?`)) return;
-
     try {
       await axios.delete(`${API_URL}/contactos-mascota/${id}`);
       showSuccess("Contacto eliminado.");
-      await cargarTodosLosDatos();
+      await recargarContactos(mascotas);
     } catch (err) {
-      console.error(err);
       setError("Error al eliminar contacto.");
     }
   };
 
   const eliminarHistorialItem = async (id, titulo, tipo = "elemento") => {
     if (!window.confirm(`¿Eliminar ${tipo} "${titulo}"?`)) return;
-
     try {
       await axios.delete(`${API_URL}/historial-mascota/${id}`);
       showSuccess("Elemento eliminado.");
-      await cargarTodosLosDatos();
+      await recargarHistorial(mascotas);
     } catch (err) {
-      console.error(err);
       setError("Error al eliminar.");
     }
   };
@@ -777,11 +797,9 @@ export default function ContactosMascota() {
         mascota_id: contacto.mascota_id || contacto.id_mascota || contacto.mascotaId,
         id_mascota: contacto.id_mascota || contacto.mascota_id || contacto.mascotaId
       };
-
       await axios.put(`${API_URL}/contactos-mascota/${contacto.id}`, payload);
-      await cargarTodosLosDatos();
+      await recargarContactos(mascotas);
     } catch (err) {
-      console.error(err);
       setError("No se pudo actualizar favorito.");
     }
   };
@@ -1087,17 +1105,11 @@ export default function ContactosMascota() {
                           <div className={styles.homeCitasList}>
                             {citasProximas.slice(0, 4).map((cita) => {
                               const fecha = cita.fecha_evento || cita.fecha || "";
-                              const fechaObj = fecha ? new Date(fecha) : null;
-
-                              const dia =
-                                fechaObj && !Number.isNaN(fechaObj.getTime())
-                                  ? fechaObj.toLocaleDateString("es-AR", { day: "2-digit" })
-                                  : "--";
-
-                              const mes =
-                                fechaObj && !Number.isNaN(fechaObj.getTime())
-                                  ? fechaObj.toLocaleDateString("es-AR", { month: "short" })
-                                  : "Sin fecha";
+                              const partes = fecha ? String(fecha).split("T")[0].split("-") : [];
+                              const dia = partes.length === 3 ? partes[2] : "--";
+                              const mes = partes.length === 3
+                                ? new Date(Number(partes[0]), Number(partes[1]) - 1, 1).toLocaleDateString("es-AR", { month: "short" })
+                                : "Sin fecha";
 
                               return (
                                 <article key={cita.id} className={styles.homeCitaItem}>
@@ -1374,21 +1386,17 @@ export default function ContactosMascota() {
                     <Row className="g-3">
                       {citasFiltradas.map((cita) => {
                         const fecha = cita.fecha_evento || cita.fecha || "";
-                        const fechaObj = fecha ? new Date(fecha) : null;
-                        const dia = fechaObj && !Number.isNaN(fechaObj.getTime())
-                          ? fechaObj.toLocaleDateString("es-AR", { day: "2-digit" })
-                          : "--";
-                        const mes = fechaObj && !Number.isNaN(fechaObj.getTime())
-                          ? fechaObj.toLocaleDateString("es-AR", { month: "short" })
+
+                        const partes = fecha ? String(fecha).split("T")[0].split("-") : [];
+                        const dia = partes.length === 3 ? partes[2] : "--";
+                        const mes = partes.length === 3
+                          ? new Date(Number(partes[0]), Number(partes[1]) - 1, 1).toLocaleDateString("es-AR", { month: "short" })
                           : "Sin fecha";
 
                         const hoy = new Date();
                         hoy.setHours(0, 0, 0, 0);
 
-                        const esProxima =
-                          fechaObj && !Number.isNaN(fechaObj.getTime())
-                            ? fechaObj >= hoy
-                            : false;
+
 
                         return (
                           <Col key={cita.id} xs={12} md={6} xl={4}>
@@ -1400,15 +1408,7 @@ export default function ContactosMascota() {
                                     <span className={styles.citaMonth}>{mes}</span>
                                   </div>
 
-                                  <div className={styles.citaStatusArea}>
-                                    <Badge
-                                      bg={esProxima ? "primary" : "light"}
-                                      text={esProxima ? "light" : "dark"}
-                                      className={styles.citaStatusBadge}
-                                    >
-                                      {esProxima ? "Próxima" : "Pasada"}
-                                    </Badge>
-                                  </div>
+
                                 </div>
 
                                 <div className={styles.citaContent}>

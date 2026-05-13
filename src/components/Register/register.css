@@ -1,193 +1,261 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 
+/* ─── Base ─────────────────────────────────────────────── */
 .reg-main {
     min-height: calc(100vh - 64px);
-    background: #f4f1f9;
+    background: #f0ecf9;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    padding: 2rem 1rem;
+    padding: 1.5rem 1rem 3rem;
     font-family: 'Nunito', sans-serif;
 }
 
-/* Card */
+/* ─── Card ──────────────────────────────────────────────── */
 .reg-card {
     background: #fff;
     border-radius: 24px;
-    box-shadow: 0 8px 40px rgba(108, 92, 148, 0.15);
+    box-shadow: 0 4px 32px rgba(78, 63, 127, 0.13);
     width: 100%;
     max-width: 480px;
     overflow: hidden;
+    animation: reg-fadeup 0.35s ease both;
 }
 
-/* Header */
-.reg-card-header {
-    background: #4a3b7a;
-    padding: 2.5rem 2rem 2rem;
+@keyframes reg-fadeup {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ─── Header ────────────────────────────────────────────── */
+.reg-header {
+    background: linear-gradient(135deg, #4E3F7F 0%, #7B5EA7 100%);
+    padding: 2rem 1.5rem 1.75rem;
     text-align: center;
-    color: #fff;
 }
 
-.reg-paw {
-    font-size: 2.5rem;
-    display: block;
+.reg-logo {
+    font-size: 2.2rem;
     margin-bottom: 0.5rem;
+    display: block;
 }
 
 .reg-title {
-    font-size: 1.4rem;
+    font-size: 1.45rem;
     font-weight: 900;
     color: #fff;
-    margin-bottom: 0.3rem;
+    margin: 0 0 0.3rem;
+    letter-spacing: -0.3px;
 }
 
 .reg-sub {
     font-size: 0.88rem;
-    color: rgba(255, 255, 255, 0.75);
+    color: rgba(255, 255, 255, 0.78);
     font-weight: 600;
     margin: 0;
 }
 
-/* Form */
+/* ─── Form ──────────────────────────────────────────────── */
 .reg-form {
-    padding: 2rem;
+    padding: 1.5rem 1.5rem 1.75rem;
     display: flex;
     flex-direction: column;
-    gap: 1.1rem;
-}
-
-.reg-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
     gap: 1rem;
 }
 
+/* ─── Section label ─────────────────────────────────────── */
+.reg-section-label {
+    font-size: 0.72rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #9b8bbf;
+    padding-bottom: 0.1rem;
+    border-bottom: 1.5px solid #ede8f7;
+    margin-top: 0.25rem;
+}
+
+/* ─── Row 2 cols ────────────────────────────────────────── */
+.reg-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+
+/* ─── Field ─────────────────────────────────────────────── */
 .reg-field {
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
+    gap: 0.3rem;
 }
 
 .reg-field label {
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     font-weight: 800;
     color: #6C5C94;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-}
-
-.reg-hint {
-    font-weight: 600;
-    text-transform: none;
-    color: #aaa;
-    font-size: 0.78rem;
-    letter-spacing: 0;
+    letter-spacing: 0.2px;
 }
 
 .reg-field input {
     font-family: 'Nunito', sans-serif;
     font-size: 0.95rem;
     font-weight: 600;
-    padding: 0.75rem 1rem;
-    border: 1.5px solid #e4dcf5;
+    padding: 0.72rem 0.9rem;
+    border: 1.5px solid #e2d9f3;
     border-radius: 12px;
     color: #2a1f3d;
     background: #faf8ff;
     outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
     width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
 }
 
 .reg-field input:focus {
     border-color: #6C5C94;
-    box-shadow: 0 0 0 3px rgba(108, 92, 148, 0.12);
+    box-shadow: 0 0 0 3px rgba(108, 92, 148, 0.13);
     background: #fff;
 }
 
-/* Password */
+.reg-field input::placeholder {
+    color: #c0b8d4;
+    font-weight: 600;
+}
+
+/* date input fix */
+.reg-field input[type="date"] {
+    color: #2a1f3d;
+}
+
+.reg-field input[type="date"]:not(:valid) {
+    color: #c0b8d4;
+}
+
+/* ─── Password ──────────────────────────────────────────── */
 .reg-password-wrap {
     position: relative;
 }
 
 .reg-password-wrap input {
-    padding-right: 2.8rem;
+    padding-right: 3rem;
 }
 
 .reg-eye {
     position: absolute;
-    top: 0;
-    right: 0.75rem;
-    height: 100%;
+    top: 50%;
+    right: 0.9rem;
+    transform: translateY(-50%);
     background: none;
     border: none;
-    color: #6C5C94;
-    font-size: 1.1rem;
+    color: #9b8bbf;
+    font-size: 1rem;
     cursor: pointer;
+    padding: 0.25rem;
     display: flex;
     align-items: center;
-    justify-content: end;
-    padding: 0.25rem;
-    opacity: 0.7;
-    transition: opacity 0.2s;
+    transition: color 0.15s;
+    line-height: 1;
 }
 
 .reg-eye:hover {
-    opacity: 1;
+    color: #6C5C94;
 }
 
-/* Hint contraseña */
+/* ─── Hint ──────────────────────────────────────────────── */
 .reg-password-hint {
     font-size: 0.78rem;
-    color: #aaa;
+    color: #b0a3cc;
     font-weight: 600;
-    margin: -0.4rem 0 0;
+    margin: -0.3rem 0 0;
+    line-height: 1.4;
 }
 
-/* Error */
+/* ─── Error ─────────────────────────────────────────────── */
 .reg-error {
-    background: #fff0f0;
-    border: 1px solid #f9c0c0;
+    background: #fff2f2;
+    border: 1.5px solid #f5c0c0;
     color: #c0392b;
-    font-size: 0.85rem;
+    font-size: 0.84rem;
     font-weight: 700;
-    padding: 0.65rem 1rem;
-    border-radius: 10px;
+    padding: 0.7rem 1rem;
+    border-radius: 12px;
     text-align: center;
+    line-height: 1.4;
 }
 
-/* Botón */
+/* ─── Button ────────────────────────────────────────────── */
 .reg-btn {
     font-family: 'Nunito', sans-serif;
-    font-weight: 800;
+    font-weight: 900;
     font-size: 1rem;
     background: linear-gradient(135deg, #6C5C94, #a06080);
     color: #fff;
     border: none;
-    padding: 0.85rem;
-    border-radius: 12px;
+    padding: 0.9rem;
+    border-radius: 14px;
     cursor: pointer;
-    transition: opacity 0.2s, transform 0.2s;
+    transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
     margin-top: 0.25rem;
+    box-shadow: 0 4px 16px rgba(108, 92, 148, 0.28);
+    letter-spacing: 0.2px;
+    min-height: 52px;
 }
 
 .reg-btn:hover:not(:disabled) {
-    opacity: 0.92;
+    opacity: 0.93;
     transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(108, 92, 148, 0.35);
+}
+
+.reg-btn:active:not(:disabled) {
+    transform: translateY(0);
 }
 
 .reg-btn:disabled {
-    opacity: 0.6;
+    opacity: 0.65;
     cursor: not-allowed;
 }
 
-/* Link login */
+.reg-btn-inner {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+/* ─── Spinner ───────────────────────────────────────────── */
+.reg-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2.5px solid rgba(255, 255, 255, 0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: reg-spin 0.7s linear infinite;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+@keyframes reg-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ─── Footer link ───────────────────────────────────────── */
 .reg-login {
     text-align: center;
     font-size: 0.88rem;
     font-weight: 600;
-    color: #888;
-    padding: 0 2rem 1.75rem;
-    margin: 0;
+    color: #9b8bbf;
+    margin: 0.25rem 0 0;
 }
 
 .reg-login a {
@@ -200,25 +268,47 @@
     text-decoration: underline;
 }
 
-/* Responsive */
+/* ─── Mobile ────────────────────────────────────────────── */
 @media (max-width: 480px) {
-    .reg-card {
-        border-radius: 16px;
+    .reg-main {
+        padding: 1rem 0.75rem 2.5rem;
+        align-items: flex-start;
     }
 
-    .reg-card-header {
-        padding: 2rem 1.5rem 1.5rem;
+    .reg-card {
+        border-radius: 20px;
+    }
+
+    .reg-header {
+        padding: 1.75rem 1.25rem 1.5rem;
     }
 
     .reg-form {
-        padding: 1.5rem;
+        padding: 1.25rem 1.25rem 1.5rem;
+        gap: 0.9rem;
     }
 
     .reg-row {
         grid-template-columns: 1fr;
+        gap: 0.9rem;
     }
 
-    .reg-login {
-        padding: 0 1.5rem 1.5rem;
+    .reg-field input {
+        font-size: 1rem;
+        /* evita zoom en iOS */
+        padding: 0.8rem 0.9rem;
+    }
+
+    .reg-btn {
+        padding: 0.95rem;
+        font-size: 1rem;
+    }
+}
+
+/* ─── Tablet+ ───────────────────────────────────────────── */
+@media (min-width: 481px) {
+    .reg-main {
+        align-items: center;
+        min-height: calc(100vh - 64px);
     }
 }

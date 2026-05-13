@@ -36,7 +36,7 @@ export default function Dashboard() {
   const [search, setSearch] = useState("");
   const [fkCatalog, setFkCatalog] = useState({});
   const [refreshKey, setRefreshKey] = useState(Date.now());
-
+  const [filtroCodigosEstado, setFiltroCodigosEstado] = useState("todos"); // "todos" | "usado" | "libre"
   const [showModal, setShowModal] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
   const [modalMode, setModalMode] = useState("create");
@@ -327,50 +327,79 @@ export default function Dashboard() {
               <div className="db-empty">{React.createElement(sec.icon, { size: 48, opacity: 0.3 })}<p>Sin registros{search && ` para "${search}"`}</p></div>
             ) : activeTab === "codigos" ? (
               <>
+                {/* Filtro */}
+                <div style={{ display: "flex", gap: "0.5rem", padding: "0 1rem 1rem" }}>
+                  {["todos", "usado", "libre"].map((f) => (
+                    <button
+                      key={f}
+                      onClick={() => setFiltroCodigosEstado(f)}
+                      className={`db-btn ${filtroCodigosEstado === f ? "db-btn--primary" : "db-btn--ghost"}`}
+                      style={{ textTransform: "capitalize", fontSize: "0.8rem" }}
+                    >
+                      {f === "todos" ? "Todos" : f === "usado" ? "Usados" : "Libres"}
+                    </button>
+                  ))}
+                </div>
+
                 <div className="db-table-wrap d-none d-md-block">
                   <table className="db-table">
                     <thead><tr><th>Código</th><th>Estado</th><th className="text-end">Acción</th></tr></thead>
                     <tbody>
-                      {filtered.map(item => {
-                        const mascota = getMascotaByCodigoId(item.id);
-                        const isUsed = !!mascota;
-                        return (
-                          <tr key={item.id}>
-                            <td>{item.codigo_unico}</td>
-                            <td>{isUsed ? <Badge bg="success">Usado por {mascota.nombre}</Badge> : <Badge bg="secondary">Libre</Badge>}</td>
-                            <td className="db-actions-cell">
-                              {isUsed ? (
-                                <button className="db-icon-btn info" onClick={() => handleDetail(mascota)}><Eye size={14} /> Ver mascota</button>
-                              ) : (
-                                <button className="db-icon-btn primary" onClick={() => handleGenerarQR(item.codigo_unico)}><QrCode size={14} /> Generar QR</button>
-                              )}
-                            </td>
-                          </tr>
-                        );
-                      })}
+                      {filtered
+                        .filter(item => {
+                          const isUsed = !!getMascotaByCodigoId(item.id);
+                          if (filtroCodigosEstado === "usado") return isUsed;
+                          if (filtroCodigosEstado === "libre") return !isUsed;
+                          return true;
+                        })
+                        .map(item => {
+                          const mascota = getMascotaByCodigoId(item.id);
+                          const isUsed = !!mascota;
+                          return (
+                            <tr key={item.id}>
+                              <td>{item.codigo_unico}</td>
+                              <td>{isUsed ? <Badge bg="success">Usado por {mascota.nombre}</Badge> : <Badge bg="secondary">Libre</Badge>}</td>
+                              <td className="db-actions-cell">
+                                {isUsed ? (
+                                  <button className="db-icon-btn info" onClick={() => handleDetail(mascota)}><Eye size={14} /> Ver mascota</button>
+                                ) : (
+                                  <button className="db-icon-btn primary" onClick={() => handleGenerarQR(item.codigo_unico)}><QrCode size={14} /> Generar QR</button>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })}
                     </tbody>
                   </table>
                 </div>
+
                 <div className="db-mobile-list d-md-none">
-                  {filtered.map(item => {
-                    const mascota = getMascotaByCodigoId(item.id);
-                    const isUsed = !!mascota;
-                    return (
-                      <div className="db-mobile-card" key={item.id}>
-                        <div className="db-mc-body">
-                          <p className="db-mc-primary"><strong>Código:</strong> {item.codigo_unico}</p>
-                          <p className="db-mc-secondary"><strong>Estado:</strong> {isUsed ? `Usado por ${mascota.nombre}` : "Libre"}</p>
+                  {filtered
+                    .filter(item => {
+                      const isUsed = !!getMascotaByCodigoId(item.id);
+                      if (filtroCodigosEstado === "usado") return isUsed;
+                      if (filtroCodigosEstado === "libre") return !isUsed;
+                      return true;
+                    })
+                    .map(item => {
+                      const mascota = getMascotaByCodigoId(item.id);
+                      const isUsed = !!mascota;
+                      return (
+                        <div className="db-mobile-card" key={item.id}>
+                          <div className="db-mc-body">
+                            <p className="db-mc-primary"><strong>Código:</strong> {item.codigo_unico}</p>
+                            <p className="db-mc-secondary"><strong>Estado:</strong> {isUsed ? `Usado por ${mascota.nombre}` : "Libre"}</p>
+                          </div>
+                          <div className="db-mc-actions">
+                            {isUsed ? (
+                              <button className="db-icon-btn info" onClick={() => handleDetail(mascota)}><Eye size={14} /></button>
+                            ) : (
+                              <button className="db-icon-btn primary" onClick={() => handleGenerarQR(item.codigo_unico)}><QrCode size={14} /></button>
+                            )}
+                          </div>
                         </div>
-                        <div className="db-mc-actions">
-                          {isUsed ? (
-                            <button className="db-icon-btn info" onClick={() => handleDetail(mascota)}><Eye size={14} /></button>
-                          ) : (
-                            <button className="db-icon-btn primary" onClick={() => handleGenerarQR(item.codigo_unico)}><QrCode size={14} /></button>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
                 </div>
               </>
             ) : (

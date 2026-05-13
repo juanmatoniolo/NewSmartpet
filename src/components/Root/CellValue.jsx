@@ -22,7 +22,17 @@ export default function CellValue({ col, value, fkData, section, item, onImageCl
     if (section === "ubicaciones" && col === "fecha_hora") {
         return <>{formatFechaHora(value)}</>;
     }
-
+    if (col === "fecha_nacimiento") {
+        if (!value) return <>—</>;
+        const partes = String(value).split("T")[0].split("-");
+        if (partes.length !== 3) return <>{value}</>;
+        const nacimiento = new Date(Number(partes[0]), Number(partes[1]) - 1, Number(partes[2]));
+        const hoy = new Date();
+        let edad = hoy.getFullYear() - nacimiento.getFullYear();
+        const cumpleEsteAnio = new Date(hoy.getFullYear(), nacimiento.getMonth(), nacimiento.getDate());
+        if (hoy < cumpleEsteAnio) edad--;
+        return <>{edad} años</>;
+    }
     if (col === "foto") return <ImageCell section={section} item={item} onImageClick={onImageClick} refreshKey={refreshKey} />;
     if (col === "sexo") return value == 0 ? "Macho" : "Hembra";
     if (col === "precio") return formatPrice(value);

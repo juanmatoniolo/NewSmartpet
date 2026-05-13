@@ -18,6 +18,8 @@ import MisMascotas from "./components/Root/MisMascotas";
 import MascotaAdminDetail from "./components/Root/MascotaAdminDetail";
 import Productos from "./components/Root/Productos";
 import About from "./pages/About";
+import Recuperar from "./components/Login/Recuperar";
+import Reset from "./components/Login/Reset";
 
 function App() {
 	const [authenticated, setAuthenticated] = React.useState(
@@ -44,7 +46,10 @@ function App() {
 				<Route path="/Register" element={<Register />} />
 				<Route path="/register" element={<Register />} />
 				<Route path="/about" element={<About />} />
-				<Route path="/About" element={<About />} />
+				<Route path="/Recuperar" element={<Recuperar />} />
+				<Route path="/recuperar" element={<Recuperar />} />
+				<Route path="/recuperar/reset" element={<Reset />} />
+				<Route path="/Recuperar/Reset" element={<Reset />} />
 
 				{/* Ruta pública para QR / NFC */}
 				<Route path="/MascotaProtegida/:id" element={<MascotaProtegida />} />

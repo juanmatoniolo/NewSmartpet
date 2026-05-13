@@ -19,7 +19,8 @@ import {
     PawPrint,
     CheckCircle,
     Plus,
-    Phone
+    Phone,
+    Mail
 } from "lucide-react";
 import styles from "./ModalCita.module.css";
 
@@ -50,10 +51,9 @@ export default function ModalCita({
         mascota_id: "",
         id_contacto: "",
         fecha_evento: "",
-        proxima_fecha: "",
         titulo: "",
         nota: "",
-        recordatorio: false
+        recordatorio: true
     });
 
     const [guardando, setGuardando] = useState(false);
@@ -73,7 +73,6 @@ export default function ModalCita({
                     getMascotaInicial(mascotaId, mascotas),
                 id_contacto: citaEdit.id_contacto?.toString() || "",
                 fecha_evento: toDateInput(citaEdit.fecha_evento),
-                proxima_fecha: toDateInput(citaEdit.proxima_fecha),
                 titulo: citaEdit.titulo || "",
                 nota: citaEdit.nota || "",
                 recordatorio: isTrue(citaEdit.recordatorio)
@@ -83,7 +82,6 @@ export default function ModalCita({
                 mascota_id: getMascotaInicial(mascotaId, mascotas),
                 id_contacto: "",
                 fecha_evento: "",
-                proxima_fecha: "",
                 titulo: "",
                 nota: "",
                 recordatorio: false
@@ -97,17 +95,7 @@ export default function ModalCita({
         return mascotas.find((m) => String(m.id) === String(form.mascota_id));
     }, [mascotas, form.mascota_id]);
 
-    const contactosDisponibles = useMemo(() => {
-        if (!form.mascota_id) return [];
-
-        return contactos.filter((c) => {
-            const idContactoMascota =
-                c.mascota_id || c.id_mascota || c.mascotaId || "";
-
-            return String(idContactoMascota) === String(form.mascota_id);
-        });
-    }, [contactos, form.mascota_id]);
-
+    // Ahora los contactos son del usuario, no se filtran por mascota
     const contactoSeleccionado = useMemo(() => {
         return contactos.find((c) => String(c.id) === String(form.id_contacto));
     }, [contactos, form.id_contacto]);
@@ -121,13 +109,11 @@ export default function ModalCita({
             guarderia: "🏠",
             otro: "📌"
         };
-
         return mapa[tipo] || "📋";
     };
 
     const renderTipo = (c) => {
         if (c.tipo === "otro") return c.categoria_personalizada || "Otro";
-
         const tipos = {
             veterinario: "Veterinario",
             peluqueria: "Peluquería",
@@ -135,46 +121,29 @@ export default function ModalCita({
             petshop: "Pet Shop",
             guarderia: "Guardería"
         };
-
         return tipos[c.tipo] || "Contacto";
     };
 
     const setField = (field, value) => {
         setForm((prev) => ({
             ...prev,
-            [field]: value,
-            ...(field === "mascota_id" ? { id_contacto: "" } : {})
+            [field]: value
         }));
-
-        setErrores((prev) => ({
-            ...prev,
-            [field]: ""
-        }));
+        setErrores((prev) => ({ ...prev, [field]: "" }));
     };
 
     const validateForm = () => {
         const errors = {};
-
         if (!form.mascota_id) errors.mascota_id = "Seleccioná una mascota";
         if (!form.fecha_evento) errors.fecha_evento = "Seleccioná la fecha";
         if (!form.titulo.trim()) errors.titulo = "Ingresá el título";
         if (!form.nota.trim()) errors.nota = "Ingresá el detalle";
-
         return errors;
     };
 
     const handleCrearContacto = () => {
-        if (!form.mascota_id) {
-            setErrores((prev) => ({
-                ...prev,
-                mascota_id: "Primero seleccioná una mascota"
-            }));
-            return;
-        }
-
-        if (onCrearContacto) {
-            onCrearContacto(form.mascota_id);
-        }
+        // Ya no es necesario tener una mascota seleccionada (el contacto es global)
+        if (onCrearContacto) onCrearContacto();
     };
 
     const handleClose = () => {
@@ -184,14 +153,11 @@ export default function ModalCita({
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         const errors = validateForm();
         setErrores(errors);
-
         if (Object.keys(errors).length > 0) return;
 
         setGuardando(true);
-
         try {
             const payload = {
                 ...form,
@@ -202,9 +168,7 @@ export default function ModalCita({
                 titulo: form.titulo.trim(),
                 nota: form.nota.trim()
             };
-
             const ok = await onSave(payload);
-
             if (ok) handleClose();
         } finally {
             setGuardando(false);
@@ -240,18 +204,17 @@ export default function ModalCita({
                     <Row className="g-3">
                         <Col xs={12}>
                             <Alert variant="light" className="border rounded-4 mb-0">
-                                <strong>Primero elegí la mascota.</strong> Después podés seleccionar un contacto ya agendado o crear uno nuevo.
+                                <strong>📌 Recordá:</strong> los contactos son personales y sirven para todas tus mascotas.
+                                Si activás el recordatorio, recibirás un email recordatorio el día previo a la cita.
                             </Alert>
                         </Col>
 
                         <Col xs={12}>
-                            <Form.Label className="fw-bold">🐾 Mascota</Form.Label>
-
+                            <Form.Label className="fw-bold">🐾 Mascota *</Form.Label>
                             <InputGroup hasValidation>
                                 <InputGroup.Text>
                                     <PawPrint size={16} />
                                 </InputGroup.Text>
-
                                 <Form.Select
                                     value={form.mascota_id}
                                     onChange={(e) => setField("mascota_id", e.target.value)}
@@ -265,7 +228,6 @@ export default function ModalCita({
                                         </option>
                                     ))}
                                 </Form.Select>
-
                                 <Form.Control.Feedback type="invalid">
                                     {errores.mascota_id}
                                 </Form.Control.Feedback>
@@ -273,17 +235,17 @@ export default function ModalCita({
                         </Col>
 
                         <Col xs={12}>
-                            <div className="d-flex flex-column flex-md-row justify-content-between gap-2 mb-2">
+                            <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-2">
                                 <Form.Label className="fw-bold mb-0">
-                                    Contacto agendado
+                                    Contacto relacionado
                                 </Form.Label>
-
                                 <Button
                                     type="button"
                                     variant="outline-primary"
                                     size="sm"
                                     onClick={handleCrearContacto}
                                     disabled={guardando}
+                                    className="w-100 w-sm-auto"
                                 >
                                     <Plus size={15} className="me-1" />
                                     Agregar contacto
@@ -294,21 +256,13 @@ export default function ModalCita({
                                 <InputGroup.Text>
                                     <User size={16} />
                                 </InputGroup.Text>
-
                                 <Form.Select
                                     value={form.id_contacto}
                                     onChange={(e) => setField("id_contacto", e.target.value)}
-                                    disabled={guardando || !form.mascota_id}
+                                    disabled={guardando}
                                 >
-                                    <option value="">
-                                        {!form.mascota_id
-                                            ? "Primero seleccioná una mascota"
-                                            : contactosDisponibles.length === 0
-                                                ? "No hay contactos para esta mascota"
-                                                : "Sin contacto asociado"}
-                                    </option>
-
-                                    {contactosDisponibles.map((c) => (
+                                    <option value="">Sin contacto asociado</option>
+                                    {contactos.map((c) => (
                                         <option key={c.id} value={c.id}>
                                             {getIconoTipo(c.tipo)} {c.nombre} {c.apellido || ""} - {renderTipo(c)}
                                         </option>
@@ -316,11 +270,9 @@ export default function ModalCita({
                                 </Form.Select>
                             </InputGroup>
 
-                            {form.mascota_id && contactosDisponibles.length === 0 && (
+                            {contactos.length === 0 && (
                                 <Alert variant="warning" className="mt-2 mb-0 rounded-4">
-                                    No hay contactos cargados para{" "}
-                                    <strong>{mascotaSeleccionada?.nombre || "esta mascota"}</strong>.
-                                    Podés crear uno desde “Agregar contacto”.
+                                    No tenés contactos cargados. Usá el botón "Agregar contacto" para crear uno.
                                 </Alert>
                             )}
                         </Col>
@@ -333,17 +285,20 @@ export default function ModalCita({
                                             {getIconoTipo(contactoSeleccionado.tipo)}{" "}
                                             {contactoSeleccionado.nombre} {contactoSeleccionado.apellido || ""}
                                         </strong>
-
                                         <Badge bg="secondary">{renderTipo(contactoSeleccionado)}</Badge>
                                     </div>
-
                                     {contactoSeleccionado.celular && (
                                         <div className="small text-muted mt-1">
                                             <Phone size={14} className="me-1" />
                                             {contactoSeleccionado.celular}
                                         </div>
                                     )}
-
+                                    {contactoSeleccionado.email && (
+                                        <div className="small text-muted">
+                                            <Mail size={14} className="me-1" />
+                                            {contactoSeleccionado.email}
+                                        </div>
+                                    )}
                                     {contactoSeleccionado.direccion && (
                                         <div className="small text-muted">
                                             📍 {contactoSeleccionado.direccion}
@@ -353,14 +308,12 @@ export default function ModalCita({
                             </Col>
                         )}
 
-                        <Col xs={12} md={6}>
+                        <Col xs={12} md={12}>
                             <Form.Label className="fw-bold">Fecha de la cita *</Form.Label>
-
                             <InputGroup hasValidation>
                                 <InputGroup.Text>
                                     <Calendar size={16} />
                                 </InputGroup.Text>
-
                                 <Form.Control
                                     type="date"
                                     value={form.fecha_evento}
@@ -368,33 +321,15 @@ export default function ModalCita({
                                     isInvalid={!!errores.fecha_evento}
                                     disabled={guardando}
                                 />
-
                                 <Form.Control.Feedback type="invalid">
                                     {errores.fecha_evento}
                                 </Form.Control.Feedback>
                             </InputGroup>
                         </Col>
 
-                        <Col xs={12} md={6}>
-                            <Form.Label className="fw-bold">Próxima fecha</Form.Label>
-
-                            <InputGroup>
-                                <InputGroup.Text>
-                                    <Clock size={16} />
-                                </InputGroup.Text>
-
-                                <Form.Control
-                                    type="date"
-                                    value={form.proxima_fecha}
-                                    onChange={(e) => setField("proxima_fecha", e.target.value)}
-                                    disabled={guardando}
-                                />
-                            </InputGroup>
-                        </Col>
 
                         <Col xs={12}>
                             <Form.Label className="fw-bold">Título *</Form.Label>
-
                             <Form.Control
                                 value={form.titulo}
                                 onChange={(e) => setField("titulo", e.target.value)}
@@ -402,7 +337,6 @@ export default function ModalCita({
                                 isInvalid={!!errores.titulo}
                                 disabled={guardando}
                             />
-
                             <Form.Control.Feedback type="invalid">
                                 {errores.titulo}
                             </Form.Control.Feedback>
@@ -410,12 +344,10 @@ export default function ModalCita({
 
                         <Col xs={12}>
                             <Form.Label className="fw-bold">Detalle *</Form.Label>
-
                             <InputGroup hasValidation>
                                 <InputGroup.Text className="align-items-start pt-2">
                                     <FileText size={16} />
                                 </InputGroup.Text>
-
                                 <Form.Control
                                     as="textarea"
                                     rows={4}
@@ -425,7 +357,6 @@ export default function ModalCita({
                                     isInvalid={!!errores.nota}
                                     disabled={guardando}
                                 />
-
                                 <Form.Control.Feedback type="invalid">
                                     {errores.nota}
                                 </Form.Control.Feedback>
@@ -441,13 +372,16 @@ export default function ModalCita({
                                     onChange={(e) => setField("recordatorio", e.target.checked)}
                                     disabled={guardando}
                                     label={
-                                        <span className="d-inline-flex align-items-center gap-2">
+                                        <span className="d-inline-flex align-items-center gap-2 flex-wrap">
                                             <Bell size={18} />
-                                            Activar recordatorio
-                                            <Badge bg="info">Próximamente</Badge>
+                                            Activar recordatorio por email
+                                            <Badge bg="success" className="ms-1">Activo</Badge>
                                         </span>
                                     }
                                 />
+                                <small className="text-muted d-block mt-2 ms-4">
+                                    Recibirás un recordatorio el día anterior a la cita en tu correo electrónico.
+                                </small>
                             </div>
                         </Col>
 
@@ -468,14 +402,9 @@ export default function ModalCita({
                 </Modal.Body>
 
                 <Modal.Footer>
-                    <Button
-                        variant="outline-secondary"
-                        onClick={handleClose}
-                        disabled={guardando}
-                    >
+                    <Button variant="outline-secondary" onClick={handleClose} disabled={guardando}>
                         Cancelar
                     </Button>
-
                     <Button type="submit" disabled={guardando}>
                         {guardando ? (
                             <>

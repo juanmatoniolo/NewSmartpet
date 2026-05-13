@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Modal,
     Button,
@@ -8,7 +8,6 @@ import {
     InputGroup,
     Spinner,
     Alert,
-    Badge
 } from "react-bootstrap";
 import {
     Users,
@@ -18,29 +17,18 @@ import {
     Star,
     Briefcase,
     Tag,
-    PawPrint,
-    CheckCircle
 } from "lucide-react";
 import styles from "./ModalContacto.module.css";
 
 const isTrue = (value) => value === true || value === 1 || value === "1";
 
-const getMascotaInicial = (mascotaId, mascotas = []) => {
-    if (mascotaId && mascotaId !== "todas") return String(mascotaId);
-    if (mascotas.length === 1) return String(mascotas[0].id);
-    return "";
-};
-
 export default function ModalContacto({
     show,
     onHide,
     contactoEdit,
-    mascotaId,
-    mascotas = [],
-    onSave
+    onSave,
 }) {
     const [form, setForm] = useState({
-        mascota_id: "",
         tipo: "veterinario",
         nombre: "",
         apellido: "",
@@ -51,7 +39,7 @@ export default function ModalContacto({
         horarios: "",
         dias_atencion: "",
         favorito: false,
-        categoria_personalizada: ""
+        categoria_personalizada: "",
     });
 
     const [guardando, setGuardando] = useState(false);
@@ -65,7 +53,7 @@ export default function ModalContacto({
         { value: "paseador", label: "🦮 Paseador" },
         { value: "petshop", label: "🏪 Pet Shop" },
         { value: "guarderia", label: "🏠 Guardería" },
-        { value: "otro", label: "📌 Otro" }
+        { value: "otro", label: "📌 Otro" },
     ];
 
     useEffect(() => {
@@ -73,11 +61,6 @@ export default function ModalContacto({
 
         if (contactoEdit) {
             setForm({
-                mascota_id:
-                    contactoEdit.mascota_id?.toString() ||
-                    contactoEdit.id_mascota?.toString() ||
-                    contactoEdit.mascotaId?.toString() ||
-                    getMascotaInicial(mascotaId, mascotas),
                 tipo: contactoEdit.tipo || "veterinario",
                 nombre: contactoEdit.nombre || "",
                 apellido: contactoEdit.apellido || "",
@@ -88,11 +71,10 @@ export default function ModalContacto({
                 horarios: contactoEdit.horarios || "",
                 dias_atencion: contactoEdit.dias_atencion || "",
                 favorito: isTrue(contactoEdit.favorito),
-                categoria_personalizada: contactoEdit.categoria_personalizada || ""
+                categoria_personalizada: contactoEdit.categoria_personalizada || "",
             });
         } else {
             setForm({
-                mascota_id: getMascotaInicial(mascotaId, mascotas),
                 tipo: "veterinario",
                 nombre: "",
                 apellido: "",
@@ -103,38 +85,32 @@ export default function ModalContacto({
                 horarios: "",
                 dias_atencion: "",
                 favorito: false,
-                categoria_personalizada: ""
+                categoria_personalizada: "",
             });
         }
 
         setErrores({});
-    }, [show, contactoEdit, mascotaId, mascotas]);
-
-    const mascotaSeleccionada = useMemo(() => {
-        return mascotas.find((m) => String(m.id) === String(form.mascota_id));
-    }, [mascotas, form.mascota_id]);
+    }, [show, contactoEdit]);
 
     const setField = (field, value) => {
         setForm((prev) => ({
             ...prev,
-            [field]: value
+            [field]: value,
         }));
 
         setErrores((prev) => ({
             ...prev,
-            [field]: ""
+            [field]: "",
         }));
     };
 
     const validateForm = () => {
         const errors = {};
 
-        if (!form.mascota_id) errors.mascota_id = "Seleccioná una mascota";
         if (!form.nombre.trim()) errors.nombre = "Ingresá el nombre";
         if (form.tipo === "otro" && !form.categoria_personalizada.trim()) {
             errors.categoria_personalizada = "Ingresá la categoría";
         }
-
         if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
             errors.email = "Email inválido";
         }
@@ -152,21 +128,17 @@ export default function ModalContacto({
 
         const errors = validateForm();
         setErrores(errors);
-
         if (Object.keys(errors).length > 0) return;
 
         setGuardando(true);
-
         try {
             const payload = {
                 ...form,
-                mascota_id: Number(form.mascota_id),
-                id_mascota: Number(form.mascota_id),
                 favorito: form.favorito ? 1 : 0,
                 nombre: form.nombre.trim(),
                 apellido: form.apellido.trim(),
                 email: form.email.trim(),
-                categoria_personalizada: form.categoria_personalizada.trim()
+                categoria_personalizada: form.categoria_personalizada.trim(),
             };
 
             const ok = await onSave(payload);
@@ -195,7 +167,7 @@ export default function ModalContacto({
                         <div>
                             <div>{isEdit ? "Editar contacto" : "Nuevo contacto"}</div>
                             <small className="text-muted fw-normal">
-                                Guardá veterinarios, peluquerías o proveedores de tu mascota
+                                Guardá veterinarios, peluquerías u otros proveedores en tu agenda personal
                             </small>
                         </div>
                     </Modal.Title>
@@ -205,33 +177,8 @@ export default function ModalContacto({
                     <Row className="g-3">
                         <Col xs={12}>
                             <Alert variant="light" className="border rounded-4 mb-0">
-                                <strong>Tip:</strong> asociá el contacto a una mascota para encontrarlo fácil en su agenda.
+                                <strong>Tip:</strong> los contactos se guardan en tu cuenta y están disponibles para todas tus mascotas.
                             </Alert>
-                        </Col>
-
-                        <Col xs={12}>
-                            <Form.Label className="fw-bold">🐾 Mascota</Form.Label>
-                            <InputGroup hasValidation>
-                                <InputGroup.Text>
-                                    <PawPrint size={16} />
-                                </InputGroup.Text>
-                                <Form.Select
-                                    value={form.mascota_id}
-                                    onChange={(e) => setField("mascota_id", e.target.value)}
-                                    isInvalid={!!errores.mascota_id}
-                                    disabled={guardando || (mascotaId && mascotaId !== "todas")}
-                                >
-                                    <option value="">Seleccioná una mascota</option>
-                                    {mascotas.map((m) => (
-                                        <option key={m.id} value={m.id}>
-                                            {m.nombre}
-                                        </option>
-                                    ))}
-                                </Form.Select>
-                                <Form.Control.Feedback type="invalid">
-                                    {errores.mascota_id}
-                                </Form.Control.Feedback>
-                            </InputGroup>
                         </Col>
 
                         <Col xs={12} md={6}>
@@ -403,16 +350,6 @@ export default function ModalContacto({
                                 />
                             </div>
                         </Col>
-
-                        {mascotaSeleccionada && form.nombre && (
-                            <Col xs={12}>
-                                <Alert variant="light" className="border rounded-4 mb-0">
-                                    <CheckCircle size={18} className="me-2" />
-                                    Se guardará <strong>{form.nombre}</strong> para{" "}
-                                    <Badge bg="secondary">{mascotaSeleccionada.nombre}</Badge>.
-                                </Alert>
-                            </Col>
-                        )}
                     </Row>
                 </Modal.Body>
 
