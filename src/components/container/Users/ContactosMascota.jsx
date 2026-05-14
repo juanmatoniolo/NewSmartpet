@@ -458,7 +458,7 @@ export default function ContactosMascota() {
     return () => {
       window.clearTimeout(showSuccess.timer);
     };
-  }, [userId, cargarTodosLosDatos, cargarSocios]);
+  }, [userId]);
 
   const normalizarFecha = (fecha) => {
     const partes = String(fecha).split("T")[0].split("-");
