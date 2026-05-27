@@ -6,15 +6,12 @@ import {
     Package, Tag, CheckCircle, XCircle, ArrowLeft, GripVertical, X,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+import ImageUploader from "./ImageUploader";
 import AdminHeader from "./AdminHeader";
 import { API_URL, getImageUrl, withCacheBust } from "../../config/api";
 import "./Productos.css";
 
 const PLACEHOLDER_IMG = "/icono.png";
-const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
-const MAX_SIZE_MB = 6;
-
 const initialForm = {
     titulo: "",
     descripcion: "",
@@ -53,165 +50,6 @@ const formatPrice = (value) =>
         minimumFractionDigits: 0, maximumFractionDigits: 2,
     }).format(Number(value || 0));
 
-// ── ImageSlot: un slot de imagen con preview y botón de quitar ──
-function ImageSlot({ slot, index, total, onRemove, onDragStart, onDragOver, onDrop, isDragging }) {
-    return (
-        <div
-            className={`img-slot ${isDragging ? "img-slot--dragging" : ""}`}
-            draggable={!!slot}
-            onDragStart={() => slot && onDragStart(index)}
-            onDragOver={(e) => { e.preventDefault(); onDragOver(index); }}
-            onDrop={() => onDrop(index)}
-        >
-            {index === 0 && <span className="img-slot-badge">Portada</span>}
-
-            {slot ? (
-                <>
-                    <img src={slot.preview} alt={`Imagen ${index + 1}`} className="img-slot-preview" />
-                    <button
-                        type="button"
-                        className="img-slot-remove"
-                        onClick={() => onRemove(index)}
-                        aria-label="Quitar imagen"
-                    >
-                        <X size={14} />
-                    </button>
-                    {total > 1 && (
-                        <div className="img-slot-grip">
-                            <GripVertical size={16} />
-                        </div>
-                    )}
-                    <span className="img-slot-num">{index + 1}</span>
-                </>
-            ) : (
-                <div className="img-slot-empty">
-                    <span className="img-slot-empty-icon">+</span>
-                    <span>Imagen {index + 1}</span>
-                </div>
-            )}
-        </div>
-    );
-}
-
-// ── ImageUploader: sube hasta 3 imágenes, drag-to-reorder ──
-function ImageUploader({ slots, onChange, error, onError }) {
-    const inputRef = useRef(null);
-    const [dragFrom, setDragFrom] = useState(null);
-    const [dragOver, setDragOver] = useState(null);
-
-    const handleFiles = (files) => {
-        const valid = [];
-        for (const file of files) {
-            if (!ALLOWED_TYPES.includes(file.type)) {
-                onError("Formato inválido. Usá JPG, PNG o WEBP.");
-                return;
-            }
-            if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-                onError(`La imagen no puede superar los ${MAX_SIZE_MB}MB.`);
-                return;
-            }
-            valid.push({ file, preview: URL.createObjectURL(file), isNew: true });
-        }
-
-        const filled = slots.filter(Boolean);
-        const merged = [...filled, ...valid].slice(0, 3);
-        const padded = [...merged, null, null, null].slice(0, 3);
-        onChange(padded);
-        onError("");
-    };
-
-    const handleInputChange = (e) => {
-        const files = Array.from(e.target.files || []);
-        if (files.length) handleFiles(files);
-        e.target.value = "";
-    };
-
-    const handleDrop = (e) => {
-        e.preventDefault();
-        const files = Array.from(e.dataTransfer.files || []);
-        if (files.length) handleFiles(files);
-    };
-
-    const handleRemove = (index) => {
-        const next = [...slots];
-        const slot = next[index];
-        if (slot?.preview?.startsWith("blob:")) URL.revokeObjectURL(slot.preview);
-        next[index] = null;
-        // compactar: mover nulos al final
-        const compacted = [...next.filter(Boolean), ...next.filter((s) => !s)];
-        onChange(compacted);
-    };
-
-    const handleDragStart = (index) => setDragFrom(index);
-    const handleDragOver = (index) => setDragOver(index);
-    const handleDropSlot = (toIndex) => {
-        if (dragFrom === null || dragFrom === toIndex) { setDragFrom(null); setDragOver(null); return; }
-        const next = [...slots];
-        [next[dragFrom], next[toIndex]] = [next[toIndex], next[dragFrom]];
-        onChange(next);
-        setDragFrom(null);
-        setDragOver(null);
-    };
-
-    const filled = slots.filter(Boolean).length;
-    const canAdd = filled < 3;
-
-    return (
-        <div className="img-uploader">
-            <div
-                className={`img-dropzone ${canAdd ? "img-dropzone--active" : ""}`}
-                onDragOver={(e) => { e.preventDefault(); }}
-                onDrop={handleDrop}
-                onClick={() => canAdd && inputRef.current?.click()}
-            >
-                <div className="img-slots-grid">
-                    {slots.map((slot, i) => (
-                        <ImageSlot
-                            key={i}
-                            slot={slot}
-                            index={i}
-                            total={filled}
-                            onRemove={handleRemove}
-                            onDragStart={handleDragStart}
-                            onDragOver={handleDragOver}
-                            onDrop={handleDropSlot}
-                            isDragging={dragOver === i && dragFrom !== null && dragFrom !== i}
-                        />
-                    ))}
-                </div>
-
-                {canAdd && (
-                    <p className="img-dropzone-hint">
-                        {filled === 0
-                            ? "Arrastrá hasta 3 imágenes o hacé clic para seleccionar"
-                            : `Podés agregar ${3 - filled} imagen${3 - filled > 1 ? "es" : ""} más`}
-                    </p>
-                )}
-            </div>
-
-            {filled > 1 && (
-                <p className="img-order-hint">
-                    <GripVertical size={14} style={{ verticalAlign: "middle" }} />
-                    {" "}Arrastrá las imágenes para cambiar el orden. La primera es la portada.
-                </p>
-            )}
-
-            <input
-                ref={inputRef}
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                multiple
-                style={{ display: "none" }}
-                onChange={handleInputChange}
-            />
-
-            <small className="img-hint-small">
-                JPG, PNG o WEBP · Máx. {MAX_SIZE_MB}MB · El backend las guarda en WEBP
-            </small>
-        </div>
-    );
-}
-
 // ── Helpers ──
 const buildSlots = (producto) => {
     const fields = ["imagen1", "imagen2", "imagen3"];
@@ -242,25 +80,21 @@ const hasNewImages = (slots) => slots.some((s) => s?.isNew && s?.file);
 // ── Main ──
 function Productos() {
     const navigate = useNavigate();
-
     const [productos, setProductos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [saving, setSaving] = useState(false);
     const [deletingId, setDeletingId] = useState(null);
-
     const [search, setSearch] = useState("");
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [imgError, setImgError] = useState("");
-
     const [showModal, setShowModal] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null);
     const [form, setForm] = useState(initialForm);
     const [imageSlots, setImageSlots] = useState([null, null, null]);
 
     const resetMessages = () => { setError(""); setSuccess(""); };
-
     const resetImages = useCallback(() => {
         setImageSlots((prev) => {
             prev.forEach((s) => {
@@ -345,10 +179,8 @@ function Productos() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validateForm()) return;
-
         setSaving(true);
         resetMessages();
-
         try {
             const payload = {
                 titulo: form.titulo.trim(),
@@ -357,9 +189,7 @@ function Productos() {
                 oferta: form.oferta ? 1 : 0,
                 activo: form.activo ? 1 : 0,
             };
-
             let productoGuardado;
-
             if (editingProduct?.id) {
                 const res = await axios.put(`${API_URL}/productos/${editingProduct.id}`, payload, {
                     headers: getAdminHeaders(), timeout: 10000,
@@ -371,8 +201,6 @@ function Productos() {
                 });
                 productoGuardado = res.data?.producto || { id: res.data?.id, ...payload };
             }
-
-            // Subir imágenes solo si hay nuevas
             if (hasNewImages(imageSlots)) {
                 const fd = slotsToFormData(imageSlots);
                 const res = await axios.post(
@@ -382,7 +210,6 @@ function Productos() {
                 );
                 if (res.data?.producto) productoGuardado = res.data.producto;
             }
-
             setSuccess(editingProduct?.id ? "Producto actualizado correctamente." : "Producto creado correctamente.");
             await cargarProductos();
             setTimeout(closeModal, 600);
@@ -419,8 +246,6 @@ function Productos() {
         <>
             <AdminHeader />
             <main className="productos-page">
-
-                {/* HEADER */}
                 <section className="productos-header">
                     <div>
                         <button type="button" className="productos-back" onClick={() => navigate("/admin")}>
@@ -441,7 +266,6 @@ function Productos() {
                     </div>
                 </section>
 
-                {/* TOOLBAR */}
                 <section className="productos-toolbar">
                     <div className="productos-search">
                         <Search size={18} />
@@ -452,7 +276,6 @@ function Productos() {
 
                 {error && <Alert variant="danger" className="productos-alert">{error}</Alert>}
 
-                {/* GRID */}
                 {loading ? (
                     <section className="productos-grid">
                         {[1, 2, 3].map((i) => (
@@ -502,51 +325,38 @@ function Productos() {
                 )}
             </main>
 
-            {/* MODAL */}
             <Modal show={showModal} onHide={closeModal} size="lg" centered backdrop="static">
                 <Modal.Header closeButton={!saving}>
                     <Modal.Title>{editingProduct?.id ? "Editar producto" : "Nuevo producto"}</Modal.Title>
                 </Modal.Header>
-
                 <Form onSubmit={handleSubmit}>
                     <Modal.Body>
                         {error && <Alert variant="danger">{error}</Alert>}
                         {success && <Alert variant="success">{success}</Alert>}
                         {imgError && <Alert variant="warning">{imgError}</Alert>}
-
                         <div className="productos-form-grid">
                             <Form.Group className="productos-form-full">
                                 <Form.Label>Título *</Form.Label>
                                 <Form.Control type="text" name="titulo" value={form.titulo} onChange={handleChange} disabled={saving} placeholder="Ej: Chapita QR SmartPet" required />
                             </Form.Group>
-
                             <Form.Group>
                                 <Form.Label>Precio *</Form.Label>
                                 <Form.Control type="number" name="precio" value={form.precio} onChange={handleChange} disabled={saving} min="0" step="0.01" placeholder="0.00" required />
                             </Form.Group>
-
                             <div className="productos-checks">
                                 <Form.Check type="switch" id="producto-oferta" name="oferta" label="En oferta" checked={form.oferta} onChange={handleChange} disabled={saving} />
                                 <Form.Check type="switch" id="producto-activo" name="activo" label="Activo" checked={form.activo} onChange={handleChange} disabled={saving} />
                             </div>
-
                             <Form.Group className="productos-form-full">
                                 <Form.Label>Descripción</Form.Label>
                                 <Form.Control as="textarea" rows={3} name="descripcion" value={form.descripcion} onChange={handleChange} disabled={saving} placeholder="Descripción del producto..." />
                             </Form.Group>
-
                             <div className="productos-form-full">
                                 <Form.Label>Imágenes del producto</Form.Label>
-                                <ImageUploader
-                                    slots={imageSlots}
-                                    onChange={setImageSlots}
-                                    error={imgError}
-                                    onError={setImgError}
-                                />
+                                <ImageUploader slots={imageSlots} onChange={setImageSlots} error={imgError} onError={setImgError} />
                             </div>
                         </div>
                     </Modal.Body>
-
                     <Modal.Footer>
                         <Button variant="secondary" type="button" onClick={closeModal} disabled={saving}>Cancelar</Button>
                         <Button variant="primary" type="submit" disabled={saving}>
